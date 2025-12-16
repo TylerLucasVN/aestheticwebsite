@@ -47,11 +47,12 @@ nav {
 .icon-btn:hover { background-color: #e5e5e5; }
 
 /* --- 3. HERO SECTION --- */
-.hero { margin-bottom: 60px; }
+.hero { margin-bottom: 60px; position: relative; overflow: hidden; }
 .hero-img {
     pointer-events: none;
     width: 100%; height: 95vh;
     object-fit: cover; object-position: center;
+    position: relative;
 }
 
 .hero-content { text-align: center; padding: 40px 20px; }
@@ -80,7 +81,7 @@ nav {
     display: flex; justify-content: space-between; align-items: center;
     padding: 0 40px; margin-bottom: 20px;
 }
-.section-title { font-size: 24px; font-weight: 500; }
+.section-title { font-size: 24px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
 .scroll-btns { display: flex; gap: 10px; }
 .circle-btn { background-color: #f5f5f5; width: 40px; height: 40px; }
 
@@ -106,6 +107,29 @@ nav {
 .p-cat { color: var(--secondary); font-size: 16px; }
 .p-price { font-weight: 500; }
 
+
+.center-text{
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+
+/* --- FEATURED TILES --- */
+.featured { padding: 0; }
+.featured-inner { max-width: none; width: 100%; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
+.featured-card { border-radius: 0; overflow: visible; position: relative; min-height: 600px; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
+.featured-card .featured-content { padding: 28px; color: #fff; z-index: 2; }
+.featured-card::before{ content: ""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.55) 80%); }
+.featured-card.left .kicker, .featured-card.right .kickearr{ font-size: 14px; mgin-bottom: 8px; opacity: 0.95; }
+.featured-card h3{ margin:0 0 12px 0; font-size: 26px; line-height:1.05; font-weight:700; }
+.feature-btn{ display:inline-block; background:#fff; color:#111; padding:10px 18px; border-radius:999px; text-decoration:none; font-weight:600; box-shadow: 0 8px 18px rgba(0,0,0,0.25); }
+
+@media (max-width: 900px){
+    .featured-inner{ grid-template-columns: 1fr; padding: 0 20px; }
+    .featured-card{ min-height: 320px; }
+}
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .nav-links { display: none; }
@@ -113,4 +137,33 @@ nav {
     .product-card { min-width: 300px; }
     nav { padding: 0 20px; }
     .section-header, .product-scroll { padding-left: 20px; padding-right: 20px; }
+}
+.title-text{
+    white-space: nowrap;
+    font-family: 'Anton', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 60px;
+    letter-spacing: -1px;
+    color: rgb(255, 255, 255);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+.second-title-text{
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: rgb(255, 255, 255);
+}
+.feature-title{font-size: 28px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+
+/* inline Shop-by-Sport under Trending */
+.shop-by-sport-inline { padding: 24px 40px 40px 40px; }
+.shop-by-sport-inline .sport-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; }
+.shop-by-sport-inline .sport-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 6px; display: block; }
+.shop-by-sport-inline .sport-caption { margin-top: 10px; text-align: center; font-size: 16px; color: var(--primary); }
+
+@media (max-width: 900px) {
+    .shop-by-sport-inline .sport-grid { grid-template-columns: 1fr; }
+    .shop-by-sport-inline .sport-card img { height: 180px; }
 }
