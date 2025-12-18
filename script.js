@@ -1,3 +1,5 @@
+import { data } from './mockupdata.js';
+
 // --- 1. CHỌN CÁC PHẦN TỬ (SELECTORS) ---
 const scrollContainer = document.getElementById('scrollContainer');
 const btnPrev = document.getElementById('btnPrev');
