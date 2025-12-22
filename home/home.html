@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just Do It. Nike VN (Clone)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Cấu hình Tailwind tùy chỉnh */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+        
+        /* Một vài hiệu ứng không thể thực hiện với Tailwind mặc định */
+        .product-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .product-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Hiệu ứng hover cho thẻ sản phẩm */
+        .product-card:hover .card-img-wrap img {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+        
+        /* Animation cho hero */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <!-- Top Bar -->
+    <div class="bg-black text-white text-xs md:text-sm py-2 px-4 text-center">
+        New Styles On Sale: Up To 40% Off <a href="#" class="underline font-medium ml-1">Shop Now</a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="#" class="flex-shrink-0">
+                    <img src="../img/logo.png"
+                         alt="Nike Logo" class="h-6 md:h-[100px]">
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden md:flex md:items-center md:space-x-6">
+                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">New & Featured</a>
+                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
+                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
+                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
+                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
+                </div>
+
+                <!-- Icons -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <div class="relative hidden md:block">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" class="bg-gray-100 rounded-full py-2 pl-10 pr-4 text-sm w-48 focus:outline-none focus:ring-1 focus:ring-gray-300" placeholder="Search">
+                    </div>
+                    
+                    <!-- Mobile Search -->
+                    <button class="md:hidden text-gray-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Favorites -->
+                    <a href="../favor/favor.html" class="text-gray-600 hover:text-gray-900">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </a>
+                    
+                    <!-- Cart -->
+                    <a href="#" class="text-gray-600 hover:text-gray-900">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section với Video -->
+    <section class="relative overflow-hidden bg-black">
+        <div class="absolute inset-0 z-0">
+            <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-90">
+                <source src="https://static.nike.com/a/videos/so_5.41/vp_7f1f96a8-28f5-46b8-b759-5cc0e94d3b4e/so_5.41.mp4" type="video/mp4">
+                <!-- Fallback image nếu video không tải được -->
+                <img src="https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_1824,c_limit/9dc5d4c5-a5a5-4c82-9ab7-b2dc6ea84e05/nike-just-do-it.jpg" 
+                     alt="Nike Hero" class="w-full h-full object-cover">
+            </video>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="text-center fade-in-up">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">POWER THEIR NEXT REP</h1>
+                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">Gift the latest gear to help them set a new personal best.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-black font-medium px-8 py-3 rounded-full hover:bg-gray-100 transition duration-300">Shop Training</button>
+                    <button class="bg-transparent border-2 border-white text-white font-medium px-8 py-3 rounded-full hover:bg-white hover:text-black transition duration-300">Watch ►</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="py-10 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10 md:mb-16">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">FEATURED</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_406,c_limit/c1d0281f-bd97-4342-8024-1eafc5b3d6e7/nike-just-do-it.jpg')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="text-sm font-medium mb-2">Trail Running</div>
+                        <h3 class="text-xl font-bold mb-4">Up the Mountains, Through the Woods</h3>
+                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Explore</a>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_406,c_limit/1e8ef5b9-2e94-4661-8bf0-cd0a3c5c8c4e/nike-just-do-it.jpg')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="text-sm font-medium mb-2">Hollywood Goalkeepers</div>
+                        <h3 class="text-xl font-bold mb-4">Show Stoppers</h3>
+                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Shop</a>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_406,c_limit/305bf71d-95aa-4964-b098-8d0d37d78c51/nike-just-do-it.jpg')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="text-sm font-medium mb-2">New Arrivals</div>
+                        <h3 class="text-xl font-bold mb-4">Run Lighter</h3>
+                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Discover</a>
+                    </div>
+                </div>
+                
+                <!-- Card 4 -->
+                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_406,c_limit/f647b5c2-14e5-471c-bc60-7aa410846540/nike-just-do-it.jpg')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <div class="text-sm font-medium mb-2">Athlete Picks</div>
+                        <h3 class="text-xl font-bold mb-4">Essentials</h3>
+                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Shop</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Air Max Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">FEEL THE UNREAL</h1>
+            <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                The next generation of Air technology is here. Experience dynamic Air like never before.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-black text-white font-medium px-8 py-3 rounded-full hover:bg-gray-800 transition duration-300">Shop Air Max</button>
+                <button class="bg-transparent border-2 border-black text-black font-medium px-8 py-3 rounded-full hover:bg-black hover:text-white transition duration-300">Watch The Film</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Products -->
+    <section class="py-10 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Trending This Week</h2>
+                <div class="flex space-x-2">
+                    <button id="btnPrev" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300">❮</button>
+                    <button id="btnNext" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300">❯</button>
+                </div>
+            </div>
+            
+            <div id="scrollContainer" class="flex overflow-x-auto product-scroll space-x-6 pb-6">
+                <!-- Product 1 -->
+                <div class="product-card flex-shrink-0 w-64 md:w-72">
+                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
+                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/e6da41fa-7565-4271-b610-188b393b4904/air-force-1-07-shoes-WrLlWX.png" 
+                             alt="Nike Air Force 1 '07" class="w-full h-auto">
+                    </div>
+                    <div class="card-info">
+                        <div class="p-name font-medium text-gray-900 mb-1">Nike Air Force 1 '07</div>
+                        <div class="p-cat text-gray-600 text-sm mb-2">Men's Shoes</div>
+                        <div class="p-price font-bold text-gray-900">3.209.000₫</div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card flex-shrink-0 w-64 md:w-72">
+                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
+                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png" 
+                             alt="Nike Dunk Low Retro" class="w-full h-auto">
+                    </div>
+                    <div class="card-info">
+                        <div class="p-name font-medium text-gray-900 mb-1">Nike Dunk Low Retro</div>
+                        <div class="p-cat text-gray-600 text-sm mb-2">Men's Shoes</div>
+                        <div class="p-price font-bold text-gray-900">2.909.000₫</div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card flex-shrink-0 w-64 md:w-72">
+                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
+                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/21d38052-598b-44f6-a857-123c9f72b015/air-jordan-1-low-shoes-459b4T.png" 
+                             alt="Air Jordan 1 Low" class="w-full h-auto">
+                    </div>
+                    <div class="card-info">
+                        <div class="p-name font-medium text-gray-900 mb-1">Air Jordan 1 Low</div>
+                        <div class="p-cat text-gray-600 text-sm mb-2">Women's Shoes</div>
+                        <div class="p-price font-bold text-gray-900">3.509.000₫</div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card flex-shrink-0 w-64 md:w-72">
+                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
+                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/0a0279c7-5264-4424-b040-34925894b917/air-jordan-1-low-se-shoes-H7DD5v.png" 
+                             alt="Air Jordan 1 Low SE" class="w-full h-auto">
+                    </div>
+                    <div class="card-info">
+                        <div class="p-name font-medium text-gray-900 mb-1">Air Jordan 1 Low SE</div>
+                        <div class="p-cat text-gray-600 text-sm mb-2">Women's Shoes</div>
+                        <div class="p-price font-bold text-gray-900">3.809.000₫</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--  Sport -->
+    <section class="py-10 md:py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Shop by Sport</h2>
+                <div class="flex space-x-2">
+                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300">❮</button>
+                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300">❯</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Sport 1 -->
+                <div class="sport-card relative rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=800&q=80" 
+                         alt="Basketball" class="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-white text-xl font-bold">Basketball</div>
+                    </div>
+                </div>
+                
+                <!-- Sport 2 -->
+                <div class="sport-card relative rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=800&q=80" 
+                         alt="Football" class="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-white text-xl font-bold">Football</div>
+                    </div>
+                </div>
+                
+                <!-- Sport 3 -->
+                <div class="sport-card relative rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" 
+                         alt="Running" class="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-white text-xl font-bold">Running</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Find A Store</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Become a Member</a></li>
+                        <li><a href="#" class="hover:text-white">Sign Up for Email</a></li>
+                        <li><a href="#" class="hover:text-white">Student Discounts</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Get Help</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Order Status</a></li>
+                        <li><a href="#" class="hover:text-white">Delivery</a></li>
+                        <li><a href="#" class="hover:text-white">Returns</a></li>
+                        <li><a href="#" class="hover:text-white">Payment Options</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">About Us</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">News</a></li>
+                        <li><a href="#" class="hover:text-white">Careers</a></li>
+                        <li><a href="#" class="hover:text-white">Investors</a></li>
+                        <li><a href="#" class="hover:text-white">Sustainability</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Facebook</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Instagram</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-10 pt-6 border-t border-gray-800 text-center text-gray-400 text-sm">
+                <p>© 2023 SGD, Inc. All Rights Reserved</p>
+                <div class="mt-2">
+                    <a href="#" class="hover:text-white mx-2">Guides</a>
+                    <a href="#" class="hover:text-white mx-2">Terms of Sale</a>
+                    <a href="#" class="hover:text-white mx-2">Terms of Use</a>
+                    <a href="#" class="hover:text-white mx-2">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript cho tính năng scroll sản phẩm
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollContainer = document.getElementById('scrollContainer');
+            const btnNext = document.getElementById('btnNext');
+            const btnPrev = document.getElementById('btnPrev');
+            
+            if (scrollContainer && btnNext && btnPrev) {
+                const scrollAmount = 300;
+                
+                btnNext.addEventListener('click', function() {
+                    scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                });
+                
+                btnPrev.addEventListener('click', function() {
+                    scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                });
+            }
+            
+            // Thêm hiệu ứng hover cho sản phẩm
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                const img = card.querySelector('img');
+                if (img) {
+                    card.addEventListener('mouseenter', function() {
+                        img.style.transform = 'scale(1.05)';
+                    });
+                    
+                    card.addEventListener('mouseleave', function() {
+                        img.style.transform = 'scale(1)';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
