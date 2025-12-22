@@ -78,15 +78,19 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <input type="text" class="bg-gray-100 rounded-full py-2 pl-10 pr-4 text-sm w-48 focus:outline-none focus:ring-1 focus:ring-gray-300" placeholder="Search">
+                    <input type="text" 
+                        id="desktopSearchInput"
+                        onkeydown="handleSearch(event)"
+                        class="bg-gray-100 rounded-full py-2 pl-10 pr-4 text-sm w-48 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-all focus:w-60" 
+                        placeholder="Search">
                     </div>
                     
                     <!-- Mobile Search -->
-                    <button class="md:hidden text-gray-600">
+                    <a href="../Search/search.html" class="md:hidden text-gray-600 hover:text-black">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                    </button>
+                    </a>
                     
                     <!-- Favorites -->
                     <a href="../favor/favor.html" class="text-gray-600 hover:text-gray-900">
@@ -214,60 +218,11 @@
             </div>
             
             <div id="scrollContainer" class="flex overflow-x-auto product-scroll space-x-6 pb-6">
-                <!-- Product 1 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/e6da41fa-7565-4271-b610-188b393b4904/air-force-1-07-shoes-WrLlWX.png" 
-                             alt="Nike Air Force 1 '07" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Nike Air Force 1 '07</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Men's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">3.209.000₫</div>
-                    </div>
                 </div>
-                
-                <!-- Product 2 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png" 
-                             alt="Nike Dunk Low Retro" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Nike Dunk Low Retro</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Men's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">2.909.000₫</div>
-                    </div>
-                </div>
-                
-                <!-- Product 3 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/21d38052-598b-44f6-a857-123c9f72b015/air-jordan-1-low-shoes-459b4T.png" 
-                             alt="Air Jordan 1 Low" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Air Jordan 1 Low</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Women's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">3.509.000₫</div>
-                    </div>
-                </div>
-                
-                <!-- Product 4 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/0a0279c7-5264-4424-b040-34925894b917/air-jordan-1-low-se-shoes-H7DD5v.png" 
-                             alt="Air Jordan 1 Low SE" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Air Jordan 1 Low SE</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Women's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">3.809.000₫</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
+
+    <script src="../home/mockupdata.js"></script>
 
     <!--  Sport -->
     <section class="py-10 md:py-16 bg-gray-50">
@@ -379,38 +334,58 @@
     </footer>
 
     <script>
+        // Hàm xử lý khi nhấn Enter ở ô tìm kiếm Desktop
+        function handleSearch(event) {
+            // Kiểm tra nếu phím nhấn là Enter (key code 13)
+            if (event.key === 'Enter') {
+                // Chuyển hướng sang trang search.html
+                window.location.href = '../Search/search.html';
+            }
+        }
         // JavaScript cho tính năng scroll sản phẩm
         document.addEventListener('DOMContentLoaded', function() {
+            // 1. RENDER SẢN PHẨM TỪ DATA.JS
             const scrollContainer = document.getElementById('scrollContainer');
+            
+            // Kiểm tra xem biến trendingProducts (từ file data.js) có tồn tại không
+            if (typeof trendingProducts !== 'undefined' && scrollContainer) {
+                trendingProducts.forEach(product => {
+                    // Tạo HTML cho từng sản phẩm dùng Template Literal
+                    const productHTML = `
+                        <div class="product-card flex-shrink-0 w-64 md:w-72 cursor-pointer">
+                            <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 relative">
+                                <img src="${product.image}" alt="${product.name}" class="w-full h-auto transition-transform duration-300">
+                            </div>
+                            <div class="card-info">
+                                <div class="p-name font-medium text-gray-900 mb-1">${product.name}</div>
+                                <div class="p-cat text-gray-600 text-sm mb-2">${product.category}</div>
+                                <div class="p-price font-bold text-gray-900">${product.price}</div>
+                            </div>
+                        </div>
+                    `;
+                    // Thêm vào container
+                    scrollContainer.innerHTML += productHTML;
+                });
+            }
+
+            // 2. XỬ LÝ SCROLL NEXT/PREV
             const btnNext = document.getElementById('btnNext');
             const btnPrev = document.getElementById('btnPrev');
             
             if (scrollContainer && btnNext && btnPrev) {
                 const scrollAmount = 300;
-                
+
                 btnNext.addEventListener('click', function() {
                     scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
                 });
-                
+
                 btnPrev.addEventListener('click', function() {
                     scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
                 });
             }
             
-            // Thêm hiệu ứng hover cho sản phẩm
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                const img = card.querySelector('img');
-                if (img) {
-                    card.addEventListener('mouseenter', function() {
-                        img.style.transform = 'scale(1.05)';
-                    });
-                    
-                    card.addEventListener('mouseleave', function() {
-                        img.style.transform = 'scale(1)';
-                    });
-                }
-            });
+            // Lưu ý: Hiệu ứng Hover ảnh đã được xử lý bởi CSS ở trên đầu trang (.product-card:hover .card-img-wrap img)
+            // nên không cần viết thêm JS hover để tối ưu hiệu năng.
         });
     </script>
 </body>
