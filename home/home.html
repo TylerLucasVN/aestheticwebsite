@@ -63,8 +63,8 @@
                 <!-- Desktop Navigation Links -->
                 <div class="hidden md:flex md:items-center md:space-x-6">
                     <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">New & Featured</a>
-                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
-                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
+                    <a href="men.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm" onclick="filterProducts('Men\'s Shoes')">Men</a>
+                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm" onclick="filterProducts('Women')">Women</a>
                     <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
                     <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
                 </div>
@@ -214,57 +214,7 @@
             </div>
             
             <div id="scrollContainer" class="flex overflow-x-auto product-scroll space-x-6 pb-6">
-                <!-- Product 1 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/e6da41fa-7565-4271-b610-188b393b4904/air-force-1-07-shoes-WrLlWX.png" 
-                             alt="Nike Air Force 1 '07" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Nike Air Force 1 '07</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Men's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">3.209.000₫</div>
-                    </div>
-                </div>
-                
-                <!-- Product 2 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png" 
-                             alt="Nike Dunk Low Retro" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Nike Dunk Low Retro</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Men's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">2.909.000₫</div>
-                    </div>
-                </div>
-                
-                <!-- Product 3 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/21d38052-598b-44f6-a857-123c9f72b015/air-jordan-1-low-shoes-459b4T.png" 
-                             alt="Air Jordan 1 Low" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Air Jordan 1 Low</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Women's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">3.509.000₫</div>
-                    </div>
-                </div>
-                
-                <!-- Product 4 -->
-                <div class="product-card flex-shrink-0 w-64 md:w-72">
-                    <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4">
-                        <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/0a0279c7-5264-4424-b040-34925894b917/air-jordan-1-low-se-shoes-H7DD5v.png" 
-                             alt="Air Jordan 1 Low SE" class="w-full h-auto">
-                    </div>
-                    <div class="card-info">
-                        <div class="p-name font-medium text-gray-900 mb-1">Air Jordan 1 Low SE</div>
-                        <div class="p-cat text-gray-600 text-sm mb-2">Women's Shoes</div>
-                        <div class="p-price font-bold text-gray-900">3.809.000₫</div>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </section>
@@ -413,5 +363,6 @@
             });
         });
     </script>
+    <script src="/home/generateUI.js" type="module"></script>
 </body>
 </html>

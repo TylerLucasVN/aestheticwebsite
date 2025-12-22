@@ -29,127 +29,127 @@ export const data = [
     price: "3.809.000₫"
   }
 ];
-export data ={
-    "products": [   
-        {
-            "id": 1,
-            "name": "Product 1",
-            "price": 29.99,
-            "image": "images/product1.jpg"
-            "size": "M"
-            "catory": "Men Shoes"
-        },
-        {
-            "id": 2,
-            "name": "Product 2",
-            "price": 39.99,
-            "image": "images/product2.jpg"
-            "size": "L"
-            "catory": "Women Shoes"
-        },{
-        "id": 3,
-        "name": "Classic Leather Loafers",
-        "price": 89.99,
-        "image": "images/product3.jpg",
-        "size": "L",
-        "category": "Men Shoes"
-    },
-    {
-        "id": 4,
-        "name": "Summer Beach Sandals",
-        "price": 25.50,
-        "image": "images/product4.jpg",
-        "size": "S",
-        "category": "Women Shoes"
-    },
-    {
-        "id": 5,
-        "name": "High-Top Sneakers",
-        "price": 65.00,
-        "image": "images/product5.jpg",
-        "size": "XL",
-        "category": "Men Shoes"
-    },
-    {
-        "id": 6,
-        "name": "Pro Running Gear",
-        "price": 70.00,
-        "image": "images/product6.jpg",
-        "size": "M",
-        "category": "Women Shoes"
-    },
-    {
-        "id": 7,
-        "name": "Winter Warm Boots",
-        "price": 95.00,
-        "image": "images/product7.jpg",
-        "size": "L",
-        "category": "Men Shoes"
-    },
-    {
-        "id": 8,
-        "name": "Casual Daily Slip-on",
-        "price": 45.00,
-        "image": "images/product8.jpg",
-        "size": "M",
-        "category": "Men Shoes"
-    },
-    {
-        "id": 9,
-        "name": "Elegant Party Heels",
-        "price": 55.99,
-        "image": "images/product9.jpg",
-        "size": "S",
-        "category": "Women Shoes"
-    },
-    {
-        "id": 10,
-        "name": "Canvas Streetwear",
-        "price": 35.00,
-        "image": "images/product10.jpg",
-        "size": "M",
-        "category": "Unisex Shoes"
-    },
-    {
-        "id": 11,
-        "name": "Mountain Trekking Boots",
-        "price": 110.00,
-        "image": "images/product11.jpg",
-        "size": "XL",
-        "category": "Men Shoes"
-    },
-    {
-        "id": 12,
-        "name": "Office Derby Black",
-        "price": 75.00,
-        "image": "images/product12.jpg",
-        "size": "L",
-        "category": "Men Shoes"
-    },
+// export data ={
+//     "products": [   
+//         {
+//             "id": 1,
+//             "name": "Product 1",
+//             "price": 29.99,
+//             "image": "images/product1.jpg"
+//             "size": "M"
+//             "catory": "Men Shoes"
+//         },
+//         {
+//             "id": 2,
+//             "name": "Product 2",
+//             "price": 39.99,
+//             "image": "images/product2.jpg"
+//             "size": "L"
+//             "catory": "Women Shoes"
+//         },{
+//         "id": 3,
+//         "name": "Classic Leather Loafers",
+//         "price": 89.99,
+//         "image": "images/product3.jpg",
+//         "size": "L",
+//         "category": "Men Shoes"
+//     },
+//     {
+//         "id": 4,
+//         "name": "Summer Beach Sandals",
+//         "price": 25.50,
+//         "image": "images/product4.jpg",
+//         "size": "S",
+//         "category": "Women Shoes"
+//     },
+//     {
+//         "id": 5,
+//         "name": "High-Top Sneakers",
+//         "price": 65.00,
+//         "image": "images/product5.jpg",
+//         "size": "XL",
+//         "category": "Men Shoes"
+//     },
+//     {
+//         "id": 6,
+//         "name": "Pro Running Gear",
+//         "price": 70.00,
+//         "image": "images/product6.jpg",
+//         "size": "M",
+//         "category": "Women Shoes"
+//     },
+//     {
+//         "id": 7,
+//         "name": "Winter Warm Boots",
+//         "price": 95.00,
+//         "image": "images/product7.jpg",
+//         "size": "L",
+//         "category": "Men Shoes"
+//     },
+//     {
+//         "id": 8,
+//         "name": "Casual Daily Slip-on",
+//         "price": 45.00,
+//         "image": "images/product8.jpg",
+//         "size": "M",
+//         "category": "Men Shoes"
+//     },
+//     {
+//         "id": 9,
+//         "name": "Elegant Party Heels",
+//         "price": 55.99,
+//         "image": "images/product9.jpg",
+//         "size": "S",
+//         "category": "Women Shoes"
+//     },
+//     {
+//         "id": 10,
+//         "name": "Canvas Streetwear",
+//         "price": 35.00,
+//         "image": "images/product10.jpg",
+//         "size": "M",
+//         "category": "Unisex Shoes"
+//     },
+//     {
+//         "id": 11,
+//         "name": "Mountain Trekking Boots",
+//         "price": 110.00,
+//         "image": "images/product11.jpg",
+//         "size": "XL",
+//         "category": "Men Shoes"
+//     },
+//     {
+//         "id": 12,
+//         "name": "Office Derby Black",
+//         "price": 75.00,
+//         "image": "images/product12.jpg",
+//         "size": "L",
+//         "category": "Men Shoes"
+//     },
 
-    {
-        "id": 13,
-        "name": "Soft Yoga Trainers",
-        "price": 40.00,
-        "image": "images/product13.jpg",
-        "size": "M",
-        "category": "Women Shoes"
-    },
-    {
-        "id": 14,
-        "name": "Oxford Vintage Brown",
-        "price": 85.00,
-        "image": "images/product14.jpg",
-        "size": "M",
-        "category": "Men Shoes"
-    },
-    {
-        "id": 15,
-        "name": "Chunky Style Sneakers",
-        "price": 60.00,
-        "image": "images/product15.jpg",
-        "size": "L",
-        "category": "Women Shoes"
-    }
-    ]
-}
+//     {
+//         "id": 13,
+//         "name": "Soft Yoga Trainers",
+//         "price": 40.00,
+//         "image": "images/product13.jpg",
+//         "size": "M",
+//         "category": "Women Shoes"
+//     },
+//     {
+//         "id": 14,
+//         "name": "Oxford Vintage Brown",
+//         "price": 85.00,
+//         "image": "images/product14.jpg",
+//         "size": "M",
+//         "category": "Men Shoes"
+//     },
+//     {
+//         "id": 15,
+//         "name": "Chunky Style Sneakers",
+//         "price": 60.00,
+//         "image": "images/product15.jpg",
+//         "size": "L",
+//         "category": "Women Shoes"
+//     }
+//     ]
+// }
