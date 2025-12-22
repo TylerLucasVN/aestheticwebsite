@@ -29,23 +29,23 @@ export const data = [
     price: "3.809.000₫"
   }
 ];
-export data ={
+export const productsData = {
     "products": [   
         {
             "id": 1,
             "name": "Product 1",
             "price": 29.99,
-            "image": "images/product1.jpg"
-            "size": "M"
-            "catory": "Men Shoes"
+            "image": "images/product1.jpg",
+            "size": "M",
+            "category": "Men Shoes"
         },
         {
             "id": 2,
             "name": "Product 2",
             "price": 39.99,
-            "image": "images/product2.jpg"
-            "size": "L"
-            "catory": "Women Shoes"
+            "image": "images/product2.jpg",
+            "size": "L",
+            "category": "Women Shoes"
         },{
         "id": 3,
         "name": "Classic Leather Loafers",
