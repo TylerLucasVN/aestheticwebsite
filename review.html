@@ -5,19 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Just Do It. Nike VN (Clone)</title>
-
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
     <div class="top-bar">
         New Styles On Sale: Up To 40% Off <a href="#">Shop Now</a>
     </div>
 
     <nav>
         <a href="#" class="logo">
-            <img src="logo.png" alt="Logo">
+            <img src="./img/logo.png" alt="Logo">
         </a>
 
         <ul class="nav-links">
@@ -48,7 +47,7 @@
     </nav>
     <div class="hero">
         <video autoplay muted loop playsinline class="hero-img">
-            <source src="test video.mp4" type="video/mp4">
+            <source src="./img/test video.mp4" type="video/mp4">
         </video>
 
         <div class="hero-content center-text">
@@ -59,7 +58,12 @@
                 <button class="btn">Watch ►</button>
             </div>
         </div>
-    </div>
+    </div> 
+ 	
+Separate JS into its own file(s)
+Use functions to organize logic
+Avoid duplicate code
+Write readable, maintainable JS
 
 
     <div class="hero-content">
@@ -78,28 +82,28 @@
             <h2 class="featured-title">FEATURED</h2>
         </div>
         <div class="featured-inner">
-            <div class="featured-card left" style="background-image:url('image.avif')">
+            <div class="featured-card left" style="background-image:url('./img/image.avif')">
                 <div class="featured-content">
                     <div class="kicker">Trail Running</div>
                     <h3>Up the Mountains, Through the Woods</h3>
                     <a class="feature-btn" href="#">Explore</a>
                 </div>
             </div>
-            <div class="featured-card right" style="background-image:url('hollywood-keepers-hero.jpg')">
+            <div class="featured-card right" style="background-image:url('./img/hollywood-keepers-hero.jpg')">
                 <div class="featured-content">
                     <div class="kicker">Hollywood Goalkeepers</div>
                     <h3>Show Stoppers</h3>
                     <a class="feature-btn" href="#">Shop</a>
                 </div>
             </div>
-            <div class="featured-card" style="background-image:url('image (1).avif')">
+            <div class="featured-card" style="background-image:url('./img/image (1).avif')">
                 <div class="featured-content">
                     <div class="kicker">New Arrivals</div>
                     <h3>Run Lighter</h3>
                     <a class="feature-btn" href="#">Discover</a>
                 </div>
             </div>
-            <div class="featured-card" style="background-image:url('78-best-nike-sneakers-16286817-main.webp')">
+            <div class="featured-card" style="background-image:url('./img/78-best-nike-sneakers-16286817-main.webp')">
                 <div class="featured-content">
                     <div class="kicker">Athlete Picks</div>
                     <h3>Essentials</h3>
@@ -154,7 +158,7 @@
                 </div>
                 <div class="card-info">
                     <div>
-                        <div class="p-name">Air Jordan 1 Low</div>
+                        <div class="p-name">Air Jordan 123456789 Low</div>
                         <div class="p-cat">Women's Shoes</div>
                     </div>
                     <div class="p-price">3.509.000₫</div>
