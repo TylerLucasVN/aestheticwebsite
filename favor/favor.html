@@ -626,14 +626,25 @@
         // ======================
         const removeButtons = document.querySelectorAll('.remove-btn');
         const favoritesCount = document.getElementById('favoritesCount');
+        const totalValueElement = document.getElementById('totalValue');
         const emptyState = document.getElementById('emptyState');
         const favoritesGrid = document.getElementById('favoritesGrid');
         
-        let totalItems = 8;
-        let totalValue = 27864000;
+        // Tự động tính toán số lượng và tổng tiền từ HTML hiện có
+        let totalItems = 0;
+        let totalValue = 0;
+
+        document.querySelectorAll('.favorite-item').forEach(item => {
+            totalItems++;
+            const priceText = item.querySelector('.font-bold.text-gray-900').textContent;
+            totalValue += parseInt(priceText.replace(/[^\d]/g, ''));
+        });
         
         function updateSummary() {
             favoritesCount.textContent = `${totalItems} saved ${totalItems === 1 ? 'item' : 'items'}`;
+            if (totalValueElement) {
+                totalValueElement.textContent = `Total: ${totalValue.toLocaleString('vi-VN')}₫`;
+            }
             
             if (totalItems === 0) {
                 emptyState.classList.remove('hidden');
