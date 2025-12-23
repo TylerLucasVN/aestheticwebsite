@@ -217,7 +217,6 @@ export const data = [
 //         "size": "L",
 //         "category": "Men Shoes"
 //     },
-
 //     {
 //         "id": 13,
 //         "name": "Soft Yoga Trainers",
