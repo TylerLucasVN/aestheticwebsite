@@ -1,3 +1,12 @@
+import { data } from '../home/mockupdata.js';
+
+// Chuẩn bị dữ liệu: Thêm cờ 'onSale' cho sản phẩm đầu tiên để demo (vì mockupdata gốc chưa có)
+const products = data.map((item, index) => ({
+    ...item,
+    onSale: index === 0, // Giả lập sản phẩm đầu tiên đang giảm giá
+    category: item.category || "Shoes"
+}));
+
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
     // MODAL FUNCTIONALITY
