@@ -3,32 +3,123 @@ export const data = [
   {
     id: 1,
     name: "Nike Air Force 1 '07",
-    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/e6da41fa-7565-4271-b610-188b393b4904/air-force-1-07-shoes-WrLlWX.png",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png",
     category: "Men's Shoes",
-    price: "3.209.000₫"
+    price: "3.209.000₫",
+    tag: "trending",
   },
   {
     id: 2,
     name: "Nike Dunk Low Retro",
     image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png",
     category: "Men's Shoes",
-    price: "2.909.000₫"
+    price: "2.909.000₫",
+    tag: "trending",
   },
   {
     id: 3,
     name: "Air Jordan 1 Low",
-    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/21d38052-598b-44f6-a857-123c9f72b015/air-jordan-1-low-shoes-459b4T.png",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png",
     category: "Women's Shoes",
-    price: "3.509.000₫"
+    price: "3.509.000₫",
+    tag: "trending",
   },
   {
     id: 4,
     name: "Air Jordan 1 Low SE",
-    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/0a0279c7-5264-4424-b040-34925894b917/air-jordan-1-low-se-shoes-H7DD5v.png",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/dunk-low-retro-shoes-bCzchX.png",
     category: "Women's Shoes",
-    price: "3.809.000₫"
-  }
-];
+    price: "3.809.000₫",
+  },
+  {
+  id: 5,
+  name: "Nike Air Force 1 Kids",
+  image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/af1-kids.png",
+  category: "Kids's Shoes",
+  price: "1.809.000₫",
+  tag: "sale",
+  },
+  {
+    id: 6,
+    name: "Nike Revolution 6 Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/revolution-6-kids.png",
+    category: "Kids's Shoes",
+    price: "1.409.000₫",
+    tag: "sale",
+  },
+  {
+    id: 7,
+    name: "Nike Court Borough Low Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/court-borough-kids.png",
+    category: "Kids's Shoes",
+    price: "1.599.000₫",
+    tag: "sale",
+  },
+  {
+    id: 8,
+    name: "Nike Star Runner 3 Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/star-runner-kids.png",
+    category: "Kids's Shoes",
+    price: "1.299.000₫",
+    tag: "sale",
+  },
+  {
+    id: 9,
+    name: "Nike Flex Runner Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/flex-runner-kids.png",
+    category: "Kids's Shoes",
+    price: "1.199.000₫",
+    tag: "sale",
+  },
+  {
+    id: 10,
+    name: "Nike Air Max SC Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/air-max-sc-kids.png",
+    category: "Kids's Shoes",
+    price: "1.999.000₫",
+    tag: "sale",
+  },
+  {
+    id: 11,
+    name: "Nike Downshifter 12 Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/downshifter-kids.png",
+    category: "Kids's Shoes",
+    price: "1.489.000₫",
+    tag: "sale",
+  },
+  {
+    id: 12,
+    name: "Nike Air Force 1 LV8 Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/af1-lv8-kids.png",
+    category: "Kids's Shoes",
+    price: "2.109.000₫",
+    tag: "trending",
+  },
+  {
+    id: 13,
+    name: "Nike Dunk Low Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/dunk-low-kids.png",
+    category: "Kids's Shoes",
+    price: "2.309.000₫",
+    tag: "trending",
+  },
+  {
+    id: 14,
+    name: "Nike Air Max 90 Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/air-max-90-kids.png",
+    category: "Kids's Shoes",
+    price: "2.409.000₫",
+    tag: "sale",
+  },
+  {
+    id: 15,
+    name: "Nike Pegasus FlyEase Kids",
+    image: "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/pegasus-flyease-kids.png",
+    category: "Kids's  Shoes",
+    price: "1.909.000₫",
+    tag: "sale",
+  },
+]
 // export data ={
 //     "products": [   
 //         {

@@ -31,12 +31,12 @@ function renderProducts(data) {
     container.appendChild(card);
   });
 }
-renderProducts(data);
 
-function filterByCategory(data, categories = []) {
-  if (!categories.length) return data;
 
-  return data.filter(item =>
-    categories.includes(item.category)
-  );
+function filterByTag(data, tag) {
+  if (!tag) return data;
+
+  return data.filter(item => item.tag === tag);
 }
+const trendingProducts = filterByTag(data, "trending");
+renderProducts(trendingProducts);
