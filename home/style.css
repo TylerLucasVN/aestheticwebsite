@@ -55,11 +55,14 @@ nav {
     border-radius: 100px;
     padding: 6px 12px;
     width: 180px;
-    transition: 0.2s;
+    transition: all 0.3s ease;
     margin-right: 10px;
     position: relative; /* Để căn chỉnh dropdown theo khung này */
 }
-.search-wrapper:hover, .search-wrapper:focus-within { background-color: #e5e5e5; }
+.search-wrapper:hover { background-color: #e5e5e5; }
+
+/* Khi click vào ô tìm kiếm, thanh này sẽ dài ra giống Nike */
+.search-wrapper:focus-within { background-color: #e5e5e5; width: 240px; }
 
 .search-btn { display: flex; align-items: center; justify-content: center; color: var(--primary); }
 .search-input {
@@ -82,7 +85,7 @@ nav {
     opacity: 0; visibility: hidden; /* Ẩn mặc định */
     transform: translateY(-10px);
     transition: all 0.2s ease;
-    z-index: 101;
+    z-index: 999; /* Đảm bảo hiện trên mọi thứ khác */
 }
 
 /* Hiện dropdown khi focus vào ô input */
@@ -95,10 +98,10 @@ nav {
 .search-item:hover { background-color: var(--bg-gray); }
 
 @media (max-width: 900px) {
-    .search-wrapper { width: 40px; height: 40px; padding: 0; justify-content: center; background: transparent; }
-    .search-wrapper:hover { background-color: var(--bg-gray); }
-    .search-input { display: none; }
-    .search-btn { margin: 0; }
+    /* Trên mobile, không ẩn input hoàn toàn mà để nó thu nhỏ lại */
+    .search-wrapper { width: 40px; padding: 6px 8px; overflow: hidden; }
+    .search-wrapper:focus-within { width: 200px; background-color: var(--bg-gray); }
+    .search-dropdown { width: 220px; right: -50px; }
 }
 
 /* --- 3. HERO SECTION --- */
