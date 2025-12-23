@@ -159,3 +159,5 @@ const products = [
         category: "Women's Shoes"
     }
 ];
+
+const favorProducts = [...products];

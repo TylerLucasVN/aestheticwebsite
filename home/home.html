@@ -334,6 +334,37 @@
     </footer>
 
     <script>
+        // --- HÀM XỬ LÝ TIM (LOGIC MỚI) ---
+        function getFavorites() {
+            return JSON.parse(localStorage.getItem('nikeFavorites')) || [];
+        }
+
+        function toggleLike(btn, productId) {
+        // Ngăn không cho click vào sản phẩm (nếu thẻ cha có link)
+            event.stopPropagation();
+            
+            let favorites = getFavorites();
+            const icon = btn.querySelector('svg');
+            if (favorites.includes(productId)) {
+            // Đã thích -> Bỏ thích
+                favorites = favorites.filter(id => id !== productId);
+            // Chuyển về màu xám (White heart style)
+                icon.classList.remove('text-pink-500', 'fill-current');
+                icon.classList.add('text-gray-500'); 
+            } else {
+            // Chưa thích -> Thêm thích
+                favorites.push(productId);
+            // Chuyển sang màu hồng (Pink heart)
+                icon.classList.remove('text-gray-500');
+                icon.classList.add('text-pink-500', 'fill-current');
+            
+            // Hiệu ứng nảy nhẹ
+                btn.classList.add('scale-125');
+                setTimeout(() => btn.classList.remove('scale-125'), 200);
+            }
+            localStorage.setItem('nikeFavorites', JSON.stringify(favorites));
+        }
+
         // Hàm xử lý khi nhấn Enter ở ô tìm kiếm Desktop
         function handleSearch(event) {
             // Kiểm tra nếu phím nhấn là Enter (key code 13)
@@ -342,51 +373,52 @@
                 window.location.href = '../Search/search.html';
             }
         }
-        // JavaScript cho tính năng scroll sản phẩm
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. RENDER SẢN PHẨM TỪ DATA.JS
-            const scrollContainer = document.getElementById('scrollContainer');
-            
-            // Kiểm tra xem biến trendingProducts (từ file data.js) có tồn tại không
-            if (typeof trendingProducts !== 'undefined' && scrollContainer) {
-                trendingProducts.forEach(product => {
-                    // Tạo HTML cho từng sản phẩm dùng Template Literal
-                    const productHTML = `
-                        <div class="product-card flex-shrink-0 w-64 md:w-72 cursor-pointer">
-                            <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 relative">
-                                <img src="${product.image}" alt="${product.name}" class="w-full h-auto transition-transform duration-300">
-                            </div>
-                            <div class="card-info">
-                                <div class="p-name font-medium text-gray-900 mb-1">${product.name}</div>
-                                <div class="p-cat text-gray-600 text-sm mb-2">${product.category}</div>
-                                <div class="p-price font-bold text-gray-900">${product.price}</div>
-                            </div>
+        const scrollContainer = document.getElementById('scrollContainer');
+        
+        // Render Trending Products
+        if (typeof trendingProducts !== 'undefined' && scrollContainer) {
+            // Lấy danh sách đã thích để hiển thị trạng thái ban đầu
+            const favorites = getFavorites();
+
+            trendingProducts.forEach(product => {
+                // Kiểm tra trạng thái tim
+                const isLiked = favorites.includes(product.id);
+                const heartClass = isLiked ? 'text-pink-500 fill-current' : 'text-gray-500';
+
+                // Template HTML (Đã thêm nút Heart)
+                const productHTML = `
+                    <div class="product-card flex-shrink-0 w-64 md:w-72 cursor-pointer relative group">
+                        <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 relative">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-auto transition-transform duration-300">
+                            
+                            <button onclick="toggleLike(this, ${product.id})" 
+                                    class="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition-transform duration-200 z-10">
+                                <svg class="w-5 h-5 ${heartClass}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </button>
                         </div>
-                    `;
-                    // Thêm vào container
-                    scrollContainer.innerHTML += productHTML;
-                });
-            }
+                        <div class="card-info">
+                            <div class="p-name font-medium text-gray-900 mb-1">${product.name}</div>
+                            <div class="p-cat text-gray-600 text-sm mb-2">${product.category}</div>
+                            <div class="p-price font-bold text-gray-900">${product.price}</div>
+                        </div>
+                    </div>
+                `;
+                scrollContainer.innerHTML += productHTML;
+            });
+        }
 
-            // 2. XỬ LÝ SCROLL NEXT/PREV
-            const btnNext = document.getElementById('btnNext');
-            const btnPrev = document.getElementById('btnPrev');
-            
-            if (scrollContainer && btnNext && btnPrev) {
-                const scrollAmount = 300;
-
-                btnNext.addEventListener('click', function() {
-                    scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                });
-
-                btnPrev.addEventListener('click', function() {
-                    scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                });
-            }
-            
-            // Lưu ý: Hiệu ứng Hover ảnh đã được xử lý bởi CSS ở trên đầu trang (.product-card:hover .card-img-wrap img)
-            // nên không cần viết thêm JS hover để tối ưu hiệu năng.
-        });
+        // Logic Scroll (Giữ nguyên)
+        const btnNext = document.getElementById('btnNext');
+        const btnPrev = document.getElementById('btnPrev');
+        if (scrollContainer && btnNext && btnPrev) {
+            const scrollAmount = 300;
+            btnNext.addEventListener('click', () => scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+            btnPrev.addEventListener('click', () => scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+        }
+    });
     </script>
 </body>
 </html>
