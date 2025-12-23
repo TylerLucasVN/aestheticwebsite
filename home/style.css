@@ -104,6 +104,34 @@ nav {
     .search-dropdown { width: 220px; right: -50px; }
 }
 
+/* --- SEARCH OVERLAY --- */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4); /* Màu tối mờ */
+    backdrop-filter: blur(4px); /* Hiệu ứng làm mờ nền */
+    z-index: 90; /* Thấp hơn nav (100) để thanh nav vẫn sáng */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none; /* Không ngăn cản click khi đang ẩn */
+}
+
+/* Kích hoạt overlay khi thanh tìm kiếm được focus */
+body:has(.search-wrapper:focus-within) .search-overlay {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Khóa cuộn trang khi đang mở tìm kiếm để trải nghiệm mượt hơn */
+body:has(.search-wrapper:focus-within) {
+    overflow: hidden;
+}
+
 /* --- 3. HERO SECTION --- */
 .hero { margin-bottom: 60px; position: relative; overflow: hidden; }
 .hero-img {
