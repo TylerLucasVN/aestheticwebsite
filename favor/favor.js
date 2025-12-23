@@ -64,76 +64,159 @@ document.addEventListener('DOMContentLoaded', function() {
     // ======================
     // FAVORITES FUNCTIONALITY
     // ======================
-    const removeButtons = document.querySelectorAll('.remove-btn');
     const favoritesCount = document.getElementById('favoritesCount');
     const totalValueElement = document.getElementById('totalValue');
     const emptyState = document.getElementById('emptyState');
     const favoritesGrid = document.getElementById('favoritesGrid');
+    const filterButtons = document.querySelectorAll('.filter-btn');
     
-    // Tự động tính toán số lượng và tổng tiền từ HTML hiện có
-    let totalItems = 0;
-    let totalValue = 0;
+    // Biến lưu trữ danh sách sản phẩm hiện tại đang hiển thị
+    let currentItems = [...products];
 
-    document.querySelectorAll('.favorite-item').forEach(item => {
-        totalItems++;
-        const priceText = item.querySelector('.font-bold.text-gray-900').textContent;
-        totalValue += parseInt(priceText.replace(/[^\d]/g, ''));
-    });
-    
-    function updateSummary() {
+    // Hàm hiển thị sản phẩm ra giao diện
+    function renderItems(items) {
+        favoritesGrid.innerHTML = '';
+        
+        if (items.length === 0) {
+            favoritesGrid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+        } else {
+            favoritesGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            items.forEach(item => {
+                const itemHTML = `
+                    <div class="favorite-item bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300 animate-slide-up" data-id="${item.id}">
+                        <div class="relative">
+                            <div class="aspect-square bg-gray-100 relative">
+                                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain p-4 transition-transform duration-300 hover:scale-105">
+                                <button class="remove-btn absolute top-3 right-3 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-all duration-200 opacity-0 group-hover:opacity-100">
+                                    <svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                                ${item.onSale ? '<div class="absolute top-3 left-3"><span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">SALE</span></div>' : ''}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-medium text-gray-900 mb-1">${item.name}</h3>
+                                    <p class="text-gray-600 text-sm mb-2">${item.category}</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="font-bold text-gray-900">${item.price}</span>
+                                </div>
+                                <button class="add-to-cart-btn bg-black text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                favoritesGrid.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        }
+        
+        updateSummary(items);
+        attachEventListeners();
+    }
+
+    // Hàm cập nhật tổng số lượng và giá tiền
+    function updateSummary(items) {
+        const totalItems = items.length;
+        let totalValue = 0;
+        
+        items.forEach(item => {
+            totalValue += parseInt(item.price.replace(/[^\d]/g, ''));
+        });
+
         favoritesCount.textContent = `${totalItems} saved ${totalItems === 1 ? 'item' : 'items'}`;
         if (totalValueElement) {
             totalValueElement.textContent = `Total: ${totalValue.toLocaleString('vi-VN')}₫`;
         }
-        
-        if (totalItems === 0) {
-            emptyState.classList.remove('hidden');
-            favoritesGrid.classList.add('hidden');
-        } else {
-            emptyState.classList.add('hidden');
-            favoritesGrid.classList.remove('hidden');
-        }
     }
     
-    // Remove individual items
-    removeButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const favoriteItem = this.closest('.favorite-item');
-            const priceElement = favoriteItem.querySelector('.font-bold.text-gray-900');
-            
-            if (priceElement) {
-                const priceText = priceElement.textContent;
-                const price = parseInt(priceText.replace(/[^\d]/g, ''));
+    // Hàm gắn sự kiện cho các nút trong danh sách sản phẩm (Remove, Add to Cart)
+    function attachEventListeners() {
+        // Remove buttons
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const favoriteItem = this.closest('.favorite-item');
+                const id = parseInt(favoriteItem.dataset.id);
                 
-                totalValue -= price;
-                totalItems--;
+                // Xóa khỏi danh sách hiện tại
+                currentItems = currentItems.filter(item => item.id !== id);
                 
                 // Add fade out animation
                 favoriteItem.classList.add('opacity-0', 'scale-95');
                 setTimeout(() => {
-                    favoriteItem.remove();
-                    updateSummary();
+                    renderItems(currentItems);
                 }, 300);
-            }
+            });
         });
-    });
-    
-    // Add to cart buttons
-    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const productCard = this.closest('.favorite-item');
-            const productInfo = {
-                image: productCard.querySelector('img').src,
-                name: productCard.querySelector('.font-medium.text-gray-900').textContent,
-                category: productCard.querySelector('.text-gray-600.text-sm').textContent,
-                price: productCard.querySelector('.font-bold.text-gray-900').textContent
-            };
+        
+        // Add to cart buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const productCard = this.closest('.favorite-item');
+                const productInfo = {
+                    image: productCard.querySelector('img').src,
+                    name: productCard.querySelector('.font-medium.text-gray-900').textContent,
+                    category: productCard.querySelector('.text-gray-600.text-sm').textContent,
+                    price: productCard.querySelector('.font-bold.text-gray-900').textContent
+                };
+                
+                openCartModal(productInfo);
+            });
+        });
+        
+        // Hover effects
+        document.querySelectorAll('.favorite-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                const removeBtn = this.querySelector('.remove-btn');
+                if (removeBtn) removeBtn.classList.remove('opacity-0');
+            });
             
-            openCartModal(productInfo);
+            item.addEventListener('mouseleave', function() {
+                const removeBtn = this.querySelector('.remove-btn');
+                if (removeBtn) removeBtn.classList.add('opacity-0');
+            });
+        });
+    }
+
+    // Xử lý sự kiện Filter
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Cập nhật giao diện nút active
+            filterButtons.forEach(b => {
+                b.classList.remove('bg-black', 'text-white');
+                b.classList.add('bg-gray-100', 'text-gray-800');
+            });
+            btn.classList.remove('bg-gray-100', 'text-gray-800');
+            btn.classList.add('bg-black', 'text-white');
+
+            // Lọc dữ liệu
+            const filter = btn.dataset.filter;
+            if (filter === 'all') {
+                currentItems = [...products];
+            } else if (filter === 'shoes') {
+                currentItems = products.filter(i => i.category.toLowerCase().includes('shoes'));
+            } else if (filter === 'apparel') {
+                currentItems = products.filter(i => i.category.toLowerCase().includes('apparel') || i.category.toLowerCase().includes('clothing'));
+            } else if (filter === 'sale') {
+                currentItems = products.filter(i => i.onSale);
+            }
+            
+            renderItems(currentItems);
         });
     });
+
+    // Khởi tạo lần đầu
+    renderItems(currentItems);
     
     // Like buttons in recommendations
     const likeButtons = document.querySelectorAll('.like-btn');
@@ -161,26 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show notification
                 const productName = this.closest('.flex.items-center').querySelector('.font-medium').textContent;
                 alert(`"${productName}" has been added to your favorites!`);
-            }
-        });
-    });
-    
-    // ======================
-    // HOVER EFFECTS
-    // ======================
-    const favoriteItems = document.querySelectorAll('.favorite-item');
-    favoriteItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            const removeBtn = this.querySelector('.remove-btn');
-            if (removeBtn) {
-                removeBtn.classList.remove('opacity-0');
-            }
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            const removeBtn = this.querySelector('.remove-btn');
-            if (removeBtn) {
-                removeBtn.classList.add('opacity-0');
             }
         });
     });
