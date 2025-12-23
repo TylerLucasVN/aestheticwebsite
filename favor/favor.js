@@ -1,11 +1,8 @@
-import { data } from '../home/mockupdata.js';
+// Lấy dữ liệu từ LocalStorage thay vì mockupdata
+const storedFavorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
 
-// Chuẩn bị dữ liệu: Thêm cờ 'onSale' cho sản phẩm đầu tiên để demo (vì mockupdata gốc chưa có)
-const products = data.map((item, index) => ({
-    ...item,
-    onSale: index === 0, // Giả lập sản phẩm đầu tiên đang giảm giá
-    category: item.category || "Shoes"
-}));
+// Sử dụng dữ liệu đã lưu làm danh sách sản phẩm
+const products = storedFavorites;
 
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
@@ -96,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </button>
-                                ${item.onSale ? '<div class="absolute top-3 left-3"><span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">SALE</span></div>' : ''}
+                                ${item.tag === 'sale' ? '<div class="absolute top-3 left-3"><span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">SALE</span></div>' : ''}
                             </div>
                         </div>
                         <div class="p-4">
@@ -151,6 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Xóa khỏi danh sách hiện tại
                 currentItems = currentItems.filter(item => item.id !== id);
+                
+                // Cập nhật lại LocalStorage sau khi xóa
+                localStorage.setItem('nike_favorites', JSON.stringify(currentItems));
                 
                 // Add fade out animation
                 favoriteItem.classList.add('opacity-0', 'scale-95');
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (filter === 'apparel') {
                 filteredItems = products.filter(i => i.category.toLowerCase().includes('apparel') || i.category.toLowerCase().includes('clothing'));
             } else if (filter === 'sale') {
-                filteredItems = products.filter(i => i.onSale);
+                filteredItems = products.filter(i => i.tag === 'sale');
             }
             
             // Áp dụng sắp xếp hiện tại cho danh sách đã lọc

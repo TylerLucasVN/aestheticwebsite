@@ -2,18 +2,29 @@ import {data} from './mockupdata.js';
 
 function renderProducts(data) {
   const container = document.getElementById("scrollContainer");
+  // Lấy danh sách yêu thích từ LocalStorage
+  const favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
 
   data.forEach(product => {
     console.log(product);
+    // Kiểm tra xem sản phẩm này đã được like chưa
+    const isFavorite = favorites.some(fav => fav.id === product.id);
+    
     const card = document.createElement("div");
     card.className = "product-card flex-shrink-0 w-64 md:w-72";
 
     card.innerHTML = `
-      <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 
-                  transition-transform duration-300 hover:scale-105">
+      <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 transition-transform duration-300 hover:scale-105 relative group">
         <img src="${product.image}" 
              alt="${product.name}" 
              class="w-full h-auto">
+             
+        <!-- Favorite Button -->
+        <button class="fav-btn absolute top-3 right-3 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all duration-200 z-10 opacity-0 group-hover:opacity-100 focus:opacity-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-colors duration-200 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+        </button>
       </div>
 
       <div class="card-info">
@@ -28,10 +39,41 @@ function renderProducts(data) {
         </div>
       </div>
     `;
+    
+    // Thêm sự kiện click cho nút favorite
+    const favBtn = card.querySelector('.fav-btn');
+    favBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Ngăn không cho click vào card (nếu có link)
+        toggleFavorite(product, favBtn);
+    });
+
     container.appendChild(card);
   });
 }
 
+function toggleFavorite(product, btnElement) {
+    let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+    const index = favorites.findIndex(f => f.id === product.id);
+    const svg = btnElement.querySelector('svg');
+
+    if (index === -1) {
+        // Chưa có thì thêm vào
+        favorites.push(product);
+        svg.classList.remove('text-gray-400');
+        svg.classList.add('text-red-500', 'fill-current');
+        // Có thể thêm thông báo nhỏ ở đây nếu muốn
+        console.log(`Added ${product.name} to favorites`);
+    } else {
+        // Có rồi thì xóa đi
+        favorites.splice(index, 1);
+        svg.classList.remove('text-red-500', 'fill-current');
+        svg.classList.add('text-gray-400');
+        console.log(`Removed ${product.name} from favorites`);
+    }
+
+    // Lưu lại vào LocalStorage
+    localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+}
 
 function filterByTag(data, tag) {
   if (!tag) return data;
