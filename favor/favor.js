@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const emptyState = document.getElementById('emptyState');
     const favoritesGrid = document.getElementById('favoritesGrid');
     const filterButtons = document.querySelectorAll('.filter-btn');
+    const sortSelect = document.getElementById('sortSelect');
     
     // Biến lưu trữ danh sách sản phẩm hiện tại đang hiển thị
     let currentItems = [...products];
@@ -188,6 +189,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Hàm xử lý sắp xếp
+    function sortItems(items, sortType) {
+        const sorted = [...items];
+        switch(sortType) {
+            case 'price-asc':
+                return sorted.sort((a, b) => {
+                    return parseInt(a.price.replace(/[^\d]/g, '')) - parseInt(b.price.replace(/[^\d]/g, ''));
+                });
+            case 'price-desc':
+                return sorted.sort((a, b) => {
+                    return parseInt(b.price.replace(/[^\d]/g, '')) - parseInt(a.price.replace(/[^\d]/g, ''));
+                });
+            case 'name-asc':
+                return sorted.sort((a, b) => a.name.localeCompare(b.name));
+            case 'recent':
+            default:
+                return sorted.sort((a, b) => a.id - b.id);
+        }
+    }
+
     // Xử lý sự kiện Filter
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -201,19 +222,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Lọc dữ liệu
             const filter = btn.dataset.filter;
+            let filteredItems = [];
+            
             if (filter === 'all') {
-                currentItems = [...products];
+                filteredItems = [...products];
             } else if (filter === 'shoes') {
-                currentItems = products.filter(i => i.category.toLowerCase().includes('shoes'));
+                filteredItems = products.filter(i => i.category.toLowerCase().includes('shoes'));
             } else if (filter === 'apparel') {
-                currentItems = products.filter(i => i.category.toLowerCase().includes('apparel') || i.category.toLowerCase().includes('clothing'));
+                filteredItems = products.filter(i => i.category.toLowerCase().includes('apparel') || i.category.toLowerCase().includes('clothing'));
             } else if (filter === 'sale') {
-                currentItems = products.filter(i => i.onSale);
+                filteredItems = products.filter(i => i.onSale);
             }
             
+            // Áp dụng sắp xếp hiện tại cho danh sách đã lọc
+            currentItems = sortItems(filteredItems, sortSelect ? sortSelect.value : 'recent');
             renderItems(currentItems);
         });
     });
+
+    // Xử lý sự kiện Sort
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            currentItems = sortItems(currentItems, this.value);
+            renderItems(currentItems);
+        });
+    }
 
     // Khởi tạo lần đầu
     renderItems(currentItems);
