@@ -1,5 +1,6 @@
-// Small mock dataset for products used on the page
-export const data = [
+// product/data.js
+
+const trendingProducts = [
   {
     id: 1,
     name: "Nike Air Force 1 '07",
