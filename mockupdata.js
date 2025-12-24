@@ -1,4 +1,5 @@
-// Small mock dataset for products used on the page
+// product/data.js
+
 export const data = [
   {
     id: 1,
