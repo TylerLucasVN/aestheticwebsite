@@ -1,4 +1,4 @@
-import { data } from '../home/mockupdata.js';
+import { data } from '../mockupdata.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     const productsGrid = document.getElementById('productsGrid');
