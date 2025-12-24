@@ -45,6 +45,19 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <a href="../search/search.html" class="search-trigger-btn text-gray-600 hover:text-gray-900">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </a>
+
+                    <button class="search-trigger-btn md:hidden text-gray-600 hover:text-black">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    
                     <!-- Favorites - Active -->
                     <a href="favor.html" class="text-black relative">
                         <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -249,89 +262,7 @@
     </footer>
 
     <!-- JavaScript -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const favoritesGrid = document.getElementById('favoritesGrid');
-        const emptyState = document.getElementById('emptyState');
-        const favoritesCount = document.getElementById('favoritesCount');
-        const itemCount = document.getElementById('itemCount');
-        const totalPrice = document.getElementById('totalPrice');
-        const totalValueDisplay = document.getElementById('totalValue');
-        const navFavCount = document.getElementById('navFavCount');
-
-        function renderFavorites() {
-            const favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-            favoritesGrid.innerHTML = '';
-
-            // Cập nhật badge trên nav
-            if (favorites.length > 0) {
-                navFavCount.textContent = favorites.length;
-                navFavCount.classList.remove('opacity-0');
-            } else {
-                navFavCount.classList.add('opacity-0');
-            }
-
-            if (favorites.length === 0) {
-                emptyState.classList.remove('hidden');
-                favoritesGrid.classList.add('hidden');
-                favoritesCount.textContent = '0 saved items';
-                itemCount.textContent = '0';
-                totalPrice.textContent = '0₫';
-                totalValueDisplay.textContent = 'Total: 0₫';
-                return;
-            }
-
-            emptyState.classList.add('hidden');
-            favoritesGrid.classList.remove('hidden');
-
-            let total = 0;
-            favorites.forEach(product => {
-                const priceNum = parseInt(product.price.replace(/[^\d]/g, '')) || 0;
-                total += priceNum;
-
-                const itemHTML = `
-                    <div class="favorite-item group bg-white border border-gray-100 rounded-xl p-4 transition-all duration-300 hover:shadow-md relative animate-slide-up">
-                        <button class="absolute top-2 right-2 p-2 text-gray-400 hover:text-red-500 transition-colors" onclick="removeFromFav(${product.id})">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                        <div class="flex gap-4">
-                            <div class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                <img src="${product.image}" class="w-full h-full object-contain mix-blend-multiply">
-                            </div>
-                            <div class="flex-grow">
-                                <h3 class="font-medium text-gray-900">${product.name}</h3>
-                                <p class="text-gray-600 text-sm">${product.category}</p>
-                                <p class="font-bold text-gray-900 mt-2">${product.price}</p>
-                                <button class="mt-3 text-sm font-bold underline hover:text-gray-600">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                favoritesGrid.insertAdjacentHTML('beforeend', itemHTML);
-            });
-
-            favoritesCount.textContent = `${favorites.length} saved items`;
-            itemCount.textContent = favorites.length;
-            totalPrice.textContent = total.toLocaleString('vi-VN') + '₫';
-            totalValueDisplay.textContent = `Total: ${total.toLocaleString('vi-VN')}₫`;
-        }
-
-        window.removeFromFav = function(id) {
-            let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-            favorites = favorites.filter(f => f.id !== id);
-            localStorage.setItem('nike_favorites', JSON.stringify(favorites));
-            renderFavorites();
-        };
-
-        document.getElementById('clearAllBtn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to remove all items?')) {
-                localStorage.setItem('nike_favorites', JSON.stringify([]));
-                renderFavorites();
-            }
-        });
-
-        renderFavorites();
-    });
-    </script>
+    <script type="module" src="favor.js"></script>
+    <script src="../search/searchOverlay.js" type="module"></script>
 </body>
 </html>

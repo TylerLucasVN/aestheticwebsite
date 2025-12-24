@@ -82,3 +82,4 @@ function filterByTag(data, tag) {
 }
 const trendingProducts = filterByTag(data, "trending");
 renderProducts(trendingProducts);
+
