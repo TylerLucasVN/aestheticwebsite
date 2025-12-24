@@ -1,6 +1,6 @@
 // product/data.js
 
-const trendingProducts = [
+export const data = [
   {
     id: 1,
     name: "Nike Air Force 1 '07",
