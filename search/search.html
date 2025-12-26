@@ -25,7 +25,8 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Ẩn/Hiện Sidebar mượt mà */
+        /* Ẩn/Hiện Sidebar */
+        /* Desktop Styles */
         #filterSidebar {
             transition: all 0.3s ease-in-out;
         }
@@ -34,6 +35,25 @@
             padding-right: 0;
             opacity: 0;
             overflow: hidden;
+            margin-right: 0; 
+        }
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            #filterSidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 100%; /* Full màn hình mobile */
+                z-index: 60;
+                background-color: white;
+                transform: translateX(-100%); /* Mặc định ẩn sang trái */
+                padding: 20px;
+                opacity: 1 !important; /* Override collapsed của desktop */
+            }
+            #filterSidebar.mobile-open {
+                transform: translateX(0); /* Trượt ra */
+            }
         }
     </style>
 </head>
@@ -58,14 +78,8 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <!-- Search -->
-                    <a href="search.html" class="search-trigger-btn text-gray-600 hover:text-gray-900">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </a>
-
-                    <button class="search-trigger-btn md:hidden text-gray-600 hover:text-black">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <button class="search-trigger-btn text-gray-600 hover:text-black">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
@@ -93,10 +107,10 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 sticky top-16 bg-white z-10 py-4">
             <h1 id="resultsTitle" class="text-xl md:text-2xl font-medium">Search results</h1>
             
-            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+            <div class="flex items-center space-x-6 mt-4 md:mt-0 justify-between w-full md:w-auto">
                 
                 <button id="toggleFilterBtn" class="flex items-center text-gray-800 hover:text-black font-medium">
-                    <span id="filterBtnText" class="mr-2">Hide Filters</span>
+                    <span id="filterBtnText" class="mr-2">Show Filters</span>
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
                     </svg>
@@ -123,6 +137,13 @@
         <div class="flex relative">
             <aside id="filterSidebar" class="w-60 flex-shrink-0 pr-8 h-[calc(100vh-150px)] overflow-y-auto sticky top-32 scrollbar-hide">
                 
+                <div class="flex justify-between items-center md:hidden mb-6 border-b pb-4">
+                    <h2 class="text-xl font-bold">Filters</h2>
+                    <button id="closeMobileFilterBtn" class="p-2 bg-gray-100 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
                 <div class="border-t border-gray-200 py-4">
                     <h3 class="font-medium text-sm mb-3">Gender</h3>
                     <div class="space-y-2">
@@ -178,9 +199,13 @@
                         </label>
                     </div>
                 </div>
+                
+                <div class="md:hidden mt-4">
+                    <button id="applyMobileFilterBtn" class="w-full bg-black text-white py-3 rounded-full font-bold">Apply Filters</button>
+                </div>
             </aside>
 
-            <main class="flex-1 transition-all duration-300">
+            <main class="flex-1 transition-all duration-300 w-full">
                 <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     </div>
                 <div class="border-t border-gray-200 mt-12 py-8">
@@ -196,6 +221,8 @@
             </main>
         </div>
     </div>
+
+    <div id="mobileFilterOverlay" class="fixed inset-0 bg-black/50 z-50 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
 
     <footer class="bg-black text-white py-10 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
