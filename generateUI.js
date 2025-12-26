@@ -1,4 +1,4 @@
-//import {data} from './mockupdata.js';
+
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 function getProducts() {
