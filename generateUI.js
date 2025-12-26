@@ -1,5 +1,5 @@
 //import {data} from './mockupdata.js';
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1//products";
+const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 function getProducts() {
   return new Promise(function (resolve, reject) {
@@ -28,7 +28,7 @@ function renderProducts(data) {
   data.forEach(product => {
     console.log(product);
     // Kiểm tra xem sản phẩm này đã được like chưa
-    const isFavorite = favorites.some(fav => fav.id === product.id);
+    const isFavorite = favorites.some(fav => String(fav.id) === String(product.id));
     
     const card = document.createElement("div");
     card.className = "product-card flex-shrink-0 w-64 md:w-72";
@@ -55,7 +55,7 @@ function renderProducts(data) {
           ${product.category}
         </div>
         <div class="p-price font-bold text-gray-900">
-          ${product.price}
+          ${typeof product.price === 'number' ? product.price.toLocaleString('vi-VN') + '₫' : product.price}
         </div>
       </div>
     `;
@@ -73,7 +73,7 @@ function renderProducts(data) {
 
 function toggleFavorite(product, btnElement) {
   let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-  const index = favorites.findIndex(f => f.id === product.id);
+  const index = favorites.findIndex(f => String(f.id) === String(product.id));
   const svg = btnElement.querySelector('svg');
 
   if (index === -1) {
