@@ -1,9 +1,23 @@
-import { data } from '../mockupdata.js'; // Import dữ liệu để gợi ý sản phẩm
+const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+
+// Biến lưu trữ dữ liệu cache cho overlay để tìm kiếm nhanh
+let cachedOverlayData = [];
+
+// Fetch dữ liệu ngay khi load file (hoặc khi DOMReady)
+async function fetchOverlayData() {
+    try {
+        const response = await fetch(API_URL);
+        if (response.ok) {
+            cachedOverlayData = await response.json();
+        }
+    } catch (error) {
+        console.error("Search Overlay: Failed to fetch API", error);
+    }
+}
 
 // --- HÀM HỖ TRỢ ĐƯỜNG DẪN ---
 function getSearchPagePath() {
     const path = window.location.pathname;
-    // Nếu đang ở thư mục con (ví dụ /products/ hay /search/) thì lùi ra 1 cấp
     if (path.includes('/search/') || path.includes('/favor/') || path.includes('/products/')) {
         return '../search/search.html';
     }
@@ -19,7 +33,6 @@ function getLogoPath() {
 }
 
 // --- HTML STRUCTURE ---
-// Gồm 2 phần: Backdrop (nền tối full màn) và Container (bảng trắng nửa màn)
 const searchOverlayHTML = `
 <div id="searchBackdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[199] hidden opacity-0 transition-opacity duration-300"></div>
 
@@ -127,10 +140,8 @@ export function initSearchOverlay() {
 
     function saveHistory(term) {
         let history = getHistory();
-        // Xóa trùng lặp và đưa lên đầu
         history = history.filter(item => item.toLowerCase() !== term.toLowerCase());
         history.unshift(term);
-        // Giới hạn 5 item
         if (history.length > 5) history.pop();
         localStorage.setItem('nike_search_history', JSON.stringify(history));
     }
@@ -154,7 +165,6 @@ export function initSearchOverlay() {
             </button>
         `).join('');
 
-        // Gắn sự kiện click cho các tag lịch sử vừa tạo
         document.querySelectorAll('.history-item-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 performSearch(btn.querySelector('span').innerText);
@@ -166,26 +176,23 @@ export function initSearchOverlay() {
     function openOverlay(e) {
         if(e) e.preventDefault();
         
-        // Hiện Backdrop
+        // Fetch dữ liệu nếu chưa có (đảm bảo cache có dữ liệu)
+        if (cachedOverlayData.length === 0) fetchOverlayData();
+
         backdrop.classList.remove('hidden');
         setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
-
-        // Slide Down Container
         container.classList.remove('-translate-y-full');
         
-        input.value = ''; // Reset input
-        toggleView('');   // Show default view
-        renderHistory();  // Load history mới nhất
+        input.value = '';
+        toggleView('');
+        renderHistory();
         input.focus();
         document.body.style.overflow = 'hidden';
     }
 
     function closeOverlay() {
-        // Ẩn Backdrop
         backdrop.classList.add('opacity-0');
-        // Slide Up Container
         container.classList.add('-translate-y-full');
-        
         setTimeout(() => {
             backdrop.classList.add('hidden');
             document.body.style.overflow = '';
@@ -195,12 +202,12 @@ export function initSearchOverlay() {
     // --- SEARCH LOGIC ---
     function performSearch(query) {
         if (!query.trim()) return;
-        saveHistory(query.trim()); // Lưu lịch sử
+        saveHistory(query.trim());
         const searchPath = getSearchPagePath();
+        // Redirect sang trang search với query string
         window.location.href = `${searchPath}?q=${encodeURIComponent(query)}`;
     }
 
-    // Toggle giữa History/Popular và Live Results
     function toggleView(query) {
         if (query.length > 0) {
             defaultContent.classList.add('hidden');
@@ -214,14 +221,14 @@ export function initSearchOverlay() {
         }
     }
 
-    // Render danh sách sản phẩm gợi ý
     function renderLiveProducts(query) {
         const lowerQuery = query.toLowerCase();
-        // Lọc sản phẩm (theo tên hoặc category)
-        const matches = data.filter(p => 
-            p.name.toLowerCase().includes(lowerQuery) || 
-            p.category.toLowerCase().includes(lowerQuery)
-        ).slice(0, 4); // Chỉ lấy tối đa 4 kết quả để hiển thị gọn
+        
+        // Sử dụng dữ liệu cache từ API để lọc
+        const matches = cachedOverlayData.filter(p => 
+            (p.name && p.name.toLowerCase().includes(lowerQuery)) || 
+            (p.category && p.category.toLowerCase().includes(lowerQuery))
+        ).slice(0, 4);
 
         if (matches.length === 0) {
             liveProductList.innerHTML = '';
@@ -233,7 +240,12 @@ export function initSearchOverlay() {
             viewAllBtn.innerText = `View All Results for "${query}"`;
             viewAllBtn.onclick = () => performSearch(query);
 
-            liveProductList.innerHTML = matches.map(product => `
+            liveProductList.innerHTML = matches.map(product => {
+                const priceDisplay = typeof product.price === 'number' 
+                    ? product.price.toLocaleString('vi-VN') + '₫' 
+                    : product.price;
+
+                return `
                 <div class="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition product-suggestion-item" data-id="${product.id}">
                     <div class="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
                         <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply">
@@ -241,12 +253,11 @@ export function initSearchOverlay() {
                     <div class="flex-1 min-w-0">
                         <h4 class="text-sm font-medium text-gray-900 truncate">${product.name}</h4>
                         <p class="text-xs text-gray-500 truncate">${product.category}</p>
-                        <p class="text-sm font-semibold mt-1">${product.price}</p>
+                        <p class="text-sm font-semibold mt-1">${priceDisplay}</p>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
 
-            // Click vào sản phẩm gợi ý -> đi tới trang search (hoặc chi tiết nếu có)
             document.querySelectorAll('.product-suggestion-item').forEach(item => {
                 item.addEventListener('click', () => {
                     const name = item.querySelector('h4').innerText;
@@ -257,18 +268,13 @@ export function initSearchOverlay() {
     }
 
     // --- EVENT LISTENERS ---
-
-    // 1. Mở Overlay
     searchBtns.forEach(btn => btn.addEventListener('click', openOverlay));
-
-    // 2. Đóng Overlay
     closeBtn.addEventListener('click', closeOverlay);
-    backdrop.addEventListener('click', closeOverlay); // Click ra ngoài tối thì đóng
+    backdrop.addEventListener('click', closeOverlay);
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeOverlay();
     });
 
-    // 3. Nhập liệu (Input)
     input.addEventListener('input', (e) => {
         toggleView(e.target.value);
     });
@@ -277,17 +283,14 @@ export function initSearchOverlay() {
         if (e.key === 'Enter') performSearch(input.value);
     });
 
-    // 4. Xóa Input
     clearInputBtn.addEventListener('click', () => {
         input.value = '';
         input.focus();
         toggleView('');
     });
 
-    // 5. Xóa Lịch sử
     clearHistoryBtn.addEventListener('click', clearHistory);
 
-    // 6. Click Popular Terms
     document.querySelectorAll('.search-term-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             performSearch(e.target.innerText);
@@ -295,5 +298,7 @@ export function initSearchOverlay() {
     });
 }
 
-// Init
+// Gọi fetch ngay khi load
+fetchOverlayData();
+
 document.addEventListener('DOMContentLoaded', initSearchOverlay);

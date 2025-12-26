@@ -1,12 +1,13 @@
-import getProducts from '../generateUI.js';
+// --- CẤU HÌNH API ---
+const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
-// Khai báo products từ data import vào
+// Biến lưu trữ sản phẩm (sẽ được fetch từ API)
 let products = [];
 
 // --- QUẢN LÝ TRẠNG THÁI (STATE) ---
 let currentFilters = {
     genders: [],
-    tags: [],   // Thêm filter tags
+    tags: [],
     prices: [],
     sortBy: "featured",
     searchQuery: ""
@@ -14,26 +15,48 @@ let currentFilters = {
 
 // --- HÀM TIỆN ÍCH ---
 
+// Hàm lấy dữ liệu từ API
+async function fetchProducts() {
+    const productGrid = document.getElementById('productGrid');
+    const resultsTitle = document.getElementById('resultsTitle');
+    
+    // Hiển thị loading
+    if(productGrid) productGrid.innerHTML = '<div class="col-span-full text-center py-20"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div><p class="mt-4 text-gray-500">Loading products...</p></div>';
+
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Failed to fetch');
+        products = await response.json();
+        
+        // Sau khi có dữ liệu, áp dụng bộ lọc ngay lập tức
+        applyFilters();
+    } catch (error) {
+        console.error("Error loading products:", error);
+        if(productGrid) productGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500">Failed to load data. Please try again.</div>`;
+        if(resultsTitle) resultsTitle.innerText = `Error`;
+    }
+}
+
 // Lấy danh sách yêu thích
 function getFavorites() {
-    return JSON.parse(localStorage.getItem('nike_favorites')) || []; // Sửa key cho khớp với phần trước
+    return JSON.parse(localStorage.getItem('nike_favorites')) || [];
 }
 
 // Hàm Toggle Like (Gán vào window để HTML gọi được)
 window.toggleLike = function(btn, productId) {
     if(event) event.stopPropagation();
-    
+
     let favorites = getFavorites();
     const icon = btn.querySelector('svg');
     // Tìm object sản phẩm trong data gốc
-    const product = products.find(p => p.id === productId);
-
-    const index = favorites.findIndex(f => f.id === productId);
+    // Lưu ý: MockAPI ID thường là string, so sánh lỏng (==) hoặc ép kiểu
+    const product = products.find(p => String(p.id) === String(productId));
+    const index = favorites.findIndex(f => String(f.id) === String(productId));
 
     if (index !== -1) {
         // Đã like -> Xóa
         favorites.splice(index, 1);
-        icon.classList.remove('text-red-500', 'fill-current'); // Dùng màu đỏ cho đồng bộ
+        icon.classList.remove('text-red-500', 'fill-current');
         icon.classList.add('text-gray-500');
     } else {
         // Chưa like -> Thêm
@@ -46,9 +69,11 @@ window.toggleLike = function(btn, productId) {
     localStorage.setItem('nike_favorites', JSON.stringify(favorites));
 }
 
-// Chuyển đổi giá tiền từ string "3.209.000₫" sang số
-function parsePrice(priceStr) {
-    return parseInt(priceStr.replace(/[^\d]/g, ''));
+// Chuyển đổi giá tiền từ string hoặc number sang số nguyên để so sánh
+function parsePrice(price) {
+    if (typeof price === 'number') return price;
+    if (!price) return 0;
+    return parseInt(price.replace(/[^\d]/g, '')) || 0;
 }
 
 // Hàm render sản phẩm
@@ -72,8 +97,13 @@ function renderProducts(items) {
     const favorites = getFavorites();
 
     items.forEach(product => {
-        const isLiked = favorites.some(f => f.id === product.id);
+        const isLiked = favorites.some(f => String(f.id) === String(product.id));
         const heartClass = isLiked ? 'text-red-500 fill-current' : 'text-gray-500';
+        
+        // Xử lý hiển thị giá (nếu API trả về số thì format lại)
+        const priceDisplay = typeof product.price === 'number' 
+            ? product.price.toLocaleString('vi-VN') + '₫' 
+            : product.price;
 
         const html = `
             <div class="product-card group cursor-pointer relative">
@@ -87,13 +117,12 @@ function renderProducts(items) {
                 <div class="px-1">
                     <h3 class="font-medium text-black text-base">${product.name}</h3>
                     <p class="text-gray-500 text-sm">${product.category}</p>
-                    <div class="mt-2 font-medium text-black">${product.price}</div>
+                    <div class="mt-2 font-medium text-black">${priceDisplay}</div>
                 </div>
             </div>
         `;
         productGrid.innerHTML += html;
     });
-    if(resultsTitle) resultsTitle.innerText = `All Products (${items.length})`;
 }
 
 // --- LOGIC LỌC CHÍNH ---
@@ -108,23 +137,24 @@ function applyFilters() {
         // Search Query
         if (currentFilters.searchQuery) {
             const query = currentFilters.searchQuery.toLowerCase();
-            const productName = product.name.toLowerCase();
-            // Có thể tìm theo tên hoặc category
-            if (!productName.includes(query) && !product.category.toLowerCase().includes(query)) {
+            const productName = product.name ? product.name.toLowerCase() : "";
+            const productCat = product.category ? product.category.toLowerCase() : "";
+            
+            if (!productName.includes(query) && !productCat.includes(query)) {
                 return false; 
             }
         }
 
-        // Gender (OR Logic: Sản phẩm thuộc 1 trong các giới tính đã chọn)
+        // Gender (So sánh chuỗi trong category)
         if (currentFilters.genders.length > 0) {
             const category = product.category || "";
             const matchGender = currentFilters.genders.some(selectedGender => category.includes(selectedGender));
             if (!matchGender) return false;
         }
 
-        // Tags (OR Logic: Sản phẩm có tag nằm trong các tag đã chọn)
+        // Tags
         if (currentFilters.tags.length > 0) {
-            if (!product.tag) return false; // Không có tag thì loại
+            if (!product.tag) return false;
             const matchTag = currentFilters.tags.includes(product.tag);
             if (!matchTag) return false;
         }
@@ -150,7 +180,7 @@ function applyFilters() {
     } else if (currentFilters.sortBy === 'price-desc') {
         filtered.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
     } else if (currentFilters.sortBy === 'newest') {
-        filtered.sort((a, b) => b.id - a.id);
+        filtered.sort((a, b) => parseInt(b.id) - parseInt(a.id));
     }
 
     renderProducts(filtered);
@@ -167,7 +197,8 @@ window.handleSort = function(sortType) {
         'price-desc': 'Price: High-Low',
         'price-asc': 'Price: Low-High'
     };
-    document.getElementById('sortBtnText').innerText = mapName[sortType];
+    const sortBtnText = document.getElementById('sortBtnText');
+    if(sortBtnText) sortBtnText.innerText = mapName[sortType];
     
     // Đóng menu sau khi chọn xong
     const sortMenu = document.getElementById('sortMenu');
@@ -178,71 +209,75 @@ window.handleSort = function(sortType) {
     applyFilters();
 }
 
+function toggleMobileSidebar(show) {
+    const filterSidebar = document.getElementById('filterSidebar');
+    const overlay = document.getElementById('mobileFilterOverlay');
+    const body = document.body;
+
+    if (show) {
+        // Mở Sidebar
+        filterSidebar.classList.add('mobile-open');
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        body.style.overflow = 'hidden'; // Khóa cuộn trang
+    } else {
+        // Đóng Sidebar
+        filterSidebar.classList.remove('mobile-open');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+        body.style.overflow = ''; // Mở cuộn
+    }
+}
+
 // INIT
 document.addEventListener('DOMContentLoaded', () => {
-    // --- XỬ LÝ LOGIC SORT DROPDOWN (Click để mở/đóng) ---
+    // --- XỬ LÝ LOGIC SORT DROPDOWN ---
     const urlParams = new URLSearchParams(window.location.search);
     const queryParam = urlParams.get('q');
-    const sortButton = document.getElementById('sortButton');
-    const sortDropdown = document.getElementById('sortDropdown');
-    const sortIcon = document.getElementById('sortIcon');
-
-    // Nếu có query param thì gán vào bộ lọc
+    
+    // Nếu có query param từ URL, gán vào bộ lọc
     if (queryParam) {
-        currentFilters.searchQuery = queryParam;
+        currentFilters.searchQuery = decodeURIComponent(queryParam);
     }
 
-    if (sortButton && sortDropdown) {
-        // Sự kiện click vào nút Sort By
-        sortButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Ngăn chặn sự kiện click lan ra document
-            sortDropdown.classList.toggle('hidden'); // Bật/tắt class hidden
-            sortIcon.classList.toggle('rotate-180'); // Xoay icon
-        });
-
-        // Sự kiện click ra ngoài thì đóng menu
-        document.addEventListener('click', (e) => {
-            if (!sortButton.contains(e.target) && !sortDropdown.contains(e.target)) {
-                sortDropdown.classList.add('hidden');
-                sortIcon.classList.remove('rotate-180');
-            }
-        });
-    }
-
-    // Gán sự kiện cho tất cả Checkbox (Gender, Tag, Price)
-    const allCheckboxes = document.querySelectorAll('.custom-checkbox');
-    allCheckboxes.forEach(cb => {
-        cb.addEventListener('change', applyFilters);
-    });
-
-    // Xử lý nút mở/đóng filter sidebar
     const toggleFilterBtn = document.getElementById('toggleFilterBtn');
     const filterSidebar = document.getElementById('filterSidebar');
     const filterBtnText = document.getElementById('filterBtnText');
+    const closeMobileFilterBtn = document.getElementById('closeMobileFilterBtn');
+    const applyMobileFilterBtn = document.getElementById('applyMobileFilterBtn');
+    const mobileOverlay = document.getElementById('mobileFilterOverlay');
 
-    if (toggleFilterBtn && filterSidebar) {
+    // --- SỰ KIỆN TOGGLE BỘ LỌC (Desktop & Mobile) ---
+    if (toggleFilterBtn) {
         toggleFilterBtn.addEventListener('click', () => {
-            filterSidebar.classList.toggle('collapsed');
-            if (filterSidebar.classList.contains('collapsed')) {
-                filterBtnText.innerText = "Show Filters";
+            if (window.innerWidth < 768) {
+                // Mobile: Mở Off-canvas
+                toggleMobileSidebar(true);
             } else {
-                filterBtnText.innerText = "Hide Filters";
+                // Desktop: Collapse/Expand
+                filterSidebar.classList.toggle('collapsed');
+                filterBtnText.innerText = filterSidebar.classList.contains('collapsed') ? "Show Filters" : "Hide Filters";
             }
         });
     }
-    // Xử lý nút mở/đóng sort menu
+
+    // Sự kiện đóng Mobile Sidebar
+    if(closeMobileFilterBtn) closeMobileFilterBtn.addEventListener('click', () => toggleMobileSidebar(false));
+    if(applyMobileFilterBtn) applyMobileFilterBtn.addEventListener('click', () => toggleMobileSidebar(false));
+    if(mobileOverlay) mobileOverlay.addEventListener('click', () => toggleMobileSidebar(false));
+
+    // Sort Dropdown Logic
+    const sortButton = document.getElementById('sortButton');
     const sortMenu = document.getElementById('sortMenu');
     const sortContainer = document.getElementById('sortContainer');
+    const sortIcon = document.getElementById('sortIcon');
 
     if (sortButton && sortMenu) {
-        // Nhấn nút thì toggle ẩn/hiện
         sortButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Ngăn sự kiện nổi bọt
+            e.stopPropagation();
             sortMenu.classList.toggle('hidden');
-            if(sortIcon) sortIcon.classList.toggle('rotate-180'); // Xoay mũi tên
+            if(sortIcon) sortIcon.classList.toggle('rotate-180');
         });
-
-        // Nhấn ra ngoài thì đóng menu
         document.addEventListener('click', (e) => {
             if (!sortContainer.contains(e.target)) {
                 sortMenu.classList.add('hidden');
@@ -251,6 +286,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Render lần đầu
-    applyFilters();
+    // Checkbox Listeners
+    document.querySelectorAll('.custom-checkbox').forEach(cb => {
+        cb.addEventListener('change', applyFilters);
+    });
+
+    // Start
+    fetchProducts();
 });
