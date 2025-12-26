@@ -33,10 +33,10 @@
                 <!-- Logo -->
                 <a href="../index.html" class="flex-shrink-0">
                     <img src="../img/logo.png" 
-                         alt="Nike Logo" class="h-6 md:h-[100px]">
+                         alt="Nike Logo" class="h-8 md:h-10 object-contain">
                 </a>
 
-                <div class="hidden md:flex md:items-center md:space-x-6">
+                <div class="hidden md:flex md:items-center gap-x-8">
                     <a href="../products/products.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">New & Featured</a>
                     <a href="../men.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">Men</a>
                     <a href="../products/products.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">Women</a>
@@ -44,7 +44,7 @@
                     <a href="#" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">Sale</a>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center gap-x-6">
                     <!-- Search -->
                     <a href="../search/search.html" class="search-trigger-btn text-gray-600 hover:text-gray-900">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -89,13 +89,14 @@
             </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex flex-col lg:flex-row gap-10">
+            <!-- Left Column: Favorites -->
             <div class="lg:w-2/3">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-gray-50 p-4 rounded-lg">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-gray-50 p-3 rounded-xl">
                     <div class="mb-4 sm:mb-0">
-                        <span class="font-medium text-gray-900" id="favoritesCount">0 saved items</span>
-                        <span class="text-gray-600 ml-2">•</span>
-                        <span class="text-gray-600 ml-2" id="totalValue">Total: 0₫</span>
+                        <span class="text-sm font-bold text-gray-900" id="favoritesCount">0 saved items</span>
+                        <span class="text-gray-400 mx-2">|</span>
+                        <span class="text-sm text-gray-600" id="totalValue">Total: 0₫</span>
                     </div>
                     <div class="flex items-center space-x-4">
                         <div class="relative">
@@ -127,49 +128,23 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="favoritesGrid">
-                    </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="favoritesGrid">
+                    <!-- Items rendered by JS -->
+                </div>
 
                 <div class="text-center mt-8">
-                    <button class="bg-gray-100 text-gray-900 font-medium px-6 py-3 rounded-full hover:bg-gray-200 transition-colors duration-200">
+                    <button class="text-sm bg-gray-100 text-gray-900 font-medium px-6 py-2 rounded-full hover:bg-gray-200 transition-colors duration-200">
                         Load More Items
                     </button>
                 </div>
             </div>
 
+            <!-- Right Column: Featured Sale -->
             <div class="lg:w-1/3">
-                <!-- Summary Card -->
-                <div class="bg-gray-50 rounded-xl p-6 mb-8 top-24">
-                    <h3 class="font-bold text-gray-900 mb-4 text-lg">Favorites Summary</h3>
-                    <div class="space-y-3 mb-6">
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">Saved Items</span>
-                            <span class="font-medium text-gray-900" id="itemCount">0</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-t border-gray-200">
-                            <span class="text-gray-600">Total Value</span>
-                            <span class="font-bold text-xl text-gray-900" id="totalPrice">0₫</span>
-                        </div>
-                    </div>
-                    <button id="addAllToCart" class="w-full bg-black text-white font-medium py-3 rounded-full hover:bg-gray-800 transition-colors duration-200 mb-4">
-                        Add All to Cart
-                    </button>
-                    <button id="clearAllBtn" class="w-full bg-transparent border-2 border-gray-300 text-gray-900 font-medium py-3 rounded-full hover:bg-gray-100 transition-colors duration-200">
-                        Clear All Favorites
-                    </button>
-                </div>
-
-                <!-- Recommendations -->
-                <div class="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 class="font-bold text-gray-900 mb-4 text-lg">You Might Also Like</h3>
-                    <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                        <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/fccb2d28-5a08-4bea-98d3-c280f5b58b00/air-max-90-shoes-6n3qKZ.png" class="w-full h-full object-contain p-1">
-                        </div>
-                        <div class="flex-grow">
-                            <h4 class="font-medium text-sm text-gray-900 mb-1">Nike Air Max 90</h4>
-                            <div class="font-bold text-gray-900">3.459.000₫</div>
-                        </div>
+                <div class="sticky top-24">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center">Featured Sale <span class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">Hot</span></h2>
+                    <div id="saleSidebarGrid" class="space-y-4">
+                        <!-- Sale items rendered by JS -->
                     </div>
                 </div>
             </div>
