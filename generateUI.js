@@ -1,4 +1,24 @@
-import {data} from './mockupdata.js';
+//import {data} from './mockupdata.js';
+const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1//products";
+
+function getProducts() {
+  return new Promise(function (resolve, reject) {
+    fetch(API_URL)
+      .then(function (response) {
+        if (!response.ok) {
+          reject("Không thể lấy dữ liệu từ API");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        resolve(data);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  });
+}
+
 
 function renderProducts(data) {
   const container = document.getElementById("scrollContainer");
@@ -52,34 +72,62 @@ function renderProducts(data) {
 }
 
 function toggleFavorite(product, btnElement) {
-    let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-    const index = favorites.findIndex(f => f.id === product.id);
-    const svg = btnElement.querySelector('svg');
+  let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+  const index = favorites.findIndex(f => f.id === product.id);
+  const svg = btnElement.querySelector('svg');
 
-    if (index === -1) {
-        // Chưa có thì thêm vào
-        favorites.push(product);
-        svg.classList.remove('text-gray-400');
-        svg.classList.add('text-red-500', 'fill-current');
-        // Có thể thêm thông báo nhỏ ở đây nếu muốn
-        console.log(`Added ${product.name} to favorites`);
-    } else {
-        // Có rồi thì xóa đi
-        favorites.splice(index, 1);
-        svg.classList.remove('text-red-500', 'fill-current');
-        svg.classList.add('text-gray-400');
-        console.log(`Removed ${product.name} from favorites`);
-    }
+  if (index === -1) {
+    favorites.push(product);
+    svg.classList.remove('text-gray-400');
+    svg.classList.add('text-red-500', 'fill-current');
+  } else {
+    favorites.splice(index, 1);
+    svg.classList.remove('text-red-500', 'fill-current');
+    svg.classList.add('text-gray-400');
+  }
 
-    // Lưu lại vào LocalStorage
-    localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+  localStorage.setItem('nike_favorites', JSON.stringify(favorites));
 }
+
+
+
+// function toggleFavorite(product, btnElement) {
+//     let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+//     const index = favorites.findIndex(f => f.id === product.id);
+//     const svg = btnElement.querySelector('svg');
+
+//     if (index === -1) {
+//         // Chưa có thì thêm vào
+//         favorites.push(product);
+//         svg.classList.remove('text-gray-400');
+//         svg.classList.add('text-red-500', 'fill-current');
+//         // Có thể thêm thông báo nhỏ ở đây nếu muốn
+//         console.log(`Added ${product.name} to favorites`);
+//     } else {
+//         // Có rồi thì xóa đi
+//         favorites.splice(index, 1);
+//         svg.classList.remove('text-red-500', 'fill-current');
+//         svg.classList.add('text-gray-400');
+//         console.log(`Removed ${product.name} from favorites`);
+//     }
+
+//     // Lưu lại vào LocalStorage
+//     localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+// }
 
 function filterByTag(data, tag) {
   if (!tag) return data;
 
   return data.filter(item => item.tag === tag);
 }
-const trendingProducts = filterByTag(data, "trending");
-renderProducts(trendingProducts);
+// const trendingProducts = filterByTag(data, "trending");
+// renderProducts(trendingProducts);
 
+getProducts()
+  .then(function (products) {
+    const trendingProducts = filterByTag(products, "trending");
+    renderProducts(trendingProducts);
+  })
+  .catch(function (error) {
+    console.error("Lỗi:", error);
+  });
