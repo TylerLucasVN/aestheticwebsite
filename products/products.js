@@ -84,21 +84,29 @@ function renderProducts(products) {
 
 // Xử lý thêm/xóa sản phẩm khỏi danh sách yêu thích
 function toggleFavorite(product, btn) {
-    let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-    const index = favorites.findIndex(f => String(f.id) === String(product.id));
-    const svg = btn.querySelector('svg');
 
-    if (index === -1) {
-        favorites.push(product);
-        svg.classList.add('text-red-500', 'fill-current');
-        svg.classList.remove('text-gray-400');
-    } else {
-        favorites.splice(index, 1);
-        svg.classList.remove('text-red-500', 'fill-current');
-        svg.classList.add('text-gray-400');
+    if(event) event.stopPropagation();
+
+    // Gọi Auth trước khi thực hiện logic Like
+    if (window.Auth) {
+        window.Auth.requireAuth(() => {
+            let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+            const index = favorites.findIndex(f => String(f.id) === String(product.id));
+            const svg = btn.querySelector('svg');
+
+            if (index === -1) {
+                favorites.push(product);
+                svg.classList.add('text-red-500', 'fill-current');
+                svg.classList.remove('text-gray-400');
+            } else {
+                favorites.splice(index, 1);
+                svg.classList.remove('text-red-500', 'fill-current');
+                svg.classList.add('text-gray-400');
+            }
+            localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+            updateNavFavCount();
+        });
     }
-    localStorage.setItem('nike_favorites', JSON.stringify(favorites));
-    updateNavFavCount();
 }
 
 // Cập nhật số lượng yêu thích trên thanh Navigation

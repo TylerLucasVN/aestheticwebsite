@@ -1,16 +1,14 @@
 function getLogoPath() {
     const path = window.location.pathname;
-   if (path.includes('/search/') || path.includes('/favor/') || path.includes('/products/')) {
+    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/products/')) {
        return '../img/logo.png';
-   }
-   return './img/logo.png';
+    }
+    return './img/logo.png';
 }
 
 const authModalHTML = `
 <div id="authModal" class="fixed inset-0 z-[9999] hidden">
-    
     <div class="absolute inset-0 bg-white transition-opacity duration-500 opacity-0" id="authBackdrop"></div>
-    
     <div class="absolute inset-0 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-[480px] p-8 md:p-12 transition-all duration-500 transform scale-95 opacity-0 relative" id="authContainer">
             
@@ -37,6 +35,9 @@ const authModalHTML = `
                         peer-not-placeholder-shown:top-1 peer-not-placeholder-shown:text-[11px] peer-not-placeholder-shown:font-bold pointer-events-none">
                         Email*
                     </label>
+                    <p id="emailErrorMsg" class="text-red-600 text-xs mt-2 hidden font-medium">
+                        Please enter a valid email ending with @gmail.com (e.g., user@gmail.com)
+                    </p>
                 </div>
 
                 <div class="text-xs text-gray-500 leading-relaxed text-center md:text-left">
@@ -56,24 +57,28 @@ const authModalHTML = `
 
 let pendingAction = null;
 
-export const Auth = {
+// KHÔNG DÙNG EXPORT, KHAI BÁO BIẾN THƯỜNG
+const Auth = {
     init() {
         if (!document.getElementById('authModal')) {
             document.body.insertAdjacentHTML('beforeend', authModalHTML);
             this.attachEvents();
         }
+        // Gọi chặn link ngay khi init
         this.interceptNavbarLinks();
     },
 
-    // --- QUAN TRỌNG: Dùng sessionStorage thay vì localStorage ---
     isLoggedIn() {
+        // Kiểm tra xem đã có session chưa
         return !!sessionStorage.getItem('nike_user_session');
     },
 
     requireAuth(actionCallback) {
         if (this.isLoggedIn()) {
+            // Đã đăng nhập -> Cho phép thực hiện hành động
             actionCallback();
         } else {
+            // Chưa đăng nhập -> Lưu hành động lại và mở modal
             pendingAction = actionCallback;
             this.openModal();
         }
@@ -84,19 +89,19 @@ export const Auth = {
         const backdrop = document.getElementById('authBackdrop');
         const container = document.getElementById('authContainer');
         const emailInput = document.getElementById('userEmail');
+        const errorMsg = document.getElementById('emailErrorMsg');
 
-        // Reset form cho mới
+        // Reset trạng thái form
         emailInput.value = ''; 
-        
+        emailInput.classList.remove('border-red-500', 'focus:border-red-500');
+        errorMsg.classList.add('hidden');
+
         modal.classList.remove('hidden');
-        
-        // Khóa cuộn trang web bên dưới lại
         document.body.style.overflow = 'hidden';
 
-        // Animation
         setTimeout(() => {
-            backdrop.classList.remove('opacity-0'); // Hiện nền trắng che phủ
-            container.classList.remove('opacity-0', 'scale-95'); // Hiện form
+            backdrop.classList.remove('opacity-0');
+            container.classList.remove('opacity-0', 'scale-95');
         }, 10);
 
         emailInput.focus();
@@ -109,58 +114,84 @@ export const Auth = {
 
         backdrop.classList.add('opacity-0');
         container.classList.add('opacity-0', 'scale-95');
-
-        // Mở lại cuộn trang
         document.body.style.overflow = '';
 
         setTimeout(() => {
             modal.classList.add('hidden');
             pendingAction = null;
-        }, 500); // Tăng thời gian chờ để animation mượt hơn
+        }, 500);
     },
 
     handleLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('userEmail').value;
-        if (email) {
-            // --- QUAN TRỌNG: Lưu vào Session Storage ---
-            // Dữ liệu này sẽ MẤT khi tắt tab
-            sessionStorage.setItem('nike_user_session', email);
-            
-            // Lưu email vào LocalStorage (chỉ để lưu trữ settings/favorites lâu dài nếu cần, không dùng để check login)
-            // localStorage.setItem('last_known_email', email);
+        const emailInput = document.getElementById('userEmail');
+        const errorMsg = document.getElementById('emailErrorMsg');
+        const email = emailInput.value.trim().toLowerCase();
 
-            this.closeModal();
+        // VALIDATION: Phải có đuôi @gmail.com và độ dài > 10 (để tránh trường hợp chỉ nhập @gmail.com)
+        if (!email || !email.endsWith('@gmail.com') || email.length <= 10) {
+            errorMsg.classList.remove('hidden');
+            emailInput.classList.add('border-red-500', 'focus:border-red-500');
+            emailInput.focus();
+            return;
+        }
 
-            if (pendingAction) {
-                pendingAction();
-                pendingAction = null;
-            }
+        // Đăng nhập thành công
+        errorMsg.classList.add('hidden');
+        emailInput.classList.remove('border-red-500', 'focus:border-red-500');
+
+        sessionStorage.setItem('nike_user_session', email);
+        this.closeModal();
+
+        // Thực hiện hành động còn dang dở (ví dụ: like sản phẩm)
+        if (pendingAction) {
+            pendingAction();
+            pendingAction = null;
         }
     },
 
     attachEvents() {
-        document.getElementById('closeAuthBtn').addEventListener('click', () => this.closeModal());
-        // Không cho click backdrop để đóng nữa (để tạo cảm giác bắt buộc hơn - tùy chọn)
-        // document.getElementById('authBackdrop').addEventListener('click', () => this.closeModal());
+        const closeBtn = document.getElementById('closeAuthBtn');
+        if(closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
         
-        document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
+        const form = document.getElementById('loginForm');
+        if(form) form.addEventListener('submit', (e) => this.handleLogin(e));
+
+        // Xóa lỗi khi gõ lại
+        const emailInput = document.getElementById('userEmail');
+        if(emailInput) {
+            emailInput.addEventListener('input', () => {
+                document.getElementById('emailErrorMsg').classList.add('hidden');
+                emailInput.classList.remove('border-red-500', 'focus:border-red-500');
+            });
+        }
     },
 
     interceptNavbarLinks() {
+        // Tìm tất cả thẻ a có href chứa favor.html
         const favorLinks = document.querySelectorAll('a[href*="favor.html"]');
         favorLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+            // Clone node để xóa sạch event cũ, tránh xung đột
+            const newLink = link.cloneNode(true);
+            link.parentNode.replaceChild(newLink, link);
+            
+            newLink.addEventListener('click', (e) => {
+                // Kiểm tra login
                 if (!this.isLoggedIn()) {
-                    e.preventDefault();
+                    e.preventDefault(); // Chặn chuyển trang
+                    e.stopPropagation();
                     this.requireAuth(() => {
-                        window.location.href = link.href;
+                        // Callback: Nếu login thành công thì chuyển trang
+                        window.location.href = newLink.href;
                     });
                 }
             });
         });
     }
 };
+
+// GÁN VÀO WINDOW ĐỂ DÙNG TOÀN CỤC
+window.Auth = Auth;
 
 document.addEventListener('DOMContentLoaded', () => {
     Auth.init();

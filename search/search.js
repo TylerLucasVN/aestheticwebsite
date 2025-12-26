@@ -46,27 +46,32 @@ function getFavorites() {
 window.toggleLike = function(btn, productId) {
     if(event) event.stopPropagation();
 
-    let favorites = getFavorites();
-    const icon = btn.querySelector('svg');
-    // Tìm object sản phẩm trong data gốc
-    // Lưu ý: MockAPI ID thường là string, so sánh lỏng (==) hoặc ép kiểu
-    const product = products.find(p => String(p.id) === String(productId));
-    const index = favorites.findIndex(f => String(f.id) === String(productId));
+    // Gọi Auth trước khi thực hiện logic Like
+    if (window.Auth) {
+        window.Auth.requireAuth(() => {
+            let favorites = getFavorites();
+            const icon = btn.querySelector('svg');
+            // Tìm object sản phẩm trong data gốc
+            // Lưu ý: MockAPI ID thường là string, so sánh lỏng (==) hoặc ép kiểu
+            const product = products.find(p => String(p.id) === String(productId));
+            const index = favorites.findIndex(f => String(f.id) === String(productId));
 
-    if (index !== -1) {
-        // Đã like -> Xóa
-        favorites.splice(index, 1);
-        icon.classList.remove('text-red-500', 'fill-current');
-        icon.classList.add('text-gray-500');
-    } else {
-        // Chưa like -> Thêm
-        if(product) favorites.push(product);
-        icon.classList.remove('text-gray-500');
-        icon.classList.add('text-red-500', 'fill-current');
-        btn.classList.add('scale-125');
-        setTimeout(() => btn.classList.remove('scale-125'), 200);
+            if (index !== -1) {
+                // Đã like -> Xóa
+                favorites.splice(index, 1);
+                icon.classList.remove('text-red-500', 'fill-current');
+                icon.classList.add('text-gray-500');
+            } else {
+                // Chưa like -> Thêm
+                if(product) favorites.push(product);
+                icon.classList.remove('text-gray-500');
+                icon.classList.add('text-red-500', 'fill-current');
+                btn.classList.add('scale-125');
+                setTimeout(() => btn.classList.remove('scale-125'), 200);
+            }
+            localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+        });
     }
-    localStorage.setItem('nike_favorites', JSON.stringify(favorites));
 }
 
 // Chuyển đổi giá tiền từ string hoặc number sang số nguyên để so sánh

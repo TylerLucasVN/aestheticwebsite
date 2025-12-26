@@ -73,21 +73,28 @@ function renderProducts(data) {
 }
 
 function toggleFavorite(product, btnElement) {
-  let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-  const index = favorites.findIndex(f => String(f.id) === String(product.id));
-  const svg = btnElement.querySelector('svg');
+  if(event) event.stopPropagation();
 
-  if (index === -1) {
-    favorites.push(product);
-    svg.classList.remove('text-gray-400');
-    svg.classList.add('text-red-500', 'fill-current');
-  } else {
-    favorites.splice(index, 1);
-    svg.classList.remove('text-red-500', 'fill-current');
-    svg.classList.add('text-gray-400');
+  // Gọi Auth trước khi thực hiện logic Like
+  if (window.Auth) {
+    window.Auth.requireAuth(() => {
+      let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+      const index = favorites.findIndex(f => String(f.id) === String(product.id));
+      const svg = btnElement.querySelector('svg');
+
+      if (index === -1) {
+        favorites.push(product);
+        svg.classList.remove('text-gray-400');
+        svg.classList.add('text-red-500', 'fill-current');
+      } else {
+        favorites.splice(index, 1);
+        svg.classList.remove('text-red-500', 'fill-current');
+        svg.classList.add('text-gray-400');
+      }
+
+      localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+    });
   }
-
-  localStorage.setItem('nike_favorites', JSON.stringify(favorites));
 }
 
 
