@@ -1,7 +1,7 @@
-import { data } from '../mockupdata.js';
+import getProducts from '../generateUI.js';
 
 // Khai báo products từ data import vào
-const products = data;
+let products = [];
 
 // --- QUẢN LÝ TRẠNG THÁI (STATE) ---
 let currentFilters = {

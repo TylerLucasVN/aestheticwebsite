@@ -8,7 +8,7 @@ function getProducts() {
         if (!response.ok) {
           reject("Không thể lấy dữ liệu từ API");
         }
-        return response.json();
+       return response.json();
       })
       .then(function (data) {
         resolve(data);
@@ -18,8 +18,7 @@ function getProducts() {
       });
   });
 }
-
-
+export default getProducts;
 function renderProducts(data) {
   const container = document.getElementById("scrollContainer");
   // Lấy danh sách yêu thích từ LocalStorage
