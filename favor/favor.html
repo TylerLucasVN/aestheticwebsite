@@ -82,10 +82,10 @@
             <p class="text-gray-600">Items you've saved for later</p>
             
             <div class="flex space-x-4 mt-6 overflow-x-auto pb-2">
-                <button class="px-4 py-2 bg-black text-white rounded-full text-sm font-medium whitespace-nowrap">All Items</button>
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Shoes</button>
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Apparel</button>
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">On Sale</button>
+                <button data-filter="all" class="filter-btn px-4 py-2 bg-black text-white rounded-full text-sm font-medium whitespace-nowrap">All Items</button>
+                <button data-filter="shoes" class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Shoes</button>
+                <button data-filter="apparel" class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Apparel</button>
+                <button data-filter="sale" class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">On Sale</button>
             </div>
         </div>
 
@@ -99,11 +99,11 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <div class="relative">
-                            <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black">
-                                <option>Sort by: Recently Added</option>
-                                <option>Sort by: Price Low to High</option>
-                                <option>Sort by: Price High to Low</option>
-                                <option>Sort by: Name A-Z</option>
+                            <select id="sortSelect" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black">
+                                <option value="recent">Sort by: Recently Added</option>
+                                <option value="price-asc">Sort by: Price Low to High</option>
+                                <option value="price-desc">Sort by: Price High to Low</option>
+                                <option value="name-asc">Sort by: Name A-Z</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -191,9 +191,10 @@
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button class="flex-1 bg-gray-100 py-3 rounded-lg font-medium">View Cart</button>
-                    <button class="flex-1 bg-black text-white py-3 rounded-lg font-medium">Checkout</button>
+                    <button id="viewCartModalBtn" class="flex-1 bg-gray-100 py-3 rounded-lg font-medium">View Cart</button>
+                    <button id="checkoutModalBtn" class="flex-1 bg-black text-white py-3 rounded-lg font-medium">Checkout</button>
                 </div>
+                <button id="continueShoppingBtn" class="w-full mt-4 text-sm text-gray-500 underline">Continue Shopping</button>
             </div>
         </div>
     </div>

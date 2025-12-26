@@ -33,15 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
         cartModal.classList.remove('opacity-100');
     }
     
-    closeModalBtn.addEventListener('click', closeCartModal);
-    continueShoppingBtn.addEventListener('click', closeCartModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeCartModal);
+    if (continueShoppingBtn) continueShoppingBtn.addEventListener('click', closeCartModal);
     
-    viewCartModalBtn.addEventListener('click', function() {
+    if (viewCartModalBtn) viewCartModalBtn.addEventListener('click', function() {
         alert('Redirecting to cart page...');
         closeCartModal();
     });
     
-    checkoutModalBtn.addEventListener('click', function() {
+    if (checkoutModalBtn) checkoutModalBtn.addEventListener('click', function() {
         alert('Proceeding to checkout...');
         closeCartModal();
     });
@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ======================
     const favoritesCount = document.getElementById('favoritesCount');
     const totalValueElement = document.getElementById('totalValue');
+    const itemCountSummary = document.getElementById('itemCount');
+    const totalPriceSummary = document.getElementById('totalPrice');
     const emptyState = document.getElementById('emptyState');
     const favoritesGrid = document.getElementById('favoritesGrid');
     const filterButtons = document.querySelectorAll('.filter-btn');
@@ -84,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             items.forEach(item => {
                 const itemHTML = `
-                    <div class="favorite-item bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300 animate-slide-up" data-id="${item.id}">
+                    <div class="favorite-item group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300 animate-slide-up" data-id="${item.id}">
                         <div class="relative">
                             <div class="aspect-square bg-gray-100 relative">
                                 <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain p-4 transition-transform duration-300 hover:scale-105">
@@ -135,6 +137,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (totalValueElement) {
             totalValueElement.textContent = `Total: ${totalValue.toLocaleString('vi-VN')}₫`;
         }
+        if (itemCountSummary) {
+            itemCountSummary.textContent = totalItems;
+        }
+        if (totalPriceSummary) {
+            totalPriceSummary.textContent = `${totalValue.toLocaleString('vi-VN')}₫`;
+        }
     }
     
     // Hàm gắn sự kiện cho các nút trong danh sách sản phẩm (Remove, Add to Cart)
@@ -144,10 +152,10 @@ document.addEventListener('DOMContentLoaded', function() {
             button.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const favoriteItem = this.closest('.favorite-item');
-                const id = parseInt(favoriteItem.dataset.id);
+                const id = favoriteItem.dataset.id;
                 
                 // Xóa khỏi danh sách hiện tại
-                currentItems = currentItems.filter(item => item.id !== id);
+                currentItems = currentItems.filter(item => item.id != id);
                 
                 // Cập nhật lại LocalStorage sau khi xóa
                 localStorage.setItem('nike_favorites', JSON.stringify(currentItems));
