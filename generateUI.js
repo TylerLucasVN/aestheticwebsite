@@ -1,22 +1,12 @@
 //import {data} from './mockupdata.js';
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
-function getProducts() {
-  return new Promise(function (resolve, reject) {
-    fetch(API_URL)
-      .then(function (response) {
-        if (!response.ok) {
-          reject("Không thể lấy dữ liệu từ API");
-        }
-        return response.json();
-      })
-      .then(function (data) {
-        resolve(data);
-      })
-      .catch(function (error) {
-        reject(error);
-      });
-  });
+async function getProducts() {
+  const response = await fetch(API_URL);
+  if (!response.ok) {
+    throw new Error("Không thể lấy dữ liệu từ API");
+  }
+  return await response.json();
 }
 
 
@@ -123,11 +113,17 @@ function filterByTag(data, tag) {
 // const trendingProducts = filterByTag(data, "trending");
 // renderProducts(trendingProducts);
 
-getProducts()
-  .then(function (products) {
-    const trendingProducts = filterByTag(products, "trending");
-    renderProducts(trendingProducts);
-  })
-  .catch(function (error) {
+async function init() {
+  const container = document.getElementById("scrollContainer");
+  try {
+    if (container) container.innerHTML = '<div class="text-gray-500 p-10">Loading trending products...</div>';
+    const products = await getProducts();
+    if (container) container.innerHTML = ''; // Xóa dòng loading
+    renderProducts(filterByTag(products, "trending"));
+  } catch (error) {
     console.error("Lỗi:", error);
-  });
+    if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
+  }
+}
+
+init();
