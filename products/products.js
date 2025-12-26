@@ -1,4 +1,5 @@
 import { data } from '../mockupdata.js';
+import { Auth } from '../auth/authOverlay.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     const productsGrid = document.getElementById('productsGrid');
@@ -67,7 +68,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 const id = parseInt(this.dataset.id);
                 const product = data.find(p => p.id === id);
-                toggleFavorite(product, this);
+                
+                Auth.requireAuth(() => {
+                    toggleFavorite(product, this);
+                });
             });
         });
     }

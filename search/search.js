@@ -1,4 +1,5 @@
 import { data } from '../mockupdata.js';
+import { Auth } from '../auth/authOverlay.js';
 
 // Khai báo products từ data import vào
 const products = data;
@@ -23,27 +24,29 @@ function getFavorites() {
 window.toggleLike = function(btn, productId) {
     if(event) event.stopPropagation();
     
-    let favorites = getFavorites();
-    const icon = btn.querySelector('svg');
-    // Tìm object sản phẩm trong data gốc
-    const product = products.find(p => p.id === productId);
+    Auth.requireAuth(() => {
+        let favorites = getFavorites();
+        const icon = btn.querySelector('svg');
+        // Tìm object sản phẩm trong data gốc
+        const product = products.find(p => p.id === productId);
 
-    const index = favorites.findIndex(f => f.id === productId);
+        const index = favorites.findIndex(f => f.id === productId);
 
-    if (index !== -1) {
-        // Đã like -> Xóa
-        favorites.splice(index, 1);
-        icon.classList.remove('text-red-500', 'fill-current'); // Dùng màu đỏ cho đồng bộ
-        icon.classList.add('text-gray-500');
-    } else {
-        // Chưa like -> Thêm
-        if(product) favorites.push(product);
-        icon.classList.remove('text-gray-500');
-        icon.classList.add('text-red-500', 'fill-current');
-        btn.classList.add('scale-125');
-        setTimeout(() => btn.classList.remove('scale-125'), 200);
-    }
-    localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+        if (index !== -1) {
+            // Đã like -> Xóa
+            favorites.splice(index, 1);
+            icon.classList.remove('text-red-500', 'fill-current'); // Dùng màu đỏ cho đồng bộ
+            icon.classList.add('text-gray-500');
+        } else {
+            // Chưa like -> Thêm
+            if(product) favorites.push(product);
+            icon.classList.remove('text-gray-500');
+            icon.classList.add('text-red-500', 'fill-current');
+            btn.classList.add('scale-125');
+            setTimeout(() => btn.classList.remove('scale-125'), 200);
+        }
+        localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+    });
 }
 
 // Chuyển đổi giá tiền từ string "3.209.000₫" sang số

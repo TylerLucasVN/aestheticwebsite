@@ -1,3 +1,4 @@
+import { Auth } from './auth/authOverlay.js';
 import {data} from './mockupdata.js';
 
 function renderProducts(data) {
@@ -44,7 +45,9 @@ function renderProducts(data) {
     const favBtn = card.querySelector('.fav-btn');
     favBtn.addEventListener('click', (e) => {
         e.stopPropagation(); // Ngăn không cho click vào card (nếu có link)
-        toggleFavorite(product, favBtn);
+        Auth.requireAuth(() => {
+            toggleFavorite(product, favBtn); // Chỉ chạy hàm này khi đã đăng nhập
+        });
     });
 
     container.appendChild(card);
