@@ -12,10 +12,16 @@
                     animation: {
                         'fade-in': 'fadeIn 0.3s ease-in-out',
                         'slide-up': 'slideUp 0.3s ease-out',
+                        'toast-in': 'toastIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28)',
+                        'toast-out': 'toastOut 0.3s ease-in forwards',
+                        'shimmer': 'shimmer 2s infinite linear',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { transform: 'translateY(10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        toastIn: { '0%': { transform: 'translateX(100%)', opacity: '0' }, '100%': { transform: 'translateX(0)', opacity: '1' } },
+                        toastOut: { '0%': { transform: 'translateX(100%)', opacity: '0' } },
+                        shimmer: { '0%': { backgroundPosition: '-1000px 0' }, '100%': { backgroundPosition: '1000px 0' } }
                     }
                 }
             }
@@ -27,16 +33,16 @@
         New Styles On Sale: Up To 40% Off <a href="#" class="underline font-medium ml-1">Shop Now</a>
     </div>
 
-    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <a href="../index.html" class="flex-shrink-0">
                     <img src="../img/logo.png" 
-                         alt="Nike Logo" class="h-6 md:h-[100px]">
+                         alt="Nike Logo" class="h-8 md:h-10 object-contain">
                 </a>
 
-                <div class="hidden md:flex md:items-center md:space-x-6">
+                <div class="hidden md:flex md:items-center gap-x-8">
                     <a href="../products/products.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">New & Featured</a>
                     <a href="../men.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">Men</a>
                     <a href="../products/products.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">Women</a>
@@ -44,7 +50,7 @@
                     <a href="#" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors duration-200">Sale</a>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center gap-x-6">
                     <!-- Search -->
                     <a href="../search/search.html" class="search-trigger-btn text-gray-600 hover:text-gray-900">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -82,28 +88,29 @@
             <p class="text-gray-600">Items you've saved for later</p>
             
             <div class="flex space-x-4 mt-6 overflow-x-auto pb-2">
-                <button class="px-4 py-2 bg-black text-white rounded-full text-sm font-medium whitespace-nowrap">All Items</button>
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Shoes</button>
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Apparel</button>
-                <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">On Sale</button>
+                <button data-filter="all" class="filter-btn px-4 py-2 bg-black text-white rounded-full text-sm font-medium whitespace-nowrap">All Items</button>
+                <button data-filter="shoes" class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Shoes</button>
+                <button data-filter="apparel" class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">Apparel</button>
+                <button data-filter="sale" class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">On Sale</button>
             </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex flex-col lg:flex-row gap-10">
+            <!-- Left Column: Favorites -->
             <div class="lg:w-2/3">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-gray-50 p-4 rounded-lg">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-gray-50 p-3 rounded-xl">
                     <div class="mb-4 sm:mb-0">
-                        <span class="font-medium text-gray-900" id="favoritesCount">0 saved items</span>
-                        <span class="text-gray-600 ml-2">•</span>
-                        <span class="text-gray-600 ml-2" id="totalValue">Total: 0₫</span>
+                        <span class="text-sm font-bold text-gray-900" id="favoritesCount">0 saved items</span>
+                        <span class="text-gray-400 mx-2">|</span>
+                        <span class="text-sm text-gray-600" id="totalValue">Total: 0₫</span>
                     </div>
                     <div class="flex items-center space-x-4">
                         <div class="relative">
-                            <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black">
-                                <option>Sort by: Recently Added</option>
-                                <option>Sort by: Price Low to High</option>
-                                <option>Sort by: Price High to Low</option>
-                                <option>Sort by: Name A-Z</option>
+                            <select id="sortSelect" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black">
+                                <option value="recent">Sort by: Recently Added</option>
+                                <option value="price-asc">Sort by: Price Low to High</option>
+                                <option value="price-desc">Sort by: Price High to Low</option>
+                                <option value="name-asc">Sort by: Name A-Z</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -127,59 +134,36 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="favoritesGrid">
-                    </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="favoritesGrid">
+                    <!-- Items rendered by JS -->
+                </div>
 
                 <div class="text-center mt-8">
-                    <button class="bg-gray-100 text-gray-900 font-medium px-6 py-3 rounded-full hover:bg-gray-200 transition-colors duration-200">
+                    <button class="text-sm bg-gray-100 text-gray-900 font-medium px-6 py-2 rounded-full hover:bg-gray-200 transition-colors duration-200">
                         Load More Items
                     </button>
                 </div>
             </div>
 
+            <!-- Right Column: Featured Sale -->
             <div class="lg:w-1/3">
-                <!-- Summary Card -->
-                <div class="bg-gray-50 rounded-xl p-6 mb-8 top-24">
-                    <h3 class="font-bold text-gray-900 mb-4 text-lg">Favorites Summary</h3>
-                    <div class="space-y-3 mb-6">
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">Saved Items</span>
-                            <span class="font-medium text-gray-900" id="itemCount">0</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-t border-gray-200">
-                            <span class="text-gray-600">Total Value</span>
-                            <span class="font-bold text-xl text-gray-900" id="totalPrice">0₫</span>
-                        </div>
-                    </div>
-                    <button id="addAllToCart" class="w-full bg-black text-white font-medium py-3 rounded-full hover:bg-gray-800 transition-colors duration-200 mb-4">
-                        Add All to Cart
-                    </button>
-                    <button id="clearAllBtn" class="w-full bg-transparent border-2 border-gray-300 text-gray-900 font-medium py-3 rounded-full hover:bg-gray-100 transition-colors duration-200">
-                        Clear All Favorites
-                    </button>
-                </div>
-
-                <!-- Recommendations -->
-                <div class="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 class="font-bold text-gray-900 mb-4 text-lg">You Might Also Like</h3>
-                    <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                        <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                            <img src="https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/fccb2d28-5a08-4bea-98d3-c280f5b58b00/air-max-90-shoes-6n3qKZ.png" class="w-full h-full object-contain p-1">
-                        </div>
-                        <div class="flex-grow">
-                            <h4 class="font-medium text-sm text-gray-900 mb-1">Nike Air Max 90</h4>
-                            <div class="font-bold text-gray-900">3.459.000₫</div>
-                        </div>
+                <div class="sticky top-24">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center">Featured Sale <span class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">Hot</span></h2>
+                    <div id="saleSidebarGrid" class="space-y-4">
+                        <!-- Sale items rendered by JS -->
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-3"></div>
+
     <div id="cartModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"></div>
         <div class="flex min-h-full items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative animate-slide-up">
                 <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-black">✕</button>
                 <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center"><span class="text-green-500 mr-2">✓</span> Added to Cart!</h3>
                 <div class="flex items-center space-x-4 mb-6">
@@ -191,9 +175,10 @@
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button class="flex-1 bg-gray-100 py-3 rounded-lg font-medium">View Cart</button>
-                    <button class="flex-1 bg-black text-white py-3 rounded-lg font-medium">Checkout</button>
+                    <button id="viewCartModalBtn" class="flex-1 bg-gray-100 py-3 rounded-lg font-medium">View Cart</button>
+                    <button id="checkoutModalBtn" class="flex-1 bg-black text-white py-3 rounded-lg font-medium">Checkout</button>
                 </div>
+                <button id="continueShoppingBtn" class="w-full mt-4 text-sm text-gray-500 underline">Continue Shopping</button>
             </div>
         </div>
     </div>

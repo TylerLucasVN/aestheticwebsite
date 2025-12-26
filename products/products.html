@@ -30,16 +30,16 @@
     </div>
 
     <!-- Navigation Bar -->
-    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center justify-between h-16 md:h-20">
                 <!-- Logo -->
                 <a href="../index.html" class="flex-shrink-0">
-                    <img src="../img/logo.png" alt="Nike Logo" class="h-6 md:h-[60px] object-contain">
+                    <img src="../img/logo.png" alt="Nike Logo" class="h-8 md:h-10 object-contain">
                 </a>
 
                 <!-- Desktop Navigation Links -->
-                <div class="hidden md:flex md:items-center md:space-x-8">
+                <div class="hidden md:flex md:items-center gap-x-8">
                     <a href="../products/products.html" class="text-black font-bold text-sm border-b-2 border-black pb-1">All Products</a>
                     <a href="../men.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors">Men</a>
                     <a href="products.html" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors">Women</a>
@@ -48,7 +48,7 @@
                 </div>
 
                 <!-- Icons -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center gap-x-6">
                     <a href="../favor/favor.html" class="text-gray-600 hover:text-black transition-colors relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
@@ -68,29 +68,28 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header & Filters -->
-        <div class="flex flex-col md:flex-row justify-between items-end mb-8 sticky top-16 bg-white z-40 py-4 border-b border-gray-100">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 sticky top-16 md:top-20 bg-white/90 backdrop-blur-sm z-40 py-6 border-b border-gray-100">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">All Products</h1>
-                <p class="text-gray-500 text-sm" id="productsCount">Loading...</p>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">New & Featured</h1>
+                <p class="text-gray-400 text-sm font-medium uppercase tracking-widest" id="productsCount">Loading...</p>
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0 w-full md:w-auto">
-                <!-- Filter Buttons -->
-                <div class="flex space-x-2 overflow-x-auto pb-2 sm:pb-0">
-                    <button class="filter-btn px-4 py-2 bg-black text-white rounded-full text-sm font-medium whitespace-nowrap transition-colors" data-filter="all">All</button>
-                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap transition-colors" data-filter="shoes">Shoes</button>
-                    <button class="filter-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap transition-colors" data-filter="apparel">Apparel</button>
+                <div class="flex gap-x-3 overflow-x-auto pb-2 sm:pb-0">
+                    <button class="filter-btn px-6 py-2 bg-black text-white rounded-full text-sm font-bold whitespace-nowrap transition-all hover:scale-105" data-filter="all">All</button>
+                    <button class="filter-btn px-6 py-2 bg-gray-50 text-gray-500 rounded-full text-sm font-bold hover:bg-gray-200 hover:text-black whitespace-nowrap transition-all" data-filter="shoes">Shoes</button>
+                    <button class="filter-btn px-6 py-2 bg-gray-50 text-gray-500 rounded-full text-sm font-bold hover:bg-gray-200 hover:text-black whitespace-nowrap transition-all" data-filter="apparel">Apparel</button>
                 </div>
 
                 <!-- Sort Select -->
-                <div class="relative">
-                    <select id="sortSelect" class="appearance-none bg-transparent font-medium text-sm pr-8 py-2 focus:outline-none cursor-pointer hover:text-gray-600">
+                <div class="relative group">
+                    <select id="sortSelect" class="appearance-none bg-gray-50 rounded-full px-6 py-2 font-bold text-sm pr-10 focus:outline-none cursor-pointer hover:bg-gray-100 transition-all">
                         <option value="default">Sort By</option>
                         <option value="price-asc">Price: Low-High</option>
                         <option value="price-desc">Price: High-Low</option>
                         <option value="name-asc">Name: A-Z</option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center">
+                    <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center">
                         <svg class="h-4 w-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>

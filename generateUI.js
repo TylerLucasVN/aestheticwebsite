@@ -1,6 +1,24 @@
-import { Auth } from './auth/authOverlay.js';
-import {data} from './mockupdata.js';
+//import {data} from './mockupdata.js';
+const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
+function getProducts() {
+  return new Promise(function (resolve, reject) {
+    fetch(API_URL)
+      .then(function (response) {
+        if (!response.ok) {
+          reject("Không thể lấy dữ liệu từ API");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        resolve(data);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  });
+}
+export default getProducts;
 function renderProducts(data) {
   const container = document.getElementById("scrollContainer");
   // Lấy danh sách yêu thích từ LocalStorage
@@ -9,7 +27,7 @@ function renderProducts(data) {
   data.forEach(product => {
     console.log(product);
     // Kiểm tra xem sản phẩm này đã được like chưa
-    const isFavorite = favorites.some(fav => fav.id === product.id);
+    const isFavorite = favorites.some(fav => String(fav.id) === String(product.id));
     
     const card = document.createElement("div");
     card.className = "product-card flex-shrink-0 w-64 md:w-72";
@@ -36,7 +54,7 @@ function renderProducts(data) {
           ${product.category}
         </div>
         <div class="p-price font-bold text-gray-900">
-          ${product.price}
+          ${typeof product.price === 'number' ? product.price.toLocaleString('vi-VN') + '₫' : product.price}
         </div>
       </div>
     `;
@@ -55,34 +73,43 @@ function renderProducts(data) {
 }
 
 function toggleFavorite(product, btnElement) {
-    let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-    const index = favorites.findIndex(f => f.id === product.id);
-    const svg = btnElement.querySelector('svg');
+  let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+  const index = favorites.findIndex(f => String(f.id) === String(product.id));
+  const svg = btnElement.querySelector('svg');
 
-    if (index === -1) {
-        // Chưa có thì thêm vào
-        favorites.push(product);
-        svg.classList.remove('text-gray-400');
-        svg.classList.add('text-red-500', 'fill-current');
-        // Có thể thêm thông báo nhỏ ở đây nếu muốn
-        console.log(`Added ${product.name} to favorites`);
-    } else {
-        // Có rồi thì xóa đi
-        favorites.splice(index, 1);
-        svg.classList.remove('text-red-500', 'fill-current');
-        svg.classList.add('text-gray-400');
-        console.log(`Removed ${product.name} from favorites`);
-    }
+  if (index === -1) {
+    favorites.push(product);
+    svg.classList.remove('text-gray-400');
+    svg.classList.add('text-red-500', 'fill-current');
+  } else {
+    favorites.splice(index, 1);
+    svg.classList.remove('text-red-500', 'fill-current');
+    svg.classList.add('text-gray-400');
+  }
 
-    // Lưu lại vào LocalStorage
-    localStorage.setItem('nike_favorites', JSON.stringify(favorites));
+  localStorage.setItem('nike_favorites', JSON.stringify(favorites));
 }
+
 
 function filterByTag(data, tag) {
   if (!tag) return data;
 
   return data.filter(item => item.tag === tag);
 }
-const trendingProducts = filterByTag(data, "trending");
-renderProducts(trendingProducts);
+// const trendingProducts = filterByTag(data, "trending");
+// renderProducts(trendingProducts);
 
+async function init() {
+  const container = document.getElementById("scrollContainer");
+  try {
+    if (container) container.innerHTML = '<div class="text-gray-500 p-10">Loading trending products...</div>';
+    const products = await getProducts();
+    if (container) container.innerHTML = ''; // Xóa dòng loading
+    renderProducts(filterByTag(products, "trending"));
+  } catch (error) {
+    console.error("Lỗi:", error);
+    if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
+  }
+}
+
+init();

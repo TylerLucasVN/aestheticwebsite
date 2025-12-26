@@ -1,0 +1,255 @@
+/* --- 1. BIẾN & RESET --- */
+:root {
+    --primary: #111111;
+    --secondary: #757575;
+    --bg-gray: #f5f5f5;
+    --white: #ffffff;
+    --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-main);
+    color: var(--primary);
+    background-color: var(--white);
+    overflow-x: hidden; /* Ẩn thanh cuộn ngang của body */
+}
+
+a { text-decoration: none; color: inherit; cursor: pointer; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; outline: none; background: none; font-family: inherit; }
+
+/* --- 2. HEADER & NAV --- */
+.top-bar {
+    background-color: var(--bg-gray);
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.top-bar a { text-decoration: underline; font-weight: bold; }
+
+nav {
+    position: sticky; top: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; height: 60px;
+    background: var(--white);  z-index: 100;
+}
+
+.logo img { width: 160px; height: auto; display: block; }
+
+.nav-links { display: flex; gap: 20px; position: absolute; left: 50%; transform: translateX(-50%); }
+.nav-links a { font-weight: 500; font-size: 16px; position: relative; padding-bottom: 5px; }
+.nav-links a:hover { border-bottom: 2px solid var(--primary); }
+
+.nav-icons { display: flex; gap: 15px; align-items: center; }
+.icon-btn { font-size: 20px; padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+.icon-btn:hover { background-color: #e5e5e5; }
+
+/* --- SEARCH BAR (Nike Style) --- */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-gray);
+    border-radius: 100px;
+    padding: 6px 12px;
+    width: 180px;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+    position: relative; /* Để căn chỉnh dropdown theo khung này */
+}
+.search-wrapper:hover { background-color: #e5e5e5; }
+
+/* Khi click vào ô tìm kiếm, thanh này sẽ dài ra giống Nike */
+.search-wrapper:focus-within { background-color: #e5e5e5; width: 240px; }
+
+.search-btn { display: flex; align-items: center; justify-content: center; color: var(--primary); }
+.search-input {
+    border: none; background: transparent; outline: none;
+    width: 100%; font-family: inherit; font-size: 16px; font-weight: 500;
+    color: var(--primary); margin-left: 8px;
+}
+.search-input::placeholder { color: var(--secondary); }
+
+/* --- SEARCH DROPDOWN --- */
+.search-dropdown {
+    position: absolute;
+    top: 120%; /* Cách thanh tìm kiếm một chút */
+    right: 0;
+    width: 280px; /* Rộng hơn thanh tìm kiếm để chứa nhiều chữ */
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 15px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Đổ bóng nhẹ */
+    opacity: 0; visibility: hidden; /* Ẩn mặc định */
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 999; /* Đảm bảo hiện trên mọi thứ khác */
+}
+
+/* Hiện dropdown khi focus vào ô input */
+.search-wrapper:focus-within .search-dropdown {
+    opacity: 1; visibility: visible; transform: translateY(0);
+}
+
+.search-dropdown h4 { font-size: 13px; color: var(--secondary); margin: 0 20px 10px; font-weight: 600; text-transform: uppercase; }
+.search-item { display: block; padding: 8px 20px; font-size: 15px; font-weight: 500; color: var(--primary); transition: 0.2s; }
+.search-item:hover { background-color: var(--bg-gray); }
+
+@media (max-width: 900px) {
+    /* Trên mobile, không ẩn input hoàn toàn mà để nó thu nhỏ lại */
+    .search-wrapper { width: 40px; padding: 6px 8px; overflow: hidden; }
+    .search-wrapper:focus-within { width: 200px; background-color: var(--bg-gray); }
+    .search-dropdown { width: 220px; right: -50px; }
+}
+
+/* --- SEARCH OVERLAY --- */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4); /* Màu tối mờ */
+    backdrop-filter: blur(4px); /* Hiệu ứng làm mờ nền */
+    z-index: 90; /* Thấp hơn nav (100) để thanh nav vẫn sáng */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none; /* Không ngăn cản click khi đang ẩn */
+}
+
+/* Kích hoạt overlay khi thanh tìm kiếm được focus */
+body:has(.search-wrapper:focus-within) .search-overlay {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Khóa cuộn trang khi đang mở tìm kiếm để trải nghiệm mượt hơn */
+body:has(.search-wrapper:focus-within) {
+    overflow: hidden;
+}
+
+/* --- 3. HERO SECTION --- */
+.hero { margin-bottom: 60px; position: relative; overflow: hidden; }
+.hero-img {
+    pointer-events: none;
+    width: 100%; height: 95vh;
+    object-fit: cover; object-position: center;
+    position: relative;
+}
+
+.hero-content { text-align: center; padding: 40px 20px; }
+.hero-tag { font-weight: 500; margin-bottom: 10px; font-size: 16px; }
+
+.hero-title {
+    font-size: 70px; font-weight: 900; text-transform: uppercase;
+    line-height: 0.9; margin-bottom: 20px; letter-spacing: -2px;
+    font-family: 'Arial Black', sans-serif;
+}
+.hero-desc { margin-bottom: 30px; font-size: 16px; max-width: 600px; margin: 0 auto 30px auto; }
+
+.btn-group { display: flex; justify-content: center; gap: 10px; }
+
+.btn-nike {
+    background-color: var(--primary); color: var(--white);
+    padding: 10px 25px; border-radius: 30px;
+    font-weight: 500; font-size: 15px; transition: 0.3s;
+}
+.btn-nike:hover { background-color: #3d3d3d; }
+.btn-nike.secondary { background-color: #fff; color: #111; border: 1px solid #ccc; }
+.btn-nike.secondary:hover { border-color: #111; }
+
+/* --- 4. TRENDING CAROUSEL --- */
+.section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; margin-bottom: 20px;
+}
+.section-title { font-size: 24px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+.scroll-btns { display: flex; gap: 10px; }
+.circle-btn { background-color: #f5f5f5; width: 40px; height: 40px; }
+
+.product-scroll {
+    display: flex; gap: 20px; overflow-x: auto;
+    padding: 0 40px 40px 40px;
+    scrollbar-width: none; /* Firefox */
+    cursor: grab; /* Con trỏ hình bàn tay */
+}
+.product-scroll::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+.product-scroll.active { cursor: grabbing; /* Con trỏ nắm chặt khi kéo */ }
+
+.product-card { min-width: 400px; cursor: pointer; user-select: none; /* Không cho bôi đen text khi kéo */ }
+
+.card-img-wrap {
+    width: 100%; height: 400px; background-color: var(--bg-gray);
+    margin-bottom: 15px; position: relative;
+}
+.card-img-wrap img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
+
+.card-info { display: flex; justify-content: space-between; align-items: flex-start; }
+.p-name { font-weight: 500; font-size: 16px; margin-bottom: 5px; }
+.p-cat { color: var(--secondary); font-size: 16px; }
+.p-price { font-weight: 500; }
+
+
+.center-text{
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+
+/* --- FEATURED TILES --- */
+.featured { padding: 0; }
+.featured-inner { max-width: none; width: 100%; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
+.featured-card { border-radius: 0; overflow: visible; position: relative; min-height: 600px; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
+.featured-card .featured-content { padding: 28px; color: #fff; z-index: 2; }
+.featured-card::before{ content: ""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.55) 80%); }
+.featured-card.left .kicker, .featured-card.right .kickearr{ font-size: 14px; mgin-bottom: 8px; opacity: 0.95; }
+.featured-card h3{ margin:0 0 12px 0; font-size: 26px; line-height:1.05; font-weight:700; }
+.feature-btn{ display:inline-block; background:#fff; color:#111; padding:10px 18px; border-radius:999px; text-decoration:none; font-weight:600; box-shadow: 0 8px 18px rgba(0,0,0,0.25); }
+
+@media (max-width: 900px){
+    .featured-inner{ grid-template-columns: 1fr; padding: 0 20px; }
+    .featured-card{ min-height: 320px; }
+}
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero-title { font-size: 40px; }
+    .product-card { min-width: 300px; }
+    nav { padding: 0 20px; }
+    .section-header, .product-scroll { padding-left: 20px; padding-right: 20px; }
+}
+.title-text{
+    white-space: nowrap;
+    font-family: 'Anton', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 60px;
+    letter-spacing: -1px;
+    color: rgb(255, 255, 255);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+.second-title-text{
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: rgb(255, 255, 255);
+}
+.feature-title{font-size: 28px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+
+/* inline Shop-by-Sport under Trending */
+.shop-by-sport-inline { padding: 24px 40px 40px 40px; }
+.shop-by-sport-inline .sport-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; }
+.shop-by-sport-inline .sport-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 6px; display: block; }
+.shop-by-sport-inline .sport-caption { margin-top: 10px; text-align: center; font-size: 16px; color: var(--primary); }
+
+@media (max-width: 900px) {
+    .shop-by-sport-inline .sport-grid { grid-template-columns: 1fr; }
+    .shop-by-sport-inline .sport-card img { height: 180px; }
+}
