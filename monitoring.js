@@ -40,7 +40,21 @@ export const trackPerformance = () => {
 
 // Tự động bắt các lỗi Promise bị từ chối (Unhandled Rejections)
 window.addEventListener('unhandledrejection', event => {
-    console.error("❌ [Hệ thống - Lỗi chưa xử lý]:", event.reason);
+    const errorMsg = event.reason?.message || event.reason || "Unknown Promise Error";
+    console.error("❌ [Hệ thống - Lỗi chưa xử lý]:", errorMsg);
+    trackEvent('exception', {
+        'description': errorMsg,
+        'fatal': false
+    });
+});
+
+// Bắt các lỗi JavaScript thông thường (Syntax, Reference, v.v.)
+window.onerror = function(message, source, lineno, colno, error) {
+    const errorDetail = `${message} tại ${source}:${lineno}:${colno}`;
+    trackEvent('exception', {
+        'description': errorDetail,
+        'fatal': true
+    });
 });
 
 initMonitoring();

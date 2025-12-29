@@ -123,6 +123,12 @@ async function init() {
   } catch (error) {
     console.error("Lỗi:", error);
     
+    // Gửi lỗi API về Google Analytics (Ý số 2 trong đề bài)
+    trackEvent('api_error', {
+        'endpoint': API_URL,
+        'message': error.message || error
+    });
+
     if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
   }
 }
