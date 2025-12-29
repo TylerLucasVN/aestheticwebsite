@@ -16,8 +16,7 @@ export const trackEvent = (eventName, params = {}) => {
 
 // 2. Cấu hình Sentry để bắt các lỗi không mong muốn
 export const initMonitoring = () => {
-    // Sentry đã được khởi tạo trong index.html, 
-    // ở đây chúng ta có thể thêm các cấu hình bổ sung như User Context
+    // Khởi tạo hệ thống giám sát nội bộ
     console.log("Monitoring system initialized...");
     trackPerformance();
 };
@@ -55,6 +54,6 @@ window.onerror = function(message, source, lineno, colno, error) {
         'description': errorDetail,
         'fatal': true
     });
-});
+};
 
 initMonitoring();
