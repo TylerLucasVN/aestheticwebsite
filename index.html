@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     
+    <!-- Tăng hiệu suất kết nối sớm đến các domain bên thứ 3 -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://694a5ba81282f890d2d86de0.mockapi.io">
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-69GZG08LB4"></script>
     <script>
@@ -84,22 +88,22 @@
                 <!-- Icons -->
                 <div class="flex items-center space-x-4">
                     <!-- Search -->
-                    <button class="search-trigger-btn text-gray-600 hover:text-black" aria-label="Search">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="search-trigger-btn text-gray-600 hover:text-black" aria-label="Tìm kiếm">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
                     
                     <!-- Favorites -->
-                    <a href="favor/favor.html" class="text-gray-600 hover:text-gray-900" aria-label="Favorites">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <a href="favor/favor.html" class="text-gray-600 hover:text-gray-900" aria-label="Sản phẩm yêu thích">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
                     </a>
                     
                     <!-- Cart -->
-                    <a href="#" class="text-gray-600 hover:text-gray-900" aria-label="Cart">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <a href="#" class="text-gray-600 hover:text-gray-900" aria-label="Giỏ hàng">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </a>
@@ -210,8 +214,8 @@
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Trending This Week</h2>
                 <div class="flex space-x-2">
-                    <button id="btnPrev" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Previous products">❮</button>
-                    <button id="btnNext" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Next products">❯</button>
+                    <button id="btnPrev" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Sản phẩm trước">❮</button>
+                    <button id="btnNext" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Sản phẩm tiếp theo">❯</button>
                 </div>
             </div>
             
@@ -227,8 +231,8 @@
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Shop by Sport</h2>
                 <div class="flex space-x-2">
-                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Previous sports">❮</button>
-                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Next sports">❯</button>
+                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Môn thể thao trước">❮</button>
+                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Môn thể thao tiếp theo">❯</button>
                 </div>
             </div>
             
