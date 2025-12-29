@@ -6,18 +6,17 @@
 export const trackEvent = (eventName, params = {}) => {
     if (typeof gtag === 'function') {
         gtag('event', eventName, params);
-        // Log ra console để bạn kiểm tra ngay "trên này"
-        console.log(`📊 [GA Event]: ${eventName}`, params);
-    } else {
-        // Nếu chưa có mã ID thật, vẫn log ra để bạn biết code đã chạy đến đây
-        console.warn(`⚠️ [GA Mock]: Sự kiện "${eventName}" đã kích hoạt nhưng chưa có mã ID thật.`, params);
+        // Log ra console để bạn kiểm tra ngay
+        console.log(`✅ [GA Event]: ${eventName}`, params);
     }
 };
 
-// 2. Cấu hình Sentry để bắt các lỗi không mong muốn
+// Gắn vào window để sử dụng ở mọi nơi
+window.trackEvent = trackEvent;
+
+// 2. Khởi tạo hệ thống giám sát
 export const initMonitoring = () => {
-    // Khởi tạo hệ thống giám sát nội bộ
-    console.log("Monitoring system initialized...");
+    console.log("🚀 Monitoring system initialized with Real ID...");
     trackPerformance();
 };
 

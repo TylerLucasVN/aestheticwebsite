@@ -342,13 +342,13 @@
                 
                 btnNext.addEventListener('click', function() {
                     scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                    // Theo dõi hành vi người dùng (Ý số 1)
-                    if (typeof gtag === 'function') gtag('event', 'slider_click', { 'direction': 'next' });
+                    // Theo dõi hành vi người dùng 
+                    if (window.trackEvent) window.trackEvent('slider_click', { 'direction': 'next' });
                 });
                 
                 btnPrev.addEventListener('click', function() {
                     scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                    if (typeof gtag === 'function') gtag('event', 'slider_click', { 'direction': 'prev' });
+                    if (window.trackEvent) window.trackEvent('slider_click', { 'direction': 'prev' });
                 });
             }
             
