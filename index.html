@@ -6,6 +6,17 @@
     <title>Just Do It. Nike VN (Clone)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-69GZG08LB4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-69GZG08LB4');
+    </script>
+
     <style>
         /* Cấu hình Tailwind tùy chỉnh */
         @tailwind base;
@@ -331,10 +342,13 @@
                 
                 btnNext.addEventListener('click', function() {
                     scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    // Theo dõi hành vi người dùng (Ý số 1)
+                    if (typeof gtag === 'function') gtag('event', 'slider_click', { 'direction': 'next' });
                 });
                 
                 btnPrev.addEventListener('click', function() {
                     scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    if (typeof gtag === 'function') gtag('event', 'slider_click', { 'direction': 'prev' });
                 });
             }
             
@@ -357,5 +371,6 @@
     <script src="./generateUI.js" type="module"></script>
     <!-- Search Overlay -->
     <script src="./search/searchOverlay.js" type="module"></script>
+    <script src="./monitoring.js" type="module"></script>
 </body>
 </html>
