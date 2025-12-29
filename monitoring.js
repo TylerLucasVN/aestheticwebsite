@@ -6,6 +6,11 @@
 export const trackEvent = (eventName, params = {}) => {
     if (typeof gtag === 'function') {
         gtag('event', eventName, params);
+        // Log ra console để bạn kiểm tra ngay "trên này"
+        console.log(`📊 [GA Event]: ${eventName}`, params);
+    } else {
+        // Nếu chưa có mã ID thật, vẫn log ra để bạn biết code đã chạy đến đây
+        console.warn(`⚠️ [GA Mock]: Sự kiện "${eventName}" đã kích hoạt nhưng chưa có mã ID thật.`, params);
     }
 };
 
@@ -35,9 +40,7 @@ export const trackPerformance = () => {
 
 // Tự động bắt các lỗi Promise bị từ chối (Unhandled Rejections)
 window.addEventListener('unhandledrejection', event => {
-    if (typeof Sentry !== 'undefined') {
-        Sentry.captureException(event.reason);
-    }
+    console.error("❌ [Hệ thống - Lỗi chưa xử lý]:", event.reason);
 });
 
 initMonitoring();

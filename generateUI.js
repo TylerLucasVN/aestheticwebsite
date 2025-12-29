@@ -1,4 +1,5 @@
 //import {data} from './mockupdata.js';
+import { trackEvent } from './monitoring.js';
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 function getProducts() {
@@ -31,6 +32,15 @@ function renderProducts(data) {
     
     const card = document.createElement("div");
     card.className = "product-card flex-shrink-0 w-64 md:w-72";
+
+    // Theo dõi hành vi click vào sản phẩm (Ý số 1)
+    card.addEventListener('click', () => {
+        trackEvent('product_click', {
+            product_id: product.id,
+            product_name: product.name,
+            category: product.category
+        });
+    });
 
     card.innerHTML = `
       <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 transition-transform duration-300 hover:scale-105 relative group">
@@ -79,6 +89,12 @@ function toggleFavorite(product, btnElement) {
     favorites.push(product);
     svg.classList.remove('text-gray-400');
     svg.classList.add('text-red-500', 'fill-current');
+    
+    // Theo dõi hành động thêm vào yêu thích (Ý số 1)
+    trackEvent('add_to_favorites', {
+        product_id: product.id,
+        product_name: product.name
+    });
   } else {
     favorites.splice(index, 1);
     svg.classList.remove('text-red-500', 'fill-current');
@@ -107,11 +123,6 @@ async function init() {
   } catch (error) {
     console.error("Lỗi:", error);
     
-    // Ghi nhật ký lỗi để gỡ lỗi (Ý số 2)
-    if (typeof Sentry !== 'undefined') {
-        Sentry.captureException(error);
-    }
-
     if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
   }
 }
