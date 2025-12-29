@@ -1,3 +1,4 @@
+import { trackEvent } from '../monitoring.js';
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 // Biến lưu trữ dữ liệu cache cho overlay để tìm kiếm nhanh
@@ -202,6 +203,10 @@ export function initSearchOverlay() {
     // --- SEARCH LOGIC ---
     function performSearch(query) {
         if (!query.trim()) return;
+        
+        // Theo dõi từ khóa tìm kiếm (Ý số 1)
+        trackEvent('search', { search_term: query.trim() });
+
         saveHistory(query.trim());
         const searchPath = getSearchPagePath();
         // Redirect sang trang search với query string

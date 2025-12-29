@@ -106,6 +106,12 @@ async function init() {
     renderProducts(filterByTag(products, "trending"));
   } catch (error) {
     console.error("Lỗi:", error);
+    
+    // Ghi nhật ký lỗi để gỡ lỗi (Ý số 2)
+    if (typeof Sentry !== 'undefined') {
+        Sentry.captureException(error);
+    }
+
     if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
   }
 }
