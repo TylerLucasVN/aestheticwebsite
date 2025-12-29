@@ -16,25 +16,28 @@ let currentFilters = {
 // --- HÀM TIỆN ÍCH ---
 
 // Hàm lấy dữ liệu từ API
-async function fetchProducts() {
+function fetchProducts() {
     const productGrid = document.getElementById('productGrid');
     const resultsTitle = document.getElementById('resultsTitle');
     
     // Hiển thị loading
     if(productGrid) productGrid.innerHTML = '<div class="col-span-full text-center py-20"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div><p class="mt-4 text-gray-500">Loading products...</p></div>';
 
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('Failed to fetch');
-        products = await response.json();
-        
-        // Sau khi có dữ liệu, áp dụng bộ lọc ngay lập tức
-        applyFilters();
-    } catch (error) {
-        console.error("Error loading products:", error);
-        if(productGrid) productGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500">Failed to load data. Please try again.</div>`;
-        if(resultsTitle) resultsTitle.innerText = `Error`;
-    }
+    fetch(API_URL)
+        .then(function(response) {
+            if (!response.ok) throw new Error('Failed to fetch');
+            return response.json();
+        })
+        .then(function(data) {
+            products = data;
+            // Sau khi có dữ liệu, áp dụng bộ lọc ngay lập tức
+            applyFilters();
+        })
+        .catch(function(error) {
+            console.error("Error loading products:", error);
+            if(productGrid) productGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500">Failed to load data. Please try again.</div>`;
+            if(resultsTitle) resultsTitle.innerText = `Error`;
+        });
 }
 
 // Lấy danh sách yêu thích

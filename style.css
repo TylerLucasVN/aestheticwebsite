@@ -14,6 +14,13 @@ body {
     color: var(--primary);
     background-color: var(--white);
     overflow-x: hidden; /* Ẩn thanh cuộn ngang của body */
+    text-rendering: optimizeSpeed;
+}
+
+/* Tối ưu hóa việc render các section ngoài màn hình */
+section, footer {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 500px;
 }
 
 a { text-decoration: none; color: inherit; cursor: pointer; }

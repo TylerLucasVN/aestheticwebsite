@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="style.css">
     
     <!-- Tăng hiệu suất kết nối sớm đến các domain bên thứ 3 -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://694a5ba81282f890d2d86de0.mockapi.io">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://694a5ba81282f890d2d86de0.mockapi.io" crossorigin>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-69GZG08LB4"></script>
@@ -72,8 +72,8 @@
             <div class="flex items-center justify-start h-16 space-x-80">
                 <!-- Logo -->
                 <a href="index.html" class="flex-shrink-0">
-                    <img src="./img/logo.png"
-                         alt="Nike Logo" class="h-20 md:h-30">
+                    <img src="./img/logo.png" width="120" height="60"
+                         alt="Nike Logo" class="h-auto w-24 md:w-32">
                 </a>
 
                 <!-- Desktop Navigation Links -->
@@ -115,7 +115,7 @@
     <!-- Hero Section với Video -->
     <section class="relative overflow-hidden bg-black">
         <div class="absolute inset-0 z-0">
-            <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-90">
+            <video autoplay muted loop playsinline fetchpriority="high" class="w-full h-full object-cover opacity-90">
                 <source src="https://static.nike.com/a/videos/so_5.41/vp_7f1f96a8-28f5-46b8-b759-5cc0e94d3b4e/so_5.41.mp4" type="video/mp4">
                 <!-- Fallback image nếu video không tải được -->
                 <img src="https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_1824,c_limit/9dc5d4c5-a5a5-4c82-9ab7-b2dc6ea84e05/nike-just-do-it.jpg" 

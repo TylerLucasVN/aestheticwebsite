@@ -19,34 +19,25 @@ function getProducts() {
       });
   });
 }
+
 export default getProducts;
+
 function renderProducts(data) {
   const container = document.getElementById("scrollContainer");
-  // Lấy danh sách yêu thích từ LocalStorage
   const favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
+  
+  // Sử dụng chuỗi HTML để render một lần duy nhất (tăng hiệu suất DOM)
+  let htmlContent = "";
 
   data.forEach(product => {
-    console.log(product);
-    // Kiểm tra xem sản phẩm này đã được like chưa
     const isFavorite = favorites.some(fav => String(fav.id) === String(product.id));
     
-    const card = document.createElement("div");
-    card.className = "product-card flex-shrink-0 w-64 md:w-72";
-
-    // Theo dõi hành vi click vào sản phẩm 
-    card.addEventListener('click', () => {
-        trackEvent('product_click', {
-            product_id: product.id,
-            product_name: product.name,
-            category: product.category
-        });
-    });
-
-    card.innerHTML = `
-      <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 transition-transform duration-300 hover:scale-105 relative group">
+    htmlContent += `
+      <div class="product-card flex-shrink-0 w-64 md:w-72" data-id="${product.id}">
+        <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 transition-transform duration-300 hover:scale-105 relative group">
         <img src="${product.image}" 
              alt="${product.name}" 
-             class="w-full h-auto" decoding="async">
+             class="w-full h-auto" decoding="async" loading="lazy" width="300" height="300">
              
         <!-- Favorite Button -->
         <button class="fav-btn absolute top-3 right-3 p-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all duration-200 z-10 opacity-0 group-hover:opacity-100 focus:opacity-100" aria-label="Thêm vào yêu thích">
@@ -67,16 +58,25 @@ function renderProducts(data) {
           ${typeof product.price === 'number' ? product.price.toLocaleString('vi-VN') + '₫' : product.price}
         </div>
       </div>
+      </div>
     `;
-    
-    // Thêm sự kiện click cho nút favorite
+  });
+
+  container.innerHTML = htmlContent;
+
+  // Gán sự kiện sau khi đã render xong toàn bộ HTML
+  data.forEach(product => {
+    const card = container.querySelector(`[data-id="${product.id}"]`);
     const favBtn = card.querySelector('.fav-btn');
-    favBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Ngăn không cho click vào card (nếu có link)
-        toggleFavorite(product, favBtn);
+
+    card.addEventListener('click', () => {
+      trackEvent('product_click', { product_id: product.id, product_name: product.name });
     });
 
-    container.appendChild(card);
+    favBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFavorite(product, favBtn);
+    });
   });
 }
 
@@ -113,24 +113,23 @@ function filterByTag(data, tag) {
 // const trendingProducts = filterByTag(data, "trending");
 // renderProducts(trendingProducts);
 
-async function init() {
+function init() {
   const container = document.getElementById("scrollContainer");
-  try {
-    if (container) container.innerHTML = '<div class="text-gray-500 p-10">Loading trending products...</div>';
-    const products = await getProducts();
-    if (container) container.innerHTML = ''; // Xóa dòng loading
-    renderProducts(filterByTag(products, "trending"));
-  } catch (error) {
-    console.error("Lỗi:", error);
-    
-    // Gửi lỗi API về Google Analytics 
-    trackEvent('api_error', {
-        'endpoint': API_URL,
-        'message': error.message || error
-    });
+  if (container) container.innerHTML = '<div class="text-gray-500 p-10">Loading trending products...</div>';
 
-    if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
-  }
+  getProducts()
+    .then(function(products) {
+      if (container) container.innerHTML = ''; // Xóa dòng loading
+      renderProducts(filterByTag(products, "trending"));
+    })
+    .catch(function(error) {
+      console.error("Lỗi:", error);
+      trackEvent('api_error', {
+          'endpoint': API_URL,
+          'message': error.message || error
+      });
+      if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products. Please try again later.</div>';
+    });
 }
 
 init();

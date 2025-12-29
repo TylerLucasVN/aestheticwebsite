@@ -5,15 +5,17 @@ const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 let cachedOverlayData = [];
 
 // Fetch dữ liệu ngay khi load file (hoặc khi DOMReady)
-async function fetchOverlayData() {
-    try {
-        const response = await fetch(API_URL);
-        if (response.ok) {
-            cachedOverlayData = await response.json();
-        }
-    } catch (error) {
-        console.error("Search Overlay: Failed to fetch API", error);
-    }
+function fetchOverlayData() {
+    fetch(API_URL)
+        .then(function(response) {
+            if (response.ok) return response.json();
+        })
+        .then(function(data) {
+            if (data) cachedOverlayData = data;
+        })
+        .catch(function(error) {
+            console.error("Search Overlay: Failed to fetch API", error);
+        });
 }
 
 // --- HÀM HỖ TRỢ ĐƯỜNG DẪN ---
