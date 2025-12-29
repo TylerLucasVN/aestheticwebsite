@@ -6,13 +6,17 @@
 export const trackEvent = (eventName, params = {}) => {
     if (typeof gtag === 'function') {
         gtag('event', eventName, params);
+        // Log ra console để bạn kiểm tra ngay "trên này"
+        console.log(`📊 [GA Event]: ${eventName}`, params);
+    } else {
+        // Nếu chưa có mã ID thật, vẫn log ra để bạn biết code đã chạy đến đây
+        console.warn(`⚠️ [GA Mock]: Sự kiện "${eventName}" đã kích hoạt nhưng chưa có mã ID thật.`, params);
     }
 };
 
 // 2. Cấu hình Sentry để bắt các lỗi không mong muốn
 export const initMonitoring = () => {
-    // Sentry đã được khởi tạo trong index.html, 
-    // ở đây chúng ta có thể thêm các cấu hình bổ sung như User Context
+    // Khởi tạo hệ thống giám sát nội bộ
     console.log("Monitoring system initialized...");
     trackPerformance();
 };
@@ -35,9 +39,21 @@ export const trackPerformance = () => {
 
 // Tự động bắt các lỗi Promise bị từ chối (Unhandled Rejections)
 window.addEventListener('unhandledrejection', event => {
-    if (typeof Sentry !== 'undefined') {
-        Sentry.captureException(event.reason);
-    }
+    const errorMsg = event.reason?.message || event.reason || "Unknown Promise Error";
+    console.error("❌ [Hệ thống - Lỗi chưa xử lý]:", errorMsg);
+    trackEvent('exception', {
+        'description': errorMsg,
+        'fatal': false
+    });
 });
+
+// Bắt các lỗi JavaScript thông thường (Syntax, Reference, v.v.)
+window.onerror = function(message, source, lineno, colno, error) {
+    const errorDetail = `${message} tại ${source}:${lineno}:${colno}`;
+    trackEvent('exception', {
+        'description': errorDetail,
+        'fatal': true
+    });
+};
 
 initMonitoring();
