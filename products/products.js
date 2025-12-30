@@ -53,7 +53,7 @@ async function fetchProducts() {
     const categoryParam = params.get("category");
 
     // Cập nhật trạng thái active cho menu chính (Men/Women/Kids/All)
-    setActiveCategoryNav(categoryParam ? categoryParam.toLowerCase() : 'all');
+    setActiveCategoryNav(categoryParam || 'all');
 
     // Mapping từ URL parameter sang giá trị thực tế trong database của API
     const categoryMap = {
@@ -119,9 +119,8 @@ async function fetchProducts() {
 
 // Hàm hỗ trợ đặt trạng thái active cho menu danh mục chính
 function setActiveCategoryNav(categoryValue) {
-    const normalizedValue = categoryValue ? categoryValue.toLowerCase() : 'all';
     document.querySelectorAll(".nav-link").forEach(link => {
-        if (link.dataset.category === normalizedValue) {
+        if (link.dataset.category === categoryValue) {
             // Thêm gạch chân, chữ đen và đậm
             link.classList.add("text-black", "font-bold", "border-b-2", "border-black");
             link.classList.remove("text-gray-800", "font-medium");
@@ -318,3 +317,23 @@ function setupEventListeners() {
     renderProducts(filteredProducts);
   });
 }
+const params = new URLSearchParams(window.location.search);
+  const currentCategory = params.get("category") || "all";
+
+  document.querySelectorAll("#categoryTabs .tab").forEach(tab => {
+    const category = tab.dataset.category;
+
+    if (category === currentCategory) {
+      tab.classList.add(
+        "border-b-2",
+        "border-black",
+        "font-bold",
+        "text-black"
+      );
+    } else {
+      tab.classList.add(
+        "text-gray-800",
+        "hover:text-gray-600"
+      );
+    }
+  });
