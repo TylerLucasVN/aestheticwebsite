@@ -28,20 +28,73 @@ document.addEventListener("DOMContentLoaded", () => {
 // =======================
 async function fetchProducts() {
   try {
+    // Lấy dữ liệu từ API (Lấy hết về, không lọc trên URL API)
     const res = await fetch(API_URL);
     if (!res.ok) throw new Error("Fetch failed");
-
     allProducts = await res.json();
 
-    // DEFAULT: show all
-    filteredProducts = [...allProducts];
+    // Lấy tham số từ trình duyệt
+    const urlParams = new URLSearchParams(window.location.search);
+    const tagParam = urlParams.get('tag');       // Lấy ?tag=...
+    const categoryParam = urlParams.get('category'); // Lấy ?category=...
+
+    // Logic lọc
+    if (tagParam) {
+      // --- LỌC THEO TAG (SALE) ---
+      const searchTag = tagParam.toLowerCase().trim(); // "sale"
+      
+      console.log("Đang tìm tag:", searchTag); // Kiểm tra log
+
+      filteredProducts = allProducts.filter(p => {
+        // Kiểm tra xem sản phẩm có trường "tag" không (Lưu ý: tag số ít)
+        if (!p.tag) return false;
+
+        // Chuyển dữ liệu trong JSON về chữ thường để so sánh
+        // Dữ liệu của bạn: "tag": "sale"
+        const productTag = String(p.tag).toLowerCase();
+
+        return productTag.includes(searchTag);
+      });
+
+      updateTitle(tagParam);
+
+    } else if (categoryParam) {
+      // --- LỌC THEO CATEGORY (MEN, WOMEN, KIDS) ---
+      const searchCat = categoryParam.toLowerCase().trim();
+      
+      filteredProducts = allProducts.filter(p => {
+        if (!p.category) return false;
+        const pCat = p.category.toLowerCase();
+
+        // Fix lỗi: Tìm Men nhưng không lấy Women
+        if (searchCat === 'men') {
+          return pCat.includes('men') && !pCat.includes('women');
+        }
+        
+        return pCat.includes(searchCat);
+      });
+
+      updateTitle(categoryParam);
+
+    } else {
+      // --- KHÔNG LỌC (ALL PRODUCTS) ---
+      filteredProducts = [...allProducts];
+      updateTitle("New & Featured");
+    }
+
+    console.log(`Kết quả: Tìm thấy ${filteredProducts.length} sản phẩm.`);
     renderProducts(filteredProducts);
 
   } catch (err) {
     console.error(err);
-    document.getElementById("productsCount").textContent =
-      "Failed to load products";
+    document.getElementById("productsCount").textContent = "Failed to load products";
   }
+}
+
+// Hàm đổi tên tiêu đề
+function updateTitle(text) {
+  const title = document.querySelector('h1');
+  if (title) title.textContent = text.toUpperCase();
 }
 
 // =======================
