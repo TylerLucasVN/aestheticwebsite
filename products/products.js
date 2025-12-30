@@ -290,3 +290,23 @@ function setupEventListeners() {
     renderProducts(filteredProducts);
   });
 }
+const params = new URLSearchParams(window.location.search);
+  const currentCategory = params.get("category") || "all";
+
+  document.querySelectorAll("#categoryTabs .tab").forEach(tab => {
+    const category = tab.dataset.category;
+
+    if (category === currentCategory) {
+      tab.classList.add(
+        "border-b-2",
+        "border-black",
+        "font-bold",
+        "text-black"
+      );
+    } else {
+      tab.classList.add(
+        "text-gray-800",
+        "hover:text-gray-600"
+      );
+    }
+  });
