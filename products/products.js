@@ -79,10 +79,13 @@ async function fetchProducts() {
                 (p.category && p.category.toLowerCase().includes('sale'))
             );
         } else if (categoryMap[categoryParam.toLowerCase()]) {
-            // Lọc linh hoạt: Chỉ cần trong category có chứa từ khóa (ví dụ: "men" sẽ khớp với "Men's Shoes")
             const target = categoryParam.toLowerCase();
             categoryProducts = allProducts.filter(p => {
                 const productCat = (p.category || "").toLowerCase();
+                // Xử lý đặc biệt cho 'kids': tìm 'kid' (số ít) để khớp với cả "Kid's Shoes" và "Kids"
+                if (target === 'kids') {
+                    return productCat.includes('kid');
+                }
                 return productCat.includes(target);
             });
         } else {
