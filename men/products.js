@@ -5,79 +5,157 @@ const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 let allProducts = [];
 let filteredProducts = [];
+let currentIndex = 0;
+
+const ITEMS_PER_LOAD = 8;
+let observer = null;
 
 // =======================
 // UTILS
 // =======================
 function parsePrice(price) {
   if (typeof price === "number") return price;
-  return parseInt(price.replace(/[^\d]/g, "")) || 0;
+  return parseInt(String(price).replace(/[^\d]/g, "")) || 0;
 }
 
 // =======================
-// INIT APP
+// INIT
 // =======================
 document.addEventListener("DOMContentLoaded", () => {
   fetchProducts();
-  setupEventListeners();
+  setupSort();
   updateNavFavCount();
 });
 
 // =======================
-// FETCH DATA
+// FETCH PRODUCTS
 // =======================
 async function fetchProducts() {
+  const grid = document.getElementById("productsGrid");
+  const countLabel = document.getElementById("productsCount");
+  const emptyState = document.getElementById("emptyState");
+
   try {
+    grid.innerHTML = "";
+    emptyState.classList.add("hidden");
+    currentIndex = 0;
+
     const res = await fetch(API_URL);
     if (!res.ok) throw new Error("Fetch failed");
 
     allProducts = await res.json();
 
-    // DEFAULT: show all
-    filteredProducts = [...allProducts];
-    renderProducts(filteredProducts);
+    // 👉 CHỈ MEN'S SHOES
+    filteredProducts = allProducts.filter(
+      p => p.category === "Men's Shoes"
+    );
+
+    updateCount();
+
+    if (filteredProducts.length === 0) {
+      showEmpty("No Men's Shoes found.");
+      return;
+    }
+
+    renderNextBatch();
+    setupLazyLoadObserver();
 
   } catch (err) {
     console.error(err);
-    document.getElementById("productsCount").textContent =
-      "Failed to load products";
+    showEmpty("Failed to load products. Please try again later.");
   }
 }
 
 // =======================
-// FILTER LOGIC (CORE)
+// SORT (GIỮ NGUYÊN HTML)
 // =======================
+function setupSort() {
+  const sortSelect = document.getElementById("sortSelect");
+  if (!sortSelect) return;
 
-// 👉 CHỈ FILTER ĐÚNG "Men's Shoes"
-function filterMenShoes(products) {
-  return products.filter(
-    p => p.category === "Men's Shoes"
-  );
+  sortSelect.addEventListener("change", e => {
+    const value = e.target.value;
+
+    // reset list trước
+    filteredProducts = allProducts.filter(
+      p => p.category === "Men's Shoes"
+    );
+
+    if (value === "price-asc") {
+      filteredProducts.sort(
+        (a, b) => parsePrice(a.price) - parsePrice(b.price)
+      );
+    }
+
+    if (value === "price-desc") {
+      filteredProducts.sort(
+        (a, b) => parsePrice(b.price) - parsePrice(a.price)
+      );
+    }
+
+    if (value === "name-asc") {
+      filteredProducts.sort(
+        (a, b) => a.name.localeCompare(b.name)
+      );
+    }
+
+    resetAndRender();
+  });
 }
 
 // =======================
-// RENDER PRODUCTS
+// RESET + RENDER
 // =======================
-function renderProducts(products) {
+function resetAndRender() {
   const grid = document.getElementById("productsGrid");
-  const countLabel = document.getElementById("productsCount");
-  const emptyState = document.getElementById("emptyState");
-
-  const favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
 
   grid.innerHTML = "";
-  countLabel.textContent = `${products.length} Items Found`;
+  currentIndex = 0;
+  updateCount();
 
-  if (products.length === 0) {
-    grid.classList.add("hidden");
-    emptyState.classList.remove("hidden");
-    return;
-  }
+  if (observer) observer.disconnect();
 
-  grid.classList.remove("hidden");
-  emptyState.classList.add("hidden");
+  renderNextBatch();
+  setupLazyLoadObserver();
+}
 
-  products.forEach(product => {
+// =======================
+// COUNT
+// =======================
+function updateCount() {
+  const countLabel = document.getElementById("productsCount");
+  countLabel.textContent = `${filteredProducts.length} Items Found`;
+}
+
+// =======================
+// EMPTY STATE
+// =======================
+function showEmpty(message) {
+  const grid = document.getElementById("productsGrid");
+  const emptyState = document.getElementById("emptyState");
+  const countLabel = document.getElementById("productsCount");
+
+  grid.innerHTML = "";
+  countLabel.textContent = "0 Items Found";
+  emptyState.classList.remove("hidden");
+  emptyState.querySelector("p").textContent = message;
+}
+
+// =======================
+// RENDER NEXT BATCH
+// =======================
+function renderNextBatch() {
+  const grid = document.getElementById("productsGrid");
+  const favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
+
+  const nextItems = filteredProducts.slice(
+    currentIndex,
+    currentIndex + ITEMS_PER_LOAD
+  );
+
+  if (nextItems.length === 0) return;
+
+  nextItems.forEach(product => {
     const isFavorite = favorites.some(
       fav => String(fav.id) === String(product.id)
     );
@@ -96,6 +174,7 @@ function renderProducts(products) {
                   transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-1">
 
         <img src="${product.image}"
+             loading="lazy"
              alt="${product.name}"
              class="w-full h-full object-contain p-6
                     transition-transform duration-700 group-hover:scale-110">
@@ -136,6 +215,30 @@ function renderProducts(products) {
 
     grid.appendChild(card);
   });
+
+  currentIndex += ITEMS_PER_LOAD;
+}
+
+// =======================
+// LAZY LOAD
+// =======================
+function setupLazyLoadObserver() {
+  const sentinel = document.createElement("div");
+  sentinel.id = "scroll-sentinel";
+  document.getElementById("productsGrid").after(sentinel);
+
+  observer = new IntersectionObserver(entries => {
+    if (
+      entries[0].isIntersecting &&
+      currentIndex < filteredProducts.length
+    ) {
+      renderNextBatch();
+    }
+  }, {
+    rootMargin: "200px"
+  });
+
+  observer.observe(sentinel);
 }
 
 // =======================
@@ -172,58 +275,4 @@ function updateNavFavCount() {
   navFavCount.textContent = favorites.length;
   navFavCount.classList.toggle("opacity-0", favorites.length === 0);
   navFavCount.classList.toggle("opacity-100", favorites.length > 0);
-}
-
-// =======================
-// EVENTS (FILTER + SORT)
-// =======================
-function setupEventListeners() {
-
-  // FILTER BUTTONS
-  document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn").forEach(b => {
-        b.classList.remove("bg-black", "text-white");
-        b.classList.add("bg-gray-50", "text-gray-500");
-      });
-
-      btn.classList.add("bg-black", "text-white");
-      btn.classList.remove("bg-gray-50", "text-gray-500");
-
-      const filter = btn.dataset.filter;
-
-      if (filter === "men") {
-        filteredProducts = filterMenShoes(allProducts);
-      } else {
-        filteredProducts = [...allProducts];
-      }
-
-      renderProducts(filteredProducts);
-    });
-  });
-
-  // SORT
-  document.getElementById("sortSelect")?.addEventListener("change", e => {
-    const value = e.target.value;
-
-    if (value === "price-asc") {
-      filteredProducts.sort(
-        (a, b) => parsePrice(a.price) - parsePrice(b.price)
-      );
-    }
-
-    if (value === "price-desc") {
-      filteredProducts.sort(
-        (a, b) => parsePrice(b.price) - parsePrice(a.price)
-      );
-    }
-
-    if (value === "name-asc") {
-      filteredProducts.sort(
-        (a, b) => a.name.localeCompare(b.name)
-      );
-    }
-
-    renderProducts(filteredProducts);
-  });
 }

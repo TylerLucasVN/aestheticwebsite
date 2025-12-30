@@ -66,36 +66,34 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="../index.html" class="flex-shrink-0">
-                    <img src="../img/logo.png" 
-                         alt="Nike Logo" class="h-6 md:h-[100px]">
+                    <img src="../img/logo.png" width="120" height="60"
+                         alt="Nike Logo" class="h-auto w-24 md:w-32">
                 </a>
                 <div class="hidden md:flex md:items-center md:space-x-6">
-                    <a href="../products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">New & Featured</a>
-                    <a href="../men.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
-                    <a href="../products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
-                    <a href="../products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
-                    <a href="#" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
+                    <a href="../products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">All Products</a>
+                    <a href="../women/women.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
+                    <a href="../kid/kid.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
+                    <a href="../men/men.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
+                    <a href="../sale/sale.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <!-- Search -->
                     <button class="search-trigger-btn text-gray-600 hover:text-black">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
 
-                    <!-- Favorites -->
                     <a href="../favor/favor.html" class="text-gray-600 hover:text-gray-900">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
                     </a>
 
-                    <!-- Cart -->
-                    <a href="#" class="text-gray-600 hover:text-gray-900">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
+                        <span id="navCartCount" class="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center opacity-0 transition-opacity">0</span>
                     </a>
                 </div>
             </div>
@@ -284,6 +282,60 @@
             </div>
         </div>
     </footer>
+
+    <div id="cartModal" class="relative z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div id="cartModalBackdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0 ease-out duration-300"></div>
+      
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div id="cartModalPanel" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-[450px] opacity-0 scale-95 duration-300 ease-out p-6 md:p-8">
+                
+                <button onclick="closeCartModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 leading-none" id="modal-title">Added to Cart!</h3>
+                </div>
+
+                <div class="flex gap-4 mb-8">
+                    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded bg-[#f5f5f5]">
+                        <img id="modalImg" src="" alt="Product Image" class="h-full w-full object-contain object-center mix-blend-multiply">
+                    </div>
+
+                    <div class="flex flex-col justify-center">
+                        <h4 id="modalName" class="text-base font-medium text-gray-900"></h4>
+                        <p id="modalCategory" class="text-sm text-gray-500 mt-1"></p>
+                        <p id="modalTag" class="text-sm font-bold text-black mt-2 uppercase"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button onclick="closeCartModal()" class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-base font-bold text-gray-900 hover:border-gray-400 transition-colors focus:outline-none">
+                        View Cart
+                    </button>
+                    <button onclick="closeCartModal()" class="flex w-full items-center justify-center rounded-full bg-black px-4 py-3 text-base font-bold text-white hover:bg-gray-800 transition-colors focus:outline-none">
+                        Checkout
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="closeCartModal()" class="text-sm font-medium text-gray-500 underline hover:text-gray-900 transition-colors">
+                        Continue Shopping
+                    </button>
+                </div>
+
+            </div>
+          </div>
+        </div>
+    </div>
 
     <script src="../search/search.js" type="module"></script>
     <script src="./searchOverlay.js" type="module"></script>
