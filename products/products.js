@@ -15,6 +15,19 @@ function parsePrice(price) {
   return parseInt(price.replace(/[^\d]/g, "")) || 0;
 }
 
+// Cập nhật tham số trên URL mà không làm tải lại trang
+function updateURL(params) {
+  const url = new URL(window.location);
+  for (const [key, value] of Object.entries(params)) {
+    if (value) {
+      url.searchParams.set(key, value);
+    } else {
+      url.searchParams.delete(key);
+    }
+  }
+  window.history.pushState({}, '', url);
+}
+
 // =======================
 // INIT APP
 // =======================
@@ -43,19 +56,39 @@ async function fetchProducts() {
         const titleEl = document.querySelector('h1');
         if (titleEl) titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
 
+        // Mapping category từ URL sang category của sản phẩm
+        const categoryMap = {
+            men: 'men',
+            women: 'women',
+            kids: 'kid',
+            sale: 'sale'
+        };
+
         categoryProducts = allProducts.filter(p => {
             const pCat = p.category.toLowerCase();
-            if (category === 'men') return pCat.includes('men');
-            if (category === 'women') return pCat.includes('women');
-            if (category === 'kids') return pCat.includes('kid');
-            if (category === 'sale') return p.tag === 'sale' || pCat.includes('sale');
+            const mappedCategory = categoryMap[category];
+
+            if (mappedCategory === 'sale') return p.tag === 'sale' || pCat.includes('sale');
+            if (mappedCategory) return pCat.includes(mappedCategory);
             return true;
         });
+
     } else {
         categoryProducts = [...allProducts];
     }
 
-    filteredProducts = [...categoryProducts];
+    // 3. Lấy thêm tham số 'type' (shoes/apparel) từ URL để lọc sâu hơn nếu có
+    const type = urlParams.get('type');
+    if (type && type !== 'all') {
+        filteredProducts = categoryProducts.filter(p => 
+            p.category.toLowerCase().includes(type)
+        );
+        // Cập nhật trạng thái nút bấm active dựa trên URL
+        setActiveFilterButton(type);
+    } else {
+        filteredProducts = [...categoryProducts];
+    }
+
     renderProducts(filteredProducts);
 
   } catch (err) {
@@ -63,6 +96,19 @@ async function fetchProducts() {
     document.getElementById("productsCount").textContent =
       "Failed to load products";
   }
+}
+
+// Hàm hỗ trợ đặt trạng thái active cho nút lọc
+function setActiveFilterButton(filterValue) {
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        if (btn.dataset.filter === filterValue) {
+            btn.classList.add("bg-black", "text-white");
+            btn.classList.remove("bg-gray-50", "text-gray-500");
+        } else {
+            btn.classList.remove("bg-black", "text-white");
+            btn.classList.add("bg-gray-50", "text-gray-500");
+        }
+    });
 }
 
 // =======================
@@ -192,20 +238,17 @@ function setupEventListeners() {
   // FILTER BUTTONS
   document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn").forEach(b => {
-        b.classList.remove("bg-black", "text-white");
-        b.classList.add("bg-gray-50", "text-gray-500");
-      });
-
-      btn.classList.add("bg-black", "text-white");
-      btn.classList.remove("bg-gray-50", "text-gray-500");
-
       const filter = btn.dataset.filter;
+      
+      // Cập nhật giao diện nút bấm
+      setActiveFilterButton(filter);
+
+      // Cập nhật URL để "giống" với trạng thái lọc hiện tại (ví dụ: ?category=men&type=shoes)
+      updateURL({ type: filter === "all" ? null : filter });
 
       if (filter === "all") {
         filteredProducts = [...categoryProducts];
       } else {
-        // Lọc dựa trên danh sách đã phân loại theo URL (ví dụ: chỉ lấy Shoes của Men)
         filteredProducts = categoryProducts.filter(p => 
             p.category.toLowerCase().includes(filter)
         );
