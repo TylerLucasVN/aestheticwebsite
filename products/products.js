@@ -45,7 +45,7 @@ async function fetchProducts() {
     const params = new URLSearchParams(window.location.search);
     const categoryParam = params.get("category");
 
-    // Mapping category từ URL sang giá trị chính xác mà API yêu cầu
+    // Mapping từ URL parameter sang giá trị thực tế trong database của API
     const categoryMap = {
       men: "Men's Shoes",
       women: "Women's Shoes",
@@ -56,17 +56,16 @@ async function fetchProducts() {
     let fetchUrl = API_URL;
     const mappedCategory = categoryMap[categoryParam];
 
-    // TRUYỀN THẲNG VÀO FILTER CỦA API: Nếu có category hợp lệ, thêm vào query params của API call
+    // 1. TRUYỀN THẲNG VÀO FILTER CỦA API (Ngoại trừ Sale vì Sale thường là Tag)
     if (mappedCategory && categoryParam !== 'sale') {
       fetchUrl += `?category=${encodeURIComponent(mappedCategory)}`;
     }
 
     const res = await fetch(fetchUrl);
     if (!res.ok) throw new Error("Fetch failed");
-
     allProducts = await res.json();
 
-    // 2. Xử lý hiển thị tiêu đề và lọc bổ sung (như trường hợp Sale)
+    // 2. Xử lý hiển thị tiêu đề và lọc lại dữ liệu (Safety Filter)
     if (categoryParam) {
         const titleEl = document.querySelector('h1');
         if (titleEl) titleEl.textContent = categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1);
@@ -76,6 +75,9 @@ async function fetchProducts() {
                 (p.tag && p.tag.toLowerCase() === 'sale') || 
                 (p.category && p.category.toLowerCase().includes('sale'))
             );
+        } else if (mappedCategory) {
+            // Lọc lại một lần nữa ở client để đảm bảo tính chính xác tuyệt đối
+            categoryProducts = allProducts.filter(p => p.category === mappedCategory);
         } else {
             categoryProducts = [...allProducts];
         }
@@ -83,7 +85,7 @@ async function fetchProducts() {
         categoryProducts = [...allProducts];
     }
 
-    // 3. Lấy thêm tham số 'type' (shoes/apparel) từ URL để lọc sâu hơn (Client-side)
+    // 3. Xử lý tham số 'type' (Shoes/Apparel) từ URL
     const typeParam = params.get('type');
     if (typeParam && typeParam !== 'all') {
         filteredProducts = categoryProducts.filter(p => 
