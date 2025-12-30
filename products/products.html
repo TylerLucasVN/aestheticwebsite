@@ -86,6 +86,11 @@
                         </svg>
                         <span id="navCartCount" class="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center opacity-0 transition-opacity">0</span>
                     </a>
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-900 hover:text-black focus:outline-none p-1">
+                        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -173,7 +178,75 @@
         </div>
     </div>
 
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black/50 z-[150] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+
+    <div id="mobile-menu-drawer" class="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white z-[160] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl overflow-y-auto">
+        <div class="p-6 flex flex-col h-full">
+            <div class="flex justify-between items-center mb-8">
+                <a href="../index.html" class="font-bold text-xl tracking-tighter">NIKE</a>
+                
+                <button id="close-mobile-menu" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <svg class="h-6 w-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="flex flex-col space-y-6 text-xl font-bold text-gray-900">
+                <a href="../index.html" class="flex items-center justify-between group hover:text-gray-600">
+                    Home
+                </a>
+                
+                <a href="../products/products.html" class="flex items-center justify-between group hover:text-gray-600">
+                    All Products 
+                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                <a href="../products/products.html?category=men" class="flex items-center justify-between group hover:text-gray-600">
+                    Men
+                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                <a href="../products/products.html?category=women" class="flex items-center justify-between group hover:text-gray-600">
+                    Women
+                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                <a href="../products/products.html?category=kids" class="flex items-center justify-between group hover:text-gray-600">
+                    Kids
+                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                <a href="../products/products.html?category=sale" class="flex items-center justify-between text-red-600 group hover:text-red-700">
+                    Sale
+                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+            </nav>
+
+            <div class="mt-auto pt-10 border-t border-gray-100">
+                <div class="flex flex-col space-y-4 text-gray-600 font-medium">
+                    <a href="../cart/cart.html" class="hover:text-black flex items-center gap-3">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        Bag
+                    </a>
+                    <a href="../favor/favor.html" class="hover:text-black flex items-center gap-3">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        Favorites
+                    </a>
+                    <a href="#" class="hover:text-black flex items-center gap-3">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Help
+                    </a>
+                </div>
+                <div class="mt-6 text-sm text-gray-400">
+                    <p>Become a Nike Member for the best products, inspiration and stories in sport.</p>
+                    <div class="mt-3 flex gap-3">
+                        <button class="bg-black text-white px-4 py-2 rounded-full font-bold">Join Us</button>
+                        <button class="border border-gray-300 px-4 py-2 rounded-full font-bold">Sign In</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="products.js"></script>
+    <script src="../mobile.js"></script>
 </body>
 
 </html>
