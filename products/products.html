@@ -41,11 +41,11 @@
 
                 <!-- Desktop Navigation Links -->
                 <div class="hidden md:flex md:items-center gap-x-8">
-                    <a href="products.html" class="text-black font-bold text-sm border-b-2 border-black pb-1">All</a>
-                    <a href="products.html?category=men" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors">Men</a>
-                    <a href="products.html?category=women" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors">Women</a>
-                    <a href="products.html?category=kids" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors">Kids</a>
-                    <a href="products.html?category=sale" class="text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors">Sale</a>
+                    <a href="products.html" class="nav-link text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors pb-1" data-category="all">All</a>
+                    <a href="products.html?category=men" class="nav-link text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors pb-1" data-category="men">Men</a>
+                    <a href="products.html?category=women" class="nav-link text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors pb-1" data-category="women">Women</a>
+                    <a href="products.html?category=kids" class="nav-link text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors pb-1" data-category="kids">Kids</a>
+                    <a href="products.html?category=sale" class="nav-link text-gray-800 hover:text-gray-600 font-medium text-sm transition-colors pb-1" data-category="sale">Sale</a>
                 </div>
 
                 <!-- Icons -->
@@ -107,7 +107,7 @@
         <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-20">
             <p class="text-gray-500 text-lg">No products found matching your criteria.</p>
-            <button onclick="window.location.href='products.html'" class="mt-4 text-black underline font-medium">Clear Filters</button>
+'''''            <button onclick="window.location.href='products.html'" class="mt-4 text-black underline font-medium">Clear Filters</button>
         </div>
     </main>
 
