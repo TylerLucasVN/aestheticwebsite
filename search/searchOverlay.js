@@ -21,7 +21,7 @@ function fetchOverlayData() {
 // --- HÀM HỖ TRỢ ĐƯỜNG DẪN ---
 function getSearchPagePath() {
     const path = window.location.pathname;
-    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/products/')) {
+    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/cart/') || path.includes('/products/')) {
         return '../search/search.html';
     }
     return './search/search.html';
@@ -29,7 +29,7 @@ function getSearchPagePath() {
 
 function getLogoPath() {
      const path = window.location.pathname;
-    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/products/')) {
+    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/cart/') || path.includes('/products/')) {
         return '../img/logo.png';
     }
     return './img/logo.png';

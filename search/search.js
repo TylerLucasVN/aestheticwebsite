@@ -26,6 +26,7 @@ function fetchProducts() {
         .then(function(data) {
             products = data;
             applyFilters();
+            updateNavCartCount();
             updateNavFavCount();
         })
         .catch(function(error) {
@@ -40,19 +41,28 @@ function getFavorites() {
     return JSON.parse(localStorage.getItem('nike_favorites')) || [];
 }
 
-function updateNavFavCount() {
-    const favorites = getFavorites();
-    const navFavCount = document.getElementById("navFavCount");
-    if (!navFavCount) return;
-
-    const count = favorites.length;
-    navFavCount.innerText = count;
-    navFavCount.classList.toggle("opacity-0", count === 0);
-    navFavCount.classList.toggle("opacity-100", count > 0);
-}
-
 function getCart() {
     return JSON.parse(localStorage.getItem('nike_cart')) || [];
+}
+
+function updateNavFavCount() {
+  const favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
+  const navFavCount = document.getElementById("navFavCount");
+  if (!navFavCount) return;
+  navFavCount.textContent = favorites.length;
+  navFavCount.classList.toggle("opacity-0", favorites.length === 0);
+  navFavCount.classList.toggle("opacity-100", favorites.length > 0);
+}
+
+function updateNavCartCount() {
+    const cart = getCart();
+    const navCartCount = document.getElementById("navCartCount");
+    if (!navCartCount) return;
+
+    const count = cart.length; 
+    navCartCount.innerText = count;
+    navCartCount.classList.toggle("opacity-0", count === 0);
+    navCartCount.classList.toggle("opacity-100", count > 0);
 }
 
 // Global functions for HTML onclick
@@ -78,7 +88,6 @@ window.toggleLike = function(event, btn, productId) {
         setTimeout(() => btn.classList.remove('scale-110'), 200);
     }
     localStorage.setItem('nike_favorites', JSON.stringify(favorites));
-    updateNavFavCount();
 }
 
 // HÀM XỬ LÝ ADD TO CART (Đã sửa lỗi nhận sự kiện)
@@ -97,7 +106,9 @@ window.handleAddToCart = function(event, btn, productId) {
     
     if(product) {
         cart.push(product);
-        localStorage.setItem('nike_cart', JSON.stringify(cart));        
+        localStorage.setItem('nike_cart', JSON.stringify(cart));
+        updateNavCartCount();
+        
         // Gọi Modal hiển thị
         showCartModal(product);
     } else {
