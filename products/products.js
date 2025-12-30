@@ -13,7 +13,7 @@ let displayedProducts = [];
 document.addEventListener("DOMContentLoaded", () => {
     fetchProducts();
     setupEventListeners();
-    updateNavCartCount(); // Fix lỗi hiển thị số lượng khi vừa vào trang
+    updateNavCartCount(); 
     updateNavFavCount();
 });
 
@@ -22,48 +22,48 @@ document.addEventListener("DOMContentLoaded", () => {
 // =======================
 async function fetchProducts() {
     try {
+        // 1. Lấy tham số từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category'); // men, women, sale...
+
+        // 2. Highlight Menu (Logic mới: Bắt dính mọi trường hợp)
+        setActiveCategoryNav(categoryParam || 'all');
+
+        // 3. Gọi API
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error("Fetch failed");
         allProducts = await res.json();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category'); // men, women, sale...
-
-        // --- LỌC THEO CATEGORY TỪ URL ---
+        // 4. Logic Lọc (Filter)
         if (categoryParam) {
             const searchCat = categoryParam.toLowerCase().trim();
             console.log("--> Đang lọc URL Category:", searchCat);
 
             currentCategoryList = allProducts.filter(p => {
-                // Chuẩn hóa dữ liệu từ API để tránh lỗi null/undefined
                 const pCat = p.category ? p.category.toLowerCase() : "";
-                const pTag = p.tag ? String(p.tag).toLowerCase() : ""; // Lấy trường "tag" từ JSON
+                const pTag = p.tag ? String(p.tag).toLowerCase() : ""; 
 
-                // === FIX LỖI SALE TẠI ĐÂY ===
+                // === FIX LỖI SALE ===
                 if (searchCat === 'sale') {
-                    // Chỉ lấy sản phẩm nào có "tag": "sale"
                     return pTag === 'sale';
                 }
                 
                 // === CÁC TRƯỜNG HỢP KHÁC ===
-                
-                // Xử lý 'men' để không dính 'women'
                 if (searchCat === 'men') {
                     return pCat.includes('men') && !pCat.includes('women');
                 }
 
-                // Các trường hợp còn lại (Women, Kids...) lọc theo tên category
                 return pCat.includes(searchCat);
             });
 
             updateTitle(categoryParam);
         } else {
+            // Trang All Products
             currentCategoryList = [...allProducts];
             updateTitle("All Products");
         }
 
         displayedProducts = [...currentCategoryList];
-        highlightActiveLink(categoryParam || 'all');
         renderProducts(displayedProducts);
 
     } catch (err) {
@@ -73,49 +73,58 @@ async function fetchProducts() {
 }
 
 // =======================
-// 4. UI LOGIC & HELPER
+// 4. UI HELPERS (Nav & Title)
 // =======================
+
 function updateTitle(text) {
     const title = document.querySelector('h1');
     if (title) title.textContent = text.toUpperCase();
 }
 
-function highlightActiveLink(activeCategory) {
-    const links = document.querySelectorAll('.nav-link'); // Bạn cần thêm class nav-link vào thẻ a ở HTML
+// 👉 HÀM MỚI: Tự động nhận diện link theo URL hoặc Text
+function setActiveCategoryNav(activeCategory) {
+    const normalized = activeCategory ? activeCategory.toLowerCase() : 'all';
     
-    // Fallback: Nếu HTML chưa có class nav-link, tìm theo text
-    const allLinks = document.querySelectorAll('nav a');
-    
-    allLinks.forEach(link => {
-        // Reset style
-        link.classList.remove('font-bold', 'underline', 'text-black', 'decoration-2', 'underline-offset-4');
-        link.classList.add('text-gray-800');
+    // Tìm tất cả thẻ a nằm trong nav (kể cả có class nav-link hay không)
+    const links = document.querySelectorAll("nav a");
 
-        // Logic highlight
-        const href = link.getAttribute('href') || "";
-        const text = link.textContent.trim().toLowerCase();
-        
-        // Kiểm tra URL hoặc Text để active đúng
-        if (href.includes(`category=${activeCategory}`) || text === activeCategory) {
-            link.classList.remove('text-gray-800');
-            link.classList.add('font-bold', 'underline', 'text-black', 'decoration-2', 'underline-offset-4');
+    links.forEach(link => {
+        // Lấy thông tin của link để so sánh
+        const linkCat = link.dataset.category ? link.dataset.category.toLowerCase() : '';
+        const linkHref = link.getAttribute('href') || '';
+        const linkText = link.textContent.trim().toLowerCase();
+
+        let isActive = false;
+
+        // 1. Ưu tiên: So sánh data-category (nếu có)
+        if (linkCat === normalized) {
+            isActive = true;
+        }
+        // 2. So sánh URL (ví dụ href chứa ?category=men)
+        else if (linkHref.includes(`category=${normalized}`)) {
+            isActive = true;
+        }
+        // 3. So sánh Chữ hiển thị (ví dụ chữ "Men" khớp với "men")
+        else if (linkText === normalized) {
+            isActive = true;
+        }
+        // 4. Trường hợp đặc biệt cho trang 'All'
+        else if (normalized === 'all') {
+            // Nếu link không có ?category=... và chữ là All hoặc New & Featured
+            if (!linkHref.includes('category=') && (linkText === 'all' || linkText.includes('new'))) {
+                isActive = true;
+            }
+        }
+
+        // Áp dụng Style (Gạch chân + In đậm)
+        if (isActive) {
+            link.classList.add("text-black", "font-bold", "underline", "decoration-2", "underline-offset-4");
+            link.classList.remove("text-gray-800", "font-medium");
+        } else {
+            link.classList.remove("text-black", "font-bold", "underline", "decoration-2", "underline-offset-4");
+            link.classList.add("text-gray-800", "font-medium");
         }
     });
-}
-
-// FIX LỖI NAN: Tính tổng dựa trên thuộc tính quantity
-function updateNavCartCount() {
-    const cart = JSON.parse(localStorage.getItem("nike_cart")) || [];
-    const navCartCount = document.getElementById("navCartCount");
-    
-    // Tính tổng số lượng item (quantity) thay vì độ dài mảng
-    const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
-
-    if (navCartCount) {
-        navCartCount.textContent = totalItems; // Sẽ hiện số, không hiện NaN nữa
-        navCartCount.classList.toggle("opacity-0", totalItems === 0);
-        navCartCount.classList.toggle("opacity-100", totalItems > 0);
-    }
 }
 
 // =======================
@@ -188,12 +197,11 @@ function renderProducts(products) {
 }
 
 // =======================
-// 6. CART & FAVORITE ACTIONS
+// 6. CART LOGIC (CORE & MODAL)
 // =======================
+
 function addToCart(product) {
     let cart = JSON.parse(localStorage.getItem("nike_cart")) || [];
-    
-    // Kiểm tra xem sản phẩm đã có chưa
     const existingItem = cart.find(item => String(item.id) === String(product.id));
 
     if (existingItem) {
@@ -204,12 +212,64 @@ function addToCart(product) {
 
     localStorage.setItem("nike_cart", JSON.stringify(cart));
     updateNavCartCount();
-    
-    // Mở Modal (Nếu bạn có code Modal ở HTML)
-    if(typeof openCartModal === 'function') openCartModal(product);
-    else alert("Added to Bag!");
+    openCartModal(product);
 }
 
+function updateNavCartCount() {
+    const cart = JSON.parse(localStorage.getItem("nike_cart")) || [];
+    const navCartCount = document.getElementById("navCartCount");
+    
+    const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+
+    if (navCartCount) {
+        navCartCount.textContent = totalItems;
+        navCartCount.classList.toggle("opacity-0", totalItems === 0);
+        navCartCount.classList.toggle("opacity-100", totalItems > 0);
+    }
+}
+
+// --- MODAL LOGIC ---
+function openCartModal(product) {
+    const modal = document.getElementById("cartModal");
+    const backdrop = document.getElementById("cartModalBackdrop");
+    const panel = document.getElementById("cartModalPanel");
+
+    if(!modal) return;
+
+    document.getElementById("modalImg").src = product.image;
+    document.getElementById("modalName").textContent = product.name;
+    document.getElementById("modalCategory").textContent = product.category;
+    
+    const price = typeof product.price === "number" ? product.price.toLocaleString("vi-VN") + "₫" : product.price;
+    document.getElementById("modalTag").textContent = price;
+
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+        backdrop.classList.add("opacity-100");
+        panel.classList.remove("opacity-0", "scale-95");
+        panel.classList.add("opacity-100", "scale-100");
+    }, 10);
+}
+
+window.closeCartModal = function() {
+    const modal = document.getElementById("cartModal");
+    const backdrop = document.getElementById("cartModalBackdrop");
+    const panel = document.getElementById("cartModalPanel");
+
+    if(!modal) return;
+
+    backdrop.classList.remove("opacity-100");
+    panel.classList.remove("opacity-100", "scale-100");
+    panel.classList.add("opacity-0", "scale-95");
+
+    setTimeout(() => {
+        modal.classList.add("hidden");
+    }, 300);
+}
+
+// =======================
+// 7. FAVORITE LOGIC
+// =======================
 function toggleFavorite(product, btn) {
     let favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
     const index = favorites.findIndex(f => String(f.id) === String(product.id));
@@ -239,7 +299,7 @@ function updateNavFavCount() {
 }
 
 // =======================
-// 7. EVENT LISTENERS
+// 8. EVENT LISTENERS
 // =======================
 function setupEventListeners() {
     document.querySelectorAll(".filter-btn").forEach(btn => {
