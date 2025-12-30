@@ -4,6 +4,7 @@
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 let allProducts = [];
+let categoryProducts = []; // Danh sách sản phẩm sau khi lọc theo URL (Men/Women/Kids)
 let filteredProducts = [];
 
 // =======================
@@ -33,8 +34,28 @@ async function fetchProducts() {
 
     allProducts = await res.json();
 
-    // DEFAULT: show all
-    filteredProducts = [...allProducts];
+    // 1. Lấy tham số category từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+
+    // 2. Lọc sản phẩm dựa trên category từ URL
+    if (category) {
+        const titleEl = document.querySelector('h1');
+        if (titleEl) titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+
+        categoryProducts = allProducts.filter(p => {
+            const pCat = p.category.toLowerCase();
+            if (category === 'men') return pCat.includes('men');
+            if (category === 'women') return pCat.includes('women');
+            if (category === 'kids') return pCat.includes('kid');
+            if (category === 'sale') return p.tag === 'sale' || pCat.includes('sale');
+            return true;
+        });
+    } else {
+        categoryProducts = [...allProducts];
+    }
+
+    filteredProducts = [...categoryProducts];
     renderProducts(filteredProducts);
 
   } catch (err) {
@@ -42,17 +63,6 @@ async function fetchProducts() {
     document.getElementById("productsCount").textContent =
       "Failed to load products";
   }
-}
-
-// =======================
-// FILTER LOGIC (CORE)
-// =======================
-
-// 👉 CHỈ FILTER ĐÚNG "Men's Shoes"
-function filterMenShoes(products) {
-  return products.filter(
-    p => p.category === "Men's Shoes"
-  );
 }
 
 // =======================
@@ -192,10 +202,13 @@ function setupEventListeners() {
 
       const filter = btn.dataset.filter;
 
-      if (filter === "men") {
-        filteredProducts = filterMenShoes(allProducts);
+      if (filter === "all") {
+        filteredProducts = [...categoryProducts];
       } else {
-        filteredProducts = [...allProducts];
+        // Lọc dựa trên danh sách đã phân loại theo URL (ví dụ: chỉ lấy Shoes của Men)
+        filteredProducts = categoryProducts.filter(p => 
+            p.category.toLowerCase().includes(filter)
+        );
       }
 
       renderProducts(filteredProducts);
