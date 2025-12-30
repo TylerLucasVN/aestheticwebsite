@@ -42,49 +42,54 @@ document.addEventListener("DOMContentLoaded", () => {
 // =======================
 async function fetchProducts() {
   try {
-    const res = await fetch(API_URL);
+    const params = new URLSearchParams(window.location.search);
+    const categoryParam = params.get("category");
+
+    // Mapping category từ URL sang giá trị chính xác mà API yêu cầu
+    const categoryMap = {
+      men: "Men's Shoes",
+      women: "Women's Shoes",
+      kids: "Kids' Shoes",
+      sale: "Sale"
+    };
+
+    let fetchUrl = API_URL;
+    const mappedCategory = categoryMap[categoryParam];
+
+    // TRUYỀN THẲNG VÀO FILTER CỦA API: Nếu có category hợp lệ, thêm vào query params của API call
+    if (mappedCategory && categoryParam !== 'sale') {
+      fetchUrl += `?category=${encodeURIComponent(mappedCategory)}`;
+    }
+
+    const res = await fetch(fetchUrl);
     if (!res.ok) throw new Error("Fetch failed");
 
     allProducts = await res.json();
 
-    // 1. Lấy tham số category từ URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-
-    // 2. Lọc sản phẩm dựa trên category từ URL
-    if (category) {
+    // 2. Xử lý hiển thị tiêu đề và lọc bổ sung (như trường hợp Sale)
+    if (categoryParam) {
         const titleEl = document.querySelector('h1');
-        if (titleEl) titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+        if (titleEl) titleEl.textContent = categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1);
 
-        // Mapping category từ URL sang category của sản phẩm
-        const categoryMap = {
-            men: 'men',
-            women: 'women',
-            kids: 'kid',
-            sale: 'sale'
-        };
-
-        categoryProducts = allProducts.filter(p => {
-            const pCat = p.category.toLowerCase();
-            const mappedCategory = categoryMap[category];
-
-            if (mappedCategory === 'sale') return p.tag === 'sale' || pCat.includes('sale');
-            if (mappedCategory) return pCat.includes(mappedCategory);
-            return true;
-        });
-
+        if (categoryParam === 'sale') {
+            categoryProducts = allProducts.filter(p => 
+                (p.tag && p.tag.toLowerCase() === 'sale') || 
+                (p.category && p.category.toLowerCase().includes('sale'))
+            );
+        } else {
+            categoryProducts = [...allProducts];
+        }
     } else {
         categoryProducts = [...allProducts];
     }
 
-    // 3. Lấy thêm tham số 'type' (shoes/apparel) từ URL để lọc sâu hơn nếu có
-    const type = urlParams.get('type');
-    if (type && type !== 'all') {
+    // 3. Lấy thêm tham số 'type' (shoes/apparel) từ URL để lọc sâu hơn (Client-side)
+    const typeParam = params.get('type');
+    if (typeParam && typeParam !== 'all') {
         filteredProducts = categoryProducts.filter(p => 
-            p.category.toLowerCase().includes(type)
+            p.category.toLowerCase().includes(typeParam)
         );
-        // Cập nhật trạng thái nút bấm active dựa trên URL
-        setActiveFilterButton(type);
+        setActiveFilterButton(typeParam);
     } else {
         filteredProducts = [...categoryProducts];
     }
