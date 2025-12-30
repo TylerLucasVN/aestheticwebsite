@@ -45,6 +45,9 @@ async function fetchProducts() {
     const params = new URLSearchParams(window.location.search);
     const categoryParam = params.get("category");
 
+    // Cập nhật trạng thái active cho menu chính (Men/Women/Kids/All)
+    setActiveCategoryNav(categoryParam || 'all');
+
     // Mapping từ URL parameter sang giá trị thực tế trong database của API
     const categoryMap = {
       men: "Men's Shoes",
@@ -94,6 +97,7 @@ async function fetchProducts() {
         setActiveFilterButton(typeParam);
     } else {
         filteredProducts = [...categoryProducts];
+        setActiveFilterButton('all'); // Đảm bảo nút 'All' được active nếu không có type
     }
 
     renderProducts(filteredProducts);
@@ -103,6 +107,21 @@ async function fetchProducts() {
     document.getElementById("productsCount").textContent =
       "Failed to load products";
   }
+}
+
+// Hàm hỗ trợ đặt trạng thái active cho menu danh mục chính
+function setActiveCategoryNav(categoryValue) {
+    document.querySelectorAll(".nav-link").forEach(link => {
+        if (link.dataset.category === categoryValue) {
+            // Thêm gạch chân, chữ đen và đậm
+            link.classList.add("text-black", "font-bold", "border-b-2", "border-black");
+            link.classList.remove("text-gray-800", "font-medium");
+        } else {
+            // Trả về trạng thái xám bình thường
+            link.classList.remove("text-black", "font-bold", "border-b-2", "border-black");
+            link.classList.add("text-gray-800", "font-medium");
+        }
+    });
 }
 
 // Hàm hỗ trợ đặt trạng thái active cho nút lọc
