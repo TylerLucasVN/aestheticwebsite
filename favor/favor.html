@@ -169,9 +169,14 @@
                         <p id="modalProductPrice" class="font-bold mt-1"></p>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button id="viewCartModalBtn" class="flex-1 bg-gray-100 py-3 rounded-lg font-medium">View Cart</button>
-                    <button id="checkoutModalBtn" class="flex-1 bg-black text-white py-3 rounded-lg font-medium">Checkout</button>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button onclick="window.location.href='../cart/cart.html'" class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-base font-bold text-gray-900 hover:border-gray-400 transition-colors focus:outline-none">
+                        View Cart
+                    </button>
+                    
+                    <button onclick="window.location.href='../cart/cart.html'" class="flex w-full items-center justify-center rounded-full bg-black px-4 py-3 text-base font-bold text-white hover:bg-gray-800 transition-colors focus:outline-none">
+                        Checkout
+                    </button>
                 </div>
                 <button id="continueShoppingBtn" class="w-full mt-4 text-sm text-gray-500 underline">Continue Shopping</button>
             </div>
