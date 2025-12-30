@@ -1,7 +1,8 @@
 // =======================
 // API & GLOBAL VARIABLES
 // =======================
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+// Thêm ?limit=20 để đảm bảo lấy hết 15 sản phẩm (mặc định MockAPI chỉ lấy 10)
+const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products?";
 
 let allProducts = [];
 let categoryProducts = []; // Danh sách sản phẩm sau khi lọc theo URL (Men/Women/Kids)
@@ -35,6 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchProducts();
   setupEventListeners();
   updateNavFavCount();
+
+  // Lắng nghe sự kiện quay lại/tiến tới của trình duyệt để cập nhật gạch chân
+  window.addEventListener('popstate', () => {
+    const params = new URLSearchParams(window.location.search);
+    setActiveCategoryNav(params.get("category") || 'all');
+  });
 });
 
 // =======================
@@ -46,25 +53,18 @@ async function fetchProducts() {
     const categoryParam = params.get("category");
 
     // Cập nhật trạng thái active cho menu chính (Men/Women/Kids/All)
-    setActiveCategoryNav(categoryParam || 'all');
+    setActiveCategoryNav(categoryParam ? categoryParam.toLowerCase() : 'all');
 
     // Mapping từ URL parameter sang giá trị thực tế trong database của API
     const categoryMap = {
-      men: "Men's Shoes",
-      women: "Women's Shoes",
-      kids: "Kids' Shoes",
-      sale: "Sale"
+      men: "men",
+      women: "women",
+      kids: "kids",
+      sale: "sale"
     };
 
-    let fetchUrl = API_URL;
-    const mappedCategory = categoryMap[categoryParam];
-
-    // 1. TRUYỀN THẲNG VÀO FILTER CỦA API (Ngoại trừ Sale vì Sale thường là Tag)
-    if (mappedCategory && categoryParam !== 'sale') {
-      fetchUrl += `?category=${encodeURIComponent(mappedCategory)}`;
-    }
-
-    const res = await fetch(fetchUrl);
+    // Fetch toàn bộ sản phẩm để tránh lỗi lọc của API với ký tự đặc biệt (dấu nháy ')
+    const res = await fetch(API_URL);
     if (!res.ok) throw new Error("Fetch failed");
     allProducts = await res.json();
 
@@ -73,14 +73,18 @@ async function fetchProducts() {
         const titleEl = document.querySelector('h1');
         if (titleEl) titleEl.textContent = categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1);
 
-        if (categoryParam === 'sale') {
+        if (categoryParam.toLowerCase() === 'sale') {
             categoryProducts = allProducts.filter(p => 
                 (p.tag && p.tag.toLowerCase() === 'sale') || 
                 (p.category && p.category.toLowerCase().includes('sale'))
             );
-        } else if (mappedCategory) {
-            // Lọc lại một lần nữa ở client để đảm bảo tính chính xác tuyệt đối
-            categoryProducts = allProducts.filter(p => p.category === mappedCategory);
+        } else if (categoryMap[categoryParam.toLowerCase()]) {
+            // Lọc linh hoạt: Chỉ cần trong category có chứa từ khóa (ví dụ: "men" sẽ khớp với "Men's Shoes")
+            const target = categoryParam.toLowerCase();
+            categoryProducts = allProducts.filter(p => {
+                const productCat = (p.category || "").toLowerCase();
+                return productCat.includes(target);
+            });
         } else {
             categoryProducts = [...allProducts];
         }
@@ -91,9 +95,10 @@ async function fetchProducts() {
     // 3. Xử lý tham số 'type' (Shoes/Apparel) từ URL
     const typeParam = params.get('type');
     if (typeParam && typeParam !== 'all') {
-        filteredProducts = categoryProducts.filter(p => 
-            p.category.toLowerCase().includes(typeParam)
-        );
+        filteredProducts = categoryProducts.filter(p => {
+            const cat = (p.category || "").toLowerCase();
+            return cat.includes(typeParam.toLowerCase());
+        });
         setActiveFilterButton(typeParam);
     } else {
         filteredProducts = [...categoryProducts];
@@ -111,8 +116,9 @@ async function fetchProducts() {
 
 // Hàm hỗ trợ đặt trạng thái active cho menu danh mục chính
 function setActiveCategoryNav(categoryValue) {
+    const normalizedValue = categoryValue ? categoryValue.toLowerCase() : 'all';
     document.querySelectorAll(".nav-link").forEach(link => {
-        if (link.dataset.category === categoryValue) {
+        if (link.dataset.category === normalizedValue) {
             // Thêm gạch chân, chữ đen và đậm
             link.classList.add("text-black", "font-bold", "border-b-2", "border-black");
             link.classList.remove("text-gray-800", "font-medium");
