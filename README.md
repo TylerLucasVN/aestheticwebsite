@@ -1,76 +1,82 @@
-# 🌸 Pastel Daily Diary
+# WEB BÁN GIÀY
 
 ## 1. Giới thiệu đề tài
-**Pastel Daily Diary** là một web app nhật ký cá nhân online được xây dựng nhằm hỗ trợ người dùng ghi lại cảm xúc, suy nghĩ, thành tựu và các hoạt động chăm sóc bản thân hằng ngày.  
-Ứng dụng hướng tới việc tạo ra một không gian riêng tư, thân thiện và nhẹ nhàng, giúp nâng cao ý thức theo dõi sức khỏe tinh thần thông qua việc viết nhật ký thường xuyên.
+Web Bán Giày là một ứng dụng web bán hàng online được xây dựng dựa trên việc tham khảo và clone UI/UX cũng như một phần logic từ nhiều website thương mại điện tử nổi tiếng (như Nike, Adidas, v.v.).
+Ứng dụng hướng tới việc tạo ra một nền tảng trưng bày sản phẩm giày dép hiện đại, trực quan, giúp người dùng dễ dàng khám phá sản phẩm, đánh dấu yêu thích và mô phỏng trải nghiệm mua sắm online.
 
 🔗 **Demo trực tuyến:**  
-https://ivypear.github.io/Diary/
+https://tylerlucasvn.github.io/aestheticwebsite/
 
 ---
 
 ## 2. Mục tiêu của đề tài
-- Xây dựng một ứng dụng web cho phép người dùng ghi nhật ký cá nhân hằng ngày  
-- Hỗ trợ theo dõi cảm xúc, thói quen và quá trình phát triển bản thân  
-- Áp dụng kiến thức về HTML, CSS, JavaScript và các công cụ hiện đại trong phát triển web  
-- Tạo giao diện thân thiện, dễ sử dụng, phù hợp với nhiều thiết bị  
+Xây dựng một ứng dụng web bán giày cho phép người dùng:
+- Xem danh sách sản phẩm
+- Lọc và sắp xếp sản phẩm theo danh mục
+- Đánh dấu sản phẩm yêu thích
+Áp dụng kiến thức về HTML, CSS, JavaScript trong xây dựng giao diện và xử lý logic phía client
+Tối ưu trải nghiệm người dùng thông qua UI hiện đại và hiệu ứng tương tác
+Tạo giao diện thân thiện, dễ sử dụng, phù hợp với nhiều thiết bị
 
 ---
 
 ## 3. Phạm vi và đối tượng sử dụng
 ### Đối tượng sử dụng
-- Sinh viên, học sinh và người dùng có nhu cầu ghi nhật ký cá nhân  
+- Người dùng có nhu cầu tham khảo, mua sắm giày online
+- Sinh viên học tập và nghiên cứu về thiết kế web và front-end 
 
 ### Phạm vi
-- Ứng dụng hoạt động trên trình duyệt web  
-- Lưu trữ dữ liệu phía client (offline) thông qua `localStorage`  
-- Không yêu cầu đăng nhập hay kết nối cơ sở dữ liệu phía server  
+Ứng dụng hoạt động trên trình duyệt web
+Dữ liệu sản phẩm được lấy từ API mock hoặc file JSON
+Lưu trữ dữ liệu phía client (offline) thông qua localStorage (ví dụ: danh sách yêu thích)
+Không triển khai thanh toán và backend server
 
 ---
 
 ## 4. Các chức năng chính
 
-### 4.1 Diary
-Cho phép ghi nhật ký hằng ngày bao gồm:
-- Tâm trạng  
-- Thành tựu trong ngày  
-- Điều biết ơn  
-- Checklist self-care  
-- Highlight nổi bật  
-- Photo journal (tối đa 3 ảnh)  
+### 4.1 Hiển thị sản phẩm
+Hiển thị danh sách giày theo dạng lưới (grid layout)
+Thông tin sản phẩm bao gồm:
+- Hình ảnh
+- Tên sản phẩm
+- Danh mục
+- Giá bán 
 
-### 4.2 Timeline
-- Hiển thị toàn bộ nhật ký và khoảnh khắc theo dòng thời gian  
-- Hỗ trợ tìm kiếm và lọc theo:
-  - Tâm trạng  
-  - Loại nội dung (nhật ký hoặc khoảnh khắc)  
+### 4.2 Phân loại và lọc sản phẩm
+Phân loại sản phẩm theo:
+- Men
+- Women
+- Kids
+- Sale 
+Hỗ trợ lọc sản phẩm thông qua tham số (param) hoặc tag
 
-### 4.3 Report
-Thống kê và trực quan hóa dữ liệu người dùng:
-- Biểu đồ tâm trạng theo tuần và theo tháng  
-- Số ngày viết nhật ký  
-- Tỷ lệ cảm xúc tích cực  
-- Checklist self-care  
-- Thời gian viết nhật ký trung bình  
+### 4.3 Sắp xếp (Sort)
+Sắp xếp sản phẩm theo:
+- Giá tăng dần / giảm dần
+- Tên sản phẩm (A–Z / Z–A)
 
-### 4.4 Reflection
-Tổng kết cuối tháng thông qua các câu hỏi:
-- Học được điều gì trong tháng  
-- Điều gì khiến bản thân tự hào  
-- Điều gì muốn cải thiện trong thời gian tới  
+### 4.4 Yêu thích (Favorites)
+Cho phép người dùng đánh dấu sản phẩm yêu thích
+Lưu trạng thái yêu thích bằng localStorage
+Hiển thị số lượng sản phẩm yêu thích trên thanh điều hướng
 
 ---
 
-## 5. Giao diện và trải nghiệm người dùng
-- Hỗ trợ **5 chủ đề màu pastel**:
-  - Mint (mặc định)  
-  - Pink  
-  - Lavender  
-  - Ocean  
-  - Night  
-- Theo dõi streak viết nhật ký liên tiếp  
-- Giao diện responsive, tương thích với desktop và thiết bị di động  
-- Cho phép xuất toàn bộ dữ liệu người dùng dưới dạng file JSON để sao lưu  
+### 4.5. Lazy Load / Infinite Scroll
+Tải sản phẩm theo từng batch khi người dùng cuộn trang
+Giúp tối ưu hiệu năng và trải nghiệm người dùng
+
+---
+
+## 6. Giao diện và trải nghiệm người dùng
+Thiết kế UI theo phong cách aesthetic / minimal / modern
+Hiệu ứng hover, transition và animation mượt mà
+Giao diện responsive, tương thích với:
+- Desktop
+- Tablet
+- Mobile
+Bố cục rõ ràng, dễ thao tác và dễ mở rộng
 
 ---
 
@@ -79,8 +85,7 @@ Tổng kết cuối tháng thông qua các câu hỏi:
 - CSS3  
 - JavaScript (ES6 Modules)  
 - Tailwind CSS  
-- Vite  
-- Lucide Icons  
+- API Mock / JSON
 - localStorage  
 - GitHub Pages  
 - GitHub Actions  
@@ -90,13 +95,51 @@ Tổng kết cuối tháng thông qua các câu hỏi:
 ## 7. Hướng dẫn cài đặt và chạy dự án
 
 ### 7.1 Yêu cầu hệ thống
-- Node.js (phiên bản 16 trở lên)  
-- Trình duyệt web hiện đại (Chrome, Edge, Firefox)  
+Trình duyệt web hiện đại (Chrome, Edge, Firefox)
+
+Không yêu cầu cài đặt backend 
 
 ### 7.2 Các bước chạy dự án
+Clone repository:
 ```bash
-git clone https://github.com/IvyPear/Diary.git
-cd Diary
-npm install
-npm run dev
+git clone https://github.com/tylerlucasvn/aestheticwebsite.git
+```
+Mở file index.html bằng trình duyệt
+Hoặc deploy thông qua GitHub Page
 
+---
+
+## 8. Đánh giá và hướng phát triển
+
+### 8.1 Kết quả đạt được
+Hoàn thiện giao diện web bán giày theo đúng mục tiêu đề tài
+Các chức năng lọc, sắp xếp và yêu thích hoạt động ổn định
+UI hiện đại, phù hợp với xu hướng thiết kế web hiện nay
+Sử dụng được những yêu cầu cơ bản như tailwind, api mockup,...
+
+### 8.2 Hướng phát triển
+Bổ sung giỏ hàng và thanh toán
+Kết nối backend và cơ sở dữ liệu thực
+Thêm đăng nhập người dùng
+Tối ưu SEO và hiệu năng tải trang
+
+---
+
+## 9. Kết luận
+Đề tài Web Bán Giày giúp sinh viên vận dụng kiến thức đã học vào thực tế, đặc biệt trong lĩnh vực phát triển giao diện web và xử lý logic phía client.
+Sản phẩm không chỉ mang tính học thuật mà còn có khả năng mở rộng thành một hệ thống thương mại điện tử hoàn chỉnh trong tương lai.
+
+---
+
+## 10. Nhóm thực hiện
+Tên đề tài: Web bán giày 
+Môn học: Thiết kế Web Lớp: 23SE – VNUK
+
+Thành viên nhóm:
+- Trần Tiến Minh
+- Hồ Thăng Bảo Huy
+- Nguyễn Bá Toàn
+  
+Nhóm xin chân thành cảm ơn giảng viên đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án cũng như cũng cố dự án.
+
+Nhóm 6 – 23SE – VNUK
