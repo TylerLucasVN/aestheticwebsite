@@ -84,17 +84,17 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-[100] bg-white border-b border-gray-200">
+    <nav class="sticky top-0 z-[100] bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-start h-16 space-x-80">
+            <div class="flex md:grid md:grid-cols-3 items-center justify-between h-16">
                 <!-- Logo -->
-                <a href="index.html" class="flex-shrink-0">
-                    <img src="./img/logo.png" width="120" height="60"
-                         alt="Nike Logo" class="h-auto w-24 md:w-32">
+                <a href="index.html" class="flex-shrink-0 flex justify-start">
+                    <img src="./img/logo.png" 
+                         alt="SGD Logo" class="h-10 md:h-12 w-auto object-contain transition-transform hover:scale-105">
                 </a>
 
                 <!-- Desktop Navigation Links -->
-                <div class="hidden md:flex md:items-center md:space-x-6">
+                <div class="hidden md:flex md:items-center md:justify-center gap-x-8">
                     <a href="products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">All</a>
                     <a href="products/products.html?category=men" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
                     <a href="products/products.html?category=women" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
@@ -103,7 +103,7 @@
                 </div>
 
                 <!-- Icons -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center justify-end gap-x-6">
                     <!-- Search -->
                     <button class="search-trigger-btn text-gray-600 hover:text-black" aria-label="Tìm kiếm">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -112,7 +112,7 @@
                     </button>
                     
                     <!-- Favorites -->
-                    <a href="favor/favor.html" class="text-gray-600 hover:text-black transition-colors relative group">
+                    <a href="favor/favor.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
@@ -120,7 +120,7 @@
                     </a>
                     
                     <!-- Cart -->
-                    <a href="cart/cart.html" class="text-gray-600 hover:text-black transition-colors relative group">
+                    <a href="cart/cart.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>

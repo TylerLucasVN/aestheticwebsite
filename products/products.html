@@ -35,14 +35,14 @@
     <nav
         class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 md:h-20">
+            <div class="flex md:grid md:grid-cols-3 items-center justify-between h-16">
                 <!-- Logo -->
-                <a href="../index.html" class="flex-shrink-0">
-                    <img src="../img/logo.png" alt="Nike Logo" class="h-20 md:h-30">
+                <a href="../index.html" class="flex-shrink-0 flex justify-start">
+                    <img src="../img/logo.png" alt="SGD Logo" class="h-10 md:h-12 w-auto object-contain transition-transform hover:scale-105">
                 </a>
 
                 <!-- Desktop Navigation Links -->
-               <div class="hidden md:flex md:items-center gap-x-8" id="categoryTabs">
+               <div class="hidden md:flex md:items-center md:justify-center gap-x-8" id="categoryTabs">
                     <a href="products.html" data-category="all" class="tab text-sm font-medium transition-colors">
                         All
                     </a>
@@ -69,7 +69,7 @@
                 </div>
 
                 <!-- Icons -->
-                <div class="flex items-center gap-x-6">
+                <div class="flex items-center justify-end gap-x-6">
                     <a href="../favor/favor.html"
                         class="text-gray-600 hover:text-black transition-colors relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +95,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[70vh]">
         <!-- Header & Filters -->
         <div
-            class="flex flex-col md:flex-row justify-between items-end mb-12 sticky top-16 md:top-20 bg-white/90 backdrop-blur-sm z-40 py-6 border-b border-gray-100">
+            class="flex flex-col md:flex-row justify-between items-end mb-12 sticky top-16 bg-white/90 backdrop-blur-sm z-40 py-6 border-b border-gray-100">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">New & Featured</h1>
                 <p class="text-gray-400 text-sm font-medium uppercase tracking-widest" id="productsCount">Loading...</p>
