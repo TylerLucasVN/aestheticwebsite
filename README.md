@@ -69,7 +69,7 @@ Giúp tối ưu hiệu năng và trải nghiệm người dùng
 
 ---
 
-## 6. Giao diện và trải nghiệm người dùng
+## 5. Giao diện và trải nghiệm người dùng
 Thiết kế UI theo phong cách aesthetic / minimal / modern
 Hiệu ứng hover, transition và animation mượt mà
 Giao diện responsive, tương thích với:
@@ -143,3 +143,4 @@ Thành viên nhóm:
 Nhóm xin chân thành cảm ơn giảng viên đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án cũng như cũng cố dự án.
 
 Nhóm 6 – 23SE – VNUK
+
