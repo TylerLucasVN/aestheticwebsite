@@ -139,11 +139,13 @@ Thành viên nhóm:
 - Trần Tiến Minh
 - Hồ Thăng Bảo Huy
 - Nguyễn Bá Toàn
+---
 slide thuyết trình: [NHÓM 6.pdf](https://github.com/user-attachments/files/24394064/NHOM.6.pdf)
-
+---
   
 Nhóm xin chân thành cảm ơn giảng viên đã hướng dẫn và hỗ trợ trong suốt quá trình thực hiện dự án cũng như cũng cố dự án.
 
 Nhóm 6 – 23SE – VNUK
+
 
 
