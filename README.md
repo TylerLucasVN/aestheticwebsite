@@ -92,14 +92,62 @@ Bố cục rõ ràng, dễ thao tác và dễ mở rộng
 
 ---
 
-## 7. Hướng dẫn cài đặt và chạy dự án
+## 7. Cấu trúc thư mục dự án
+```
+aestheticwebsite/
+│
+├── .github/
+│   └── workflows/
+│       └── static.yml                # Tự động hóa CI/CD deploy lên GitHub Pages
+│
+├── assets/                           # Tài nguyên tĩnh dùng chung
+│   ├── css/
+│   │   └── style.css                 # File định kiểu CSS tùy biến
+│   ├── js/
+│   │   ├── home.js                   # Logic render giao diện trang chủ
+│   │   ├── mobile.js                 # Xử lý mobile drawer & touch swipe
+│   │   ├── monitoring.js             # Theo dõi sự kiện & hiệu năng (Analytics)
+│   │   └── searchOverlay.js          # Modal tìm kiếm nhanh đa trang
+│   ├── images/                       # Hình ảnh & icons
+│   │   ├── logo.png
+│   │   ├── 78-best-nike-sneakers.webp
+│   │   ├── hollywood-keepers-hero.jpg
+│   │   ├── image.avif
+│   │   └── image-1.avif
+│   └── videos/                       # Video tư liệu
+│       └── test-video.mp4
+│
+├── pages/                            # Các trang chức năng của website
+│   ├── cart/                         # Trang giỏ hàng
+│   │   ├── cart.html
+│   │   └── cart.js
+│   ├── favor/                        # Trang danh sách yêu thích
+│   │   ├── favor.html
+│   │   └── favor.js
+│   ├── products/                     # Trang danh mục & lọc sản phẩm
+│   │   ├── products.html
+│   │   └── products.js
+│   └── search/                       # Trang kết quả tìm kiếm chi tiết
+│       ├── search.html
+│       └── search.js
+│
+├── docs/                             # Báo cáo & Tài liệu kỹ thuật
+│   └── lighthouse-report-20251230.html
+│
+├── index.html                        # Trang chủ (Root entrypoint)
+└── README.md                         # Tài liệu hướng dẫn
+```
 
-### 7.1 Yêu cầu hệ thống
+---
+
+## 8. Hướng dẫn cài đặt và chạy dự án
+
+### 8.1 Yêu cầu hệ thống
 Trình duyệt web hiện đại (Chrome, Edge, Firefox)
 
 Không yêu cầu cài đặt backend 
 
-### 7.2 Các bước chạy dự án
+### 8.2 Các bước chạy dự án
 Clone repository:
 ```bash
 git clone https://github.com/tylerlucasvn/aestheticwebsite.git
@@ -109,15 +157,15 @@ Hoặc deploy thông qua GitHub Page
 
 ---
 
-## 8. Đánh giá và hướng phát triển
+## 9. Đánh giá và hướng phát triển
 
-### 8.1 Kết quả đạt được
+### 9.1 Kết quả đạt được
 Hoàn thiện giao diện web bán giày theo đúng mục tiêu đề tài
 Các chức năng lọc, sắp xếp và yêu thích hoạt động ổn định
 UI hiện đại, phù hợp với xu hướng thiết kế web hiện nay
 Sử dụng được những yêu cầu cơ bản như tailwind, api mockup,...
 
-### 8.2 Hướng phát triển
+### 9.2 Hướng phát triển
 Bổ sung giỏ hàng và thanh toán
 Kết nối backend và cơ sở dữ liệu thực
 Thêm đăng nhập người dùng
@@ -125,13 +173,13 @@ Tối ưu SEO và hiệu năng tải trang
 
 ---
 
-## 9. Kết luận
+## 10. Kết luận
 Đề tài Web Bán Giày giúp sinh viên vận dụng kiến thức đã học vào thực tế, đặc biệt trong lĩnh vực phát triển giao diện web và xử lý logic phía client.
 Sản phẩm không chỉ mang tính học thuật mà còn có khả năng mở rộng thành một hệ thống thương mại điện tử hoàn chỉnh trong tương lai.
 
 ---
 
-## 10. Nhóm thực hiện
+## 11. Nhóm thực hiện
 Tên đề tài: Web bán giày 
 Môn học: Thiết kế Web Lớp: 23SE – VNUK
 

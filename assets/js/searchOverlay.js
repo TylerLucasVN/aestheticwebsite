@@ -1,4 +1,4 @@
-import { trackEvent } from '../monitoring.js';
+import { trackEvent } from './monitoring.js';
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
 // Biến lưu trữ dữ liệu cache cho overlay để tìm kiếm nhanh
@@ -21,18 +21,18 @@ function fetchOverlayData() {
 // --- HÀM HỖ TRỢ ĐƯỜNG DẪN ---
 function getSearchPagePath() {
     const path = window.location.pathname;
-    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/cart/') || path.includes('/products/')) {
+    if (path.includes('/pages/')) {
         return '../search/search.html';
     }
-    return './search/search.html';
+    return './pages/search/search.html';
 }
 
 function getLogoPath() {
-     const path = window.location.pathname;
-    if (path.includes('/search/') || path.includes('/favor/') || path.includes('/cart/') || path.includes('/products/')) {
-        return '../img/logo.png';
+    const path = window.location.pathname;
+    if (path.includes('/pages/')) {
+        return '../../assets/images/logo.png';
     }
-    return './img/logo.png';
+    return './assets/images/logo.png';
 }
 
 // --- HTML STRUCTURE ---

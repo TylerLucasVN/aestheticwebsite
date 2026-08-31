@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Just Do It. Nike VN (Clone)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     
     <!-- Tăng hiệu suất kết nối sớm đến các domain bên thứ 3 -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
@@ -89,17 +89,17 @@
             <div class="flex md:grid md:grid-cols-3 items-center justify-between h-16">
                 <!-- Logo -->
                 <a href="index.html" class="flex-shrink-0 flex justify-start">
-                    <img src="./img/logo.png" 
+                    <img src="./assets/images/logo.png" 
                          alt="SGD Logo" class="h-10 md:h-12 w-auto object-contain transition-transform hover:scale-105">
                 </a>
 
                 <!-- Desktop Navigation Links -->
                 <div class="hidden md:flex md:items-center md:justify-center gap-x-8">
-                    <a href="products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">All</a>
-                    <a href="products/products.html?category=men" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
-                    <a href="products/products.html?category=women" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
-                    <a href="products/products.html?category=kids" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
-                    <a href="products/products.html?category=sale" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
+                    <a href="pages/products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">All</a>
+                    <a href="pages/products/products.html?category=men" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
+                    <a href="pages/products/products.html?category=women" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
+                    <a href="pages/products/products.html?category=kids" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
+                    <a href="pages/products/products.html?category=sale" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
                 </div>
 
                 <!-- Icons -->
@@ -112,7 +112,7 @@
                     </button>
                     
                     <!-- Favorites -->
-                    <a href="favor/favor.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
+                    <a href="pages/favor/favor.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
@@ -120,7 +120,7 @@
                     </a>
                     
                     <!-- Cart -->
-                    <a href="cart/cart.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
+                    <a href="pages/cart/cart.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
@@ -170,7 +170,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Card 1 -->
                 <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('img/image.avif')" loading="lazy" decoding="async">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/image.avif')" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
                     <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -182,7 +182,7 @@
                 
                 <!-- Card 2 -->
                 <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('img/hollywood-keepers-hero.jpg')" loading="lazy" decoding="async">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/hollywood-keepers-hero.jpg')" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
                     <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -194,7 +194,7 @@
                 
                 <!-- Card 3 -->
                 <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('img/image\ \(1\).avif')" loading="lazy" decoding="async">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/image-1.avif')" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
                     <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -206,7 +206,7 @@
                 
                 <!-- Card 4 -->
                 <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('img/78-best-nike-sneakers-16286817-main.webp')" loading="lazy" decoding="async">
+                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/78-best-nike-sneakers.webp')" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
                     <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -371,8 +371,8 @@
                     <div class="flex flex-col justify-center"><h4 id="modalName" class="text-base font-medium text-gray-900"></h4><p id="modalCategory" class="text-sm text-gray-500 mt-1"></p><p id="modalTag" class="text-sm font-bold text-black mt-2 uppercase"></p></div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 mb-4">
-                    <button onclick="window.location.href='../cart/cart.html'" class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-base font-bold text-gray-900 hover:border-gray-400 transition-colors focus:outline-none">View Cart</button>
-                    <button onclick="window.location.href='../cart/cart.html'" class="flex w-full items-center justify-center rounded-full bg-black px-4 py-3 text-base font-bold text-white hover:bg-gray-800 transition-colors focus:outline-none">Checkout</button>
+                    <button onclick="window.location.href='pages/cart/cart.html'" class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-base font-bold text-gray-900 hover:border-gray-400 transition-colors focus:outline-none">View Cart</button>
+                    <button onclick="window.location.href='pages/cart/cart.html'" class="flex w-full items-center justify-center rounded-full bg-black px-4 py-3 text-base font-bold text-white hover:bg-gray-800 transition-colors focus:outline-none">Checkout</button>
                 </div>
                 <div class="text-center"><button onclick="closeCartModal()" class="text-sm font-medium text-gray-500 underline hover:text-gray-900 transition-colors">Continue Shopping</button></div>
             </div>
@@ -399,23 +399,23 @@
                     Home
                 </a>
                 
-                <a href="products/products.html" class="flex items-center justify-between group hover:text-gray-600">
+                <a href="pages/products/products.html" class="flex items-center justify-between group hover:text-gray-600">
                     All Products 
                     <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
-                <a href="products/products.html?category=men" class="flex items-center justify-between group hover:text-gray-600">
+                <a href="pages/products/products.html?category=men" class="flex items-center justify-between group hover:text-gray-600">
                     Men
                     <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
-                <a href="products/products.html?category=women" class="flex items-center justify-between group hover:text-gray-600">
+                <a href="pages/products/products.html?category=women" class="flex items-center justify-between group hover:text-gray-600">
                     Women
                     <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
-                <a href="products/products.html?category=kids" class="flex items-center justify-between group hover:text-gray-600">
+                <a href="pages/products/products.html?category=kids" class="flex items-center justify-between group hover:text-gray-600">
                     Kids
                     <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
-                <a href="products/products.html?category=sale" class="flex items-center justify-between text-red-600 group hover:text-red-700">
+                <a href="pages/products/products.html?category=sale" class="flex items-center justify-between text-red-600 group hover:text-red-700">
                     Sale
                     <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
@@ -423,11 +423,11 @@
 
             <div class="mt-auto pt-10 border-t border-gray-100">
                 <div class="flex flex-col space-y-4 text-gray-600 font-medium">
-                    <a href="cart/cart.html" class="hover:text-black flex items-center gap-3">
+                    <a href="pages/cart/cart.html" class="hover:text-black flex items-center gap-3">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         Bag
                     </a>
-                    <a href="favor/favor.html" class="hover:text-black flex items-center gap-3">
+                    <a href="pages/favor/favor.html" class="hover:text-black flex items-center gap-3">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         Favorites
                     </a>
@@ -485,10 +485,10 @@
             });
         });
     </script>
-    <script src="./generateUI.js" type="module"></script>
+    <script src="./assets/js/home.js" type="module"></script>
     <!-- Search Overlay -->
-    <script src="./search/searchOverlay.js" type="module"></script>
-    <script src="./monitoring.js" type="module"></script>
-    <script src="./mobile.js"></script>
+    <script src="./assets/js/searchOverlay.js" type="module"></script>
+    <script src="./assets/js/monitoring.js" type="module"></script>
+    <script src="./assets/js/mobile.js"></script>
 </body>
 </html>

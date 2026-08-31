@@ -71,9 +71,9 @@ function showCartModal(product) {
     const viewCartBtn = panel.querySelectorAll('button')[1]; // Nút View Cart
     const checkoutBtn = panel.querySelectorAll('button')[2]; // Nút Checkout
 
-    // Vì file này chạy ở index.html, đường dẫn đến cart phải là 'cart/cart.html' (không có ../)
-    if(viewCartBtn) viewCartBtn.setAttribute('onclick', "window.location.href='cart/cart.html'");
-    if(checkoutBtn) checkoutBtn.setAttribute('onclick', "window.location.href='cart/cart.html'");
+    // Vì file này chạy ở index.html, đường dẫn đến cart phải là 'pages/cart/cart.html'
+    if(viewCartBtn) viewCartBtn.setAttribute('onclick', "window.location.href='pages/cart/cart.html'");
+    if(checkoutBtn) checkoutBtn.setAttribute('onclick', "window.location.href='pages/cart/cart.html'");
 
     modal.classList.remove('hidden');
     setTimeout(() => {
