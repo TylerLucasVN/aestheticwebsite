@@ -7,13 +7,18 @@ let allProducts = [];
 let currentCategoryList = [];
 let displayedProducts = [];
 
+// Biến lưu trạng thái cho Quick Modal
+let activeQuickProduct = null;
+let selectedQuickSize = null;
+let currentQuickQty = 1;
+
 // =======================
 // 2. INIT APP
 // =======================
 document.addEventListener("DOMContentLoaded", () => {
     fetchProducts();
     setupEventListeners();
-    updateNavCartCount(); 
+    updateNavCartCount();
     updateNavFavCount();
 });
 
@@ -22,43 +27,27 @@ document.addEventListener("DOMContentLoaded", () => {
 // =======================
 async function fetchProducts() {
     try {
-        // 1. Lấy tham số từ URL
         const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category'); // men, women, sale...
+        const categoryParam = urlParams.get('category');
 
-        // 2. Highlight Menu (Logic mới: Bắt dính mọi trường hợp)
         setActiveCategoryNav(categoryParam || 'all');
 
-        // 3. Gọi API
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error("Fetch failed");
         allProducts = await res.json();
 
-        // 4. Logic Lọc (Filter)
         if (categoryParam) {
             const searchCat = categoryParam.toLowerCase().trim();
-            console.log("--> Đang lọc URL Category:", searchCat);
-
             currentCategoryList = allProducts.filter(p => {
                 const pCat = p.category ? p.category.toLowerCase() : "";
-                const pTag = p.tag ? String(p.tag).toLowerCase() : ""; 
+                const pTag = p.tag ? String(p.tag).toLowerCase() : "";
 
-                // === FIX LỖI SALE ===
-                if (searchCat === 'sale') {
-                    return pTag === 'sale';
-                }
-                
-                // === CÁC TRƯỜNG HỢP KHÁC ===
-                if (searchCat === 'men') {
-                    return pCat.includes('men') && !pCat.includes('women');
-                }
-
+                if (searchCat === 'sale') return pTag === 'sale';
+                if (searchCat === 'men') return pCat.includes('men') && !pCat.includes('women');
                 return pCat.includes(searchCat);
             });
-
             updateTitle(categoryParam);
         } else {
-            // Trang All Products
             currentCategoryList = [...allProducts];
             updateTitle("All Products");
         }
@@ -75,48 +64,27 @@ async function fetchProducts() {
 // =======================
 // 4. UI HELPERS (Nav & Title)
 // =======================
-
 function updateTitle(text) {
     const title = document.querySelector('h1');
     if (title) title.textContent = text.toUpperCase();
 }
 
-// 👉 HÀM MỚI: Tự động nhận diện link theo URL hoặc Text
 function setActiveCategoryNav(activeCategory) {
     const normalized = activeCategory ? activeCategory.toLowerCase() : 'all';
-    
-    // Tìm tất cả thẻ a nằm trong nav (kể cả có class nav-link hay không)
     const links = document.querySelectorAll("nav a");
 
     links.forEach(link => {
-        // Lấy thông tin của link để so sánh
         const linkCat = link.dataset.category ? link.dataset.category.toLowerCase() : '';
         const linkHref = link.getAttribute('href') || '';
         const linkText = link.textContent.trim().toLowerCase();
 
         let isActive = false;
-
-        // 1. Ưu tiên: So sánh data-category (nếu có)
-        if (linkCat === normalized) {
+        if (linkCat === normalized || linkHref.includes(`category=${normalized}`) || linkText === normalized) {
             isActive = true;
-        }
-        // 2. So sánh URL (ví dụ href chứa ?category=men)
-        else if (linkHref.includes(`category=${normalized}`)) {
+        } else if (normalized === 'all' && !linkHref.includes('category=') && (linkText === 'all' || linkText.includes('new'))) {
             isActive = true;
-        }
-        // 3. So sánh Chữ hiển thị (ví dụ chữ "Men" khớp với "men")
-        else if (linkText === normalized) {
-            isActive = true;
-        }
-        // 4. Trường hợp đặc biệt cho trang 'All'
-        else if (normalized === 'all') {
-            // Nếu link không có ?category=... và chữ là All hoặc New & Featured
-            if (!linkHref.includes('category=') && (linkText === 'all' || linkText.includes('new'))) {
-                isActive = true;
-            }
         }
 
-        // Áp dụng Style (Gạch chân + In đậm)
         if (isActive) {
             link.classList.add("text-black", "font-bold", "underline", "decoration-2", "underline-offset-4");
             link.classList.remove("text-gray-800", "font-medium");
@@ -149,8 +117,8 @@ function renderProducts(products) {
 
     products.forEach(product => {
         const isFavorite = favorites.some(f => String(f.id) === String(product.id));
-        const priceDisplay = typeof product.price === "number" 
-            ? product.price.toLocaleString("vi-VN") + "₫" 
+        const priceDisplay = typeof product.price === "number"
+            ? product.price.toLocaleString("vi-VN") + "₫"
             : product.price;
 
         const card = document.createElement("div");
@@ -158,8 +126,12 @@ function renderProducts(products) {
 
         card.innerHTML = `
             <div class="relative bg-gray-50 rounded-2xl overflow-hidden mb-4 aspect-square">
+                <!-- Hiển thị ảnh sản phẩm -->
                 <img src="${product.image}" alt="${product.name}" 
                      class="w-full h-full object-contain p-6 transition-transform duration-700 group-hover:scale-110 mix-blend-multiply">
+                
+                <!-- 👉 BỔ SUNG: Hiển thị nhãn TAG (SALE, TRENDING,...) nếu sản phẩm có -->
+                ${product.tag ? `<span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold uppercase rounded tracking-wider shadow-sm z-10">${product.tag}</span>` : ''}
                 
                 <button class="fav-btn absolute top-4 right-4 p-2 bg-white rounded-full shadow hover:scale-110 transition-transform z-10">
                     <svg class="h-5 w-5 ${isFavorite ? "text-red-500 fill-current" : "text-gray-400"}" 
@@ -169,7 +141,7 @@ function renderProducts(products) {
                     </svg>
                 </button>
 
-                <button class="add-cart-btn absolute bottom-4 right-4 bg-black text-white p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg hover:bg-gray-800">
+                <button class="add-cart-btn absolute bottom-4 right-4 bg-black text-white p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg hover:bg-gray-800" title="Quick Add">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -182,6 +154,11 @@ function renderProducts(products) {
             </div>
         `;
 
+        card.addEventListener('click', () => {
+            localStorage.setItem('nike_selected_product', JSON.stringify(product));
+            window.location.href = `../detail/detail.html?id=${product.id}`;
+        });
+
         card.querySelector(".fav-btn").addEventListener("click", (e) => {
             e.stopPropagation();
             toggleFavorite(product, e.currentTarget);
@@ -189,36 +166,119 @@ function renderProducts(products) {
 
         card.querySelector(".add-cart-btn").addEventListener("click", (e) => {
             e.stopPropagation();
-            addToCart(product);
+            openQuickSizeModal(product);
         });
 
         grid.appendChild(card);
     });
 }
-
 // =======================
-// 6. CART LOGIC (CORE & MODAL)
+// 6. QUICK SIZE & QUANTITY MODAL LOGIC
 // =======================
+function openQuickSizeModal(product) {
+    activeQuickProduct = product;
+    selectedQuickSize = null;
+    currentQuickQty = 1;
 
-function addToCart(product) {
+    document.getElementById("quickModalImg").src = product.image;
+    document.getElementById("quickModalName").textContent = product.name;
+    document.getElementById("quickModalCategory").textContent = product.category;
+    document.getElementById("quickModalPrice").textContent = typeof product.price === "number" ? product.price.toLocaleString("vi-VN") + "₫" : product.price;
+    document.getElementById("quickQtyDisplay").textContent = currentQuickQty;
+    document.getElementById("quickSizeError").classList.add("hidden");
+
+    // Render danh sách size động từ sản phẩm
+    const sizeContainer = document.getElementById("quickSizeContainer");
+    sizeContainer.innerHTML = "";
+
+    const availableSizes = product.sizes && product.sizes.length > 0
+        ? product.sizes
+        : ["EU 40", "EU 41", "EU 42", "EU 43"];
+
+    availableSizes.forEach(sizeStr => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = sizeStr;
+        btn.className = "border border-gray-300 rounded-xl py-2.5 text-xs font-bold text-center hover:border-black transition-all";
+
+        btn.addEventListener('click', () => {
+            document.querySelectorAll("#quickSizeContainer button").forEach(b => {
+                b.classList.remove("border-black", "bg-black", "text-white", "ring-1", "ring-black");
+                b.classList.add("border-gray-300");
+            });
+            btn.classList.remove("border-gray-300");
+            btn.classList.add("border-black", "bg-black", "text-white", "ring-1", "ring-black");
+            selectedQuickSize = sizeStr;
+            document.getElementById("quickSizeError").classList.add("hidden");
+        });
+
+        sizeContainer.appendChild(btn);
+    });
+
+    // Hiển thị modal
+    const modal = document.getElementById("quickSizeModal");
+    const backdrop = document.getElementById("quickModalBackdrop");
+    const panel = document.getElementById("quickModalPanel");
+
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+        backdrop.classList.add("opacity-100");
+        panel.classList.remove("opacity-0", "scale-95");
+        panel.classList.add("opacity-100", "scale-100");
+    }, 10);
+}
+
+window.adjustQuickQty = function (change) {
+    currentQuickQty += change;
+    if (currentQuickQty < 1) currentQuickQty = 1;
+    document.getElementById("quickQtyDisplay").textContent = currentQuickQty;
+}
+
+window.closeQuickSizeModal = function () {
+    const modal = document.getElementById("quickSizeModal");
+    const backdrop = document.getElementById("quickModalBackdrop");
+    const panel = document.getElementById("quickModalPanel");
+
+    if (!modal) return;
+    backdrop.classList.remove("opacity-100");
+    panel.classList.remove("opacity-100", "scale-100");
+    panel.classList.add("opacity-0", "scale-95");
+
+    setTimeout(() => {
+        modal.classList.add("hidden");
+    }, 300);
+}
+
+// Xử lý nút Add to Bag trong Quick Modal
+document.getElementById("confirmQuickAdd").onclick = () => {
+    if (!selectedQuickSize) {
+        document.getElementById("quickSizeError").classList.remove("hidden");
+        return;
+    }
+
     let cart = JSON.parse(localStorage.getItem("nike_cart")) || [];
-    const existingItem = cart.find(item => String(item.id) === String(product.id));
+    const existingItem = cart.find(item => String(item.id) === String(activeQuickProduct.id) && item.size === selectedQuickSize);
 
     if (existingItem) {
-        existingItem.quantity = (parseInt(existingItem.quantity) || 1) + 1;
+        existingItem.quantity = (parseInt(existingItem.quantity) || 1) + currentQuickQty;
     } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({ ...activeQuickProduct, size: selectedQuickSize, quantity: currentQuickQty });
     }
 
     localStorage.setItem("nike_cart", JSON.stringify(cart));
     updateNavCartCount();
-    openCartModal(product);
-}
+    closeQuickSizeModal();
 
+    // Mở popup xác nhận thành công (cartModal cũ của bạn)
+    openCartModal(activeQuickProduct);
+};
+
+// =======================
+// 7. SUCCESS MODAL & CART COUNT
+// =======================
 function updateNavCartCount() {
     const cart = JSON.parse(localStorage.getItem("nike_cart")) || [];
     const navCartCount = document.getElementById("navCartCount");
-    
     const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
 
     if (navCartCount) {
@@ -228,18 +288,17 @@ function updateNavCartCount() {
     }
 }
 
-// --- MODAL LOGIC ---
 function openCartModal(product) {
     const modal = document.getElementById("cartModal");
     const backdrop = document.getElementById("cartModalBackdrop");
     const panel = document.getElementById("cartModalPanel");
 
-    if(!modal) return;
+    if (!modal) return;
 
     document.getElementById("modalImg").src = product.image;
     document.getElementById("modalName").textContent = product.name;
     document.getElementById("modalCategory").textContent = product.category;
-    
+
     const price = typeof product.price === "number" ? product.price.toLocaleString("vi-VN") + "₫" : product.price;
     document.getElementById("modalTag").textContent = price;
 
@@ -251,12 +310,12 @@ function openCartModal(product) {
     }, 10);
 }
 
-window.closeCartModal = function() {
+window.closeCartModal = function () {
     const modal = document.getElementById("cartModal");
     const backdrop = document.getElementById("cartModalBackdrop");
     const panel = document.getElementById("cartModalPanel");
 
-    if(!modal) return;
+    if (!modal) return;
 
     backdrop.classList.remove("opacity-100");
     panel.classList.remove("opacity-100", "scale-100");
@@ -268,7 +327,7 @@ window.closeCartModal = function() {
 }
 
 // =======================
-// 7. FAVORITE LOGIC
+// 8. FAVORITE LOGIC
 // =======================
 function toggleFavorite(product, btn) {
     let favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
@@ -299,7 +358,7 @@ function updateNavFavCount() {
 }
 
 // =======================
-// 8. EVENT LISTENERS
+// 9. EVENT LISTENERS
 // =======================
 function setupEventListeners() {
     document.querySelectorAll(".filter-btn").forEach(btn => {
@@ -315,7 +374,7 @@ function setupEventListeners() {
             if (filterType === "all") {
                 displayedProducts = [...currentCategoryList];
             } else {
-                displayedProducts = currentCategoryList.filter(p => 
+                displayedProducts = currentCategoryList.filter(p =>
                     p.category.toLowerCase().includes(filterType)
                 );
             }

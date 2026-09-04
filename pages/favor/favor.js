@@ -1,10 +1,14 @@
 // --- CẤU HÌNH API ---
 const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
 
-document.addEventListener('DOMContentLoaded', function() {
-    
+// Biến cho Quick Size Modal
+let activeQuickProduct = null;
+let selectedQuickSize = null;
+let currentQuickQty = 1;
+
+document.addEventListener('DOMContentLoaded', function () {
+
     // --- KHAI BÁO CÁC PHẦN TỬ DOM ---
-    // Modal Elements
     const cartModal = document.getElementById('cartModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const continueShoppingBtn = document.getElementById('continueShoppingBtn');
@@ -12,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkoutModalBtn = document.getElementById('checkoutModalBtn');
     const cartModalBackdrop = document.getElementById('cartModalBackdrop');
 
-    // Main UI Elements
     const favoritesCount = document.getElementById('favoritesCount');
     const totalValueElement = document.getElementById('totalValue');
     const emptyState = document.getElementById('emptyState');
@@ -22,38 +25,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const sortSelect = document.getElementById('sortSelect');
 
-    // --- HÀM XỬ LÝ DỮ LIỆU LOCALSTORAGE ---
-
     const getFavorites = () => JSON.parse(localStorage.getItem('nike_favorites')) || [];
     const getCart = () => JSON.parse(localStorage.getItem('nike_cart')) || [];
 
-    // Biến lưu trạng thái danh sách hiện tại (để lọc/sort)
     let currentItems = getFavorites();
 
     // --- CẬP NHẬT GIAO DIỆN NAVBAR (BADGE) ---
-
-    // Cập nhật số lượng trên icon Giỏ hàng
     function updateNavCartCount() {
-    const cart = getCart();
-    // Tìm thẻ span theo ID vừa thêm
-    const navCartCount = document.getElementById("navCartCount");
-    
-    if (navCartCount) {
-        const count = cart.length; 
-        navCartCount.innerText = count;
-        
-        // Logic ẩn hiện: Nếu > 0 thì hiện, = 0 thì ẩn
-        if (count > 0) {
-            navCartCount.classList.remove("opacity-0");
-            navCartCount.classList.add("opacity-100");
-        } else {
-            navCartCount.classList.remove("opacity-100");
-            navCartCount.classList.add("opacity-0");
+        const cart = getCart();
+        const navCartCount = document.getElementById("navCartCount");
+
+        if (navCartCount) {
+            const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+            navCartCount.innerText = totalItems;
+
+            if (totalItems > 0) {
+                navCartCount.classList.remove("opacity-0");
+                navCartCount.classList.add("opacity-100");
+            } else {
+                navCartCount.classList.remove("opacity-100");
+                navCartCount.classList.add("opacity-0");
+            }
         }
     }
-}
 
-    // Cập nhật số lượng trên icon Yêu thích
     function updateNavFavCount() {
         const favorites = getFavorites();
         const navFavCount = document.getElementById('navFavCount');
@@ -70,8 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- XỬ LÝ MODAL ADD TO CART ---
-
+    // --- XỬ LÝ MODAL ADD TO CART THÀNH CÔNG ---
     function openCartModal(productInfo) {
         if (productInfo) {
             document.getElementById('modalProductImage').src = productInfo.image;
@@ -79,18 +73,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modalProductCategory').textContent = productInfo.category;
             document.getElementById('modalProductPrice').textContent = productInfo.price;
         }
-        
+
         cartModal.classList.remove('hidden');
-        // Animation fade in
         setTimeout(() => {
-            cartModal.firstElementChild.classList.remove('opacity-0'); // Backdrop
-            cartModal.lastElementChild.firstElementChild.classList.remove('opacity-0', 'scale-95'); // Panel
+            cartModal.firstElementChild.classList.remove('opacity-0');
+            cartModal.lastElementChild.firstElementChild.classList.remove('opacity-0', 'scale-95');
             cartModal.lastElementChild.firstElementChild.classList.add('opacity-100', 'scale-100');
         }, 10);
     }
-    
+
     function closeCartModal() {
-        // Animation fade out
         cartModal.firstElementChild.classList.add('opacity-0');
         cartModal.lastElementChild.firstElementChild.classList.remove('opacity-100', 'scale-100');
         cartModal.lastElementChild.firstElementChild.classList.add('opacity-0', 'scale-95');
@@ -100,21 +92,128 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     }
 
-    // Gán sự kiện đóng modal
     if (closeModalBtn) closeModalBtn.addEventListener('click', closeCartModal);
     if (continueShoppingBtn) continueShoppingBtn.addEventListener('click', closeCartModal);
-    if (cartModalBackdrop) cartModalBackdrop.addEventListener('click', closeCartModal); // Click ra ngoài vùng trắng
+    if (cartModalBackdrop) cartModalBackdrop.addEventListener('click', closeCartModal);
 
-    if (viewCartModalBtn) viewCartModalBtn.addEventListener('click', function() {
-        window.location.href = '../cart/cart.html'; // Chuyển hướng sang trang Cart
-    });
-    
-    if (checkoutModalBtn) checkoutModalBtn.addEventListener('click', function() {
+    if (viewCartModalBtn) viewCartModalBtn.addEventListener('click', function () {
         window.location.href = '../cart/cart.html';
     });
 
-    // --- RENDER DANH SÁCH YÊU THÍCH ---
+    if (checkoutModalBtn) checkoutModalBtn.addEventListener('click', function () {
+        window.location.href = '../cart/cart.html';
+    });
 
+    // --- QUICK SIZE MODAL LOGIC ---
+    window.openQuickSizeModal = function (productId) {
+        const allFavs = getFavorites();
+        const product = allFavs.find(item => String(item.id) === String(productId));
+        if (!product) return;
+
+        activeQuickProduct = product;
+        selectedQuickSize = null;
+        currentQuickQty = 1;
+
+        document.getElementById("quickModalImg").src = product.image;
+        document.getElementById("quickModalName").textContent = product.name;
+        document.getElementById("quickModalCategory").textContent = product.category;
+        document.getElementById("quickModalPrice").textContent = typeof product.price === "number" ? product.price.toLocaleString("vi-VN") + "₫" : product.price;
+        document.getElementById("quickQtyDisplay").textContent = currentQuickQty;
+        document.getElementById("quickSizeError").classList.add("hidden");
+
+        const sizeContainer = document.getElementById("quickSizeContainer");
+        sizeContainer.innerHTML = "";
+
+        const availableSizes = product.sizes && product.sizes.length > 0
+            ? product.sizes
+            : ["EU 40", "EU 41", "EU 42", "EU 43"];
+
+        availableSizes.forEach(sizeStr => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = sizeStr;
+            btn.className = "border border-gray-300 rounded-xl py-2.5 text-xs font-bold text-center hover:border-black transition-all";
+
+            btn.addEventListener('click', () => {
+                document.querySelectorAll("#quickSizeContainer button").forEach(b => {
+                    b.classList.remove("border-black", "bg-black", "text-white", "ring-1", "ring-black");
+                    b.classList.add("border-gray-300");
+                });
+                btn.classList.remove("border-gray-300");
+                btn.classList.add("border-black", "bg-black", "text-white", "ring-1", "ring-black");
+                selectedQuickSize = sizeStr;
+                document.getElementById("quickSizeError").classList.add("hidden");
+            });
+
+            sizeContainer.appendChild(btn);
+        });
+
+        const modal = document.getElementById("quickSizeModal");
+        const backdrop = document.getElementById("quickModalBackdrop");
+        const panel = document.getElementById("quickModalPanel");
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+            backdrop.classList.add("opacity-100");
+            panel.classList.remove("opacity-0", "scale-95");
+            panel.classList.add("opacity-100", "scale-100");
+        }, 10);
+    };
+
+    window.adjustQuickQty = function (change) {
+        currentQuickQty += change;
+        if (currentQuickQty < 1) currentQuickQty = 1;
+        document.getElementById("quickQtyDisplay").textContent = currentQuickQty;
+    };
+
+    window.closeQuickSizeModal = function () {
+        const modal = document.getElementById("quickSizeModal");
+        const backdrop = document.getElementById("quickModalBackdrop");
+        const panel = document.getElementById("quickModalPanel");
+
+        if (!modal) return;
+        backdrop.classList.remove("opacity-100");
+        panel.classList.remove("opacity-100", "scale-100");
+        panel.classList.add("opacity-0", "scale-95");
+
+        setTimeout(() => {
+            modal.classList.add("hidden");
+        }, 300);
+    };
+
+    // Xác nhận Add to Bag từ Quick Modal
+    const confirmQuickAddBtn = document.getElementById('confirmQuickAdd');
+    if (confirmQuickAddBtn) {
+        confirmQuickAddBtn.onclick = () => {
+            if (!selectedQuickSize) {
+                document.getElementById('quickSizeError').classList.remove('hidden');
+                return;
+            }
+
+            let cart = getCart();
+            const existingItem = cart.find(item => String(item.id) === String(activeQuickProduct.id) && item.size === selectedQuickSize);
+
+            if (existingItem) {
+                existingItem.quantity = (parseInt(existingItem.quantity) || 1) + currentQuickQty;
+            } else {
+                cart.push({ ...activeQuickProduct, size: selectedQuickSize, quantity: currentQuickQty });
+            }
+
+            localStorage.setItem('nike_cart', JSON.stringify(cart));
+            updateNavCartCount();
+            window.closeQuickSizeModal();
+
+            const productInfo = {
+                image: activeQuickProduct.image,
+                name: activeQuickProduct.name,
+                category: activeQuickProduct.category,
+                price: typeof activeQuickProduct.price === 'number' ? activeQuickProduct.price.toLocaleString('vi-VN') + '₫' : activeQuickProduct.price
+            };
+            openCartModal(productInfo);
+        };
+    }
+
+    // --- RENDER DANH SÁCH YÊU THÍCH ---
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         const bgColor = type === 'success' ? 'bg-black' : 'bg-red-600';
@@ -133,14 +232,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderItems(items) {
         favoritesGrid.innerHTML = '';
-        
+
         if (items.length === 0) {
             favoritesGrid.classList.add('hidden');
             emptyState.classList.remove('hidden');
         } else {
             favoritesGrid.classList.remove('hidden');
             emptyState.classList.add('hidden');
-            
+
             items.forEach((item, index) => {
                 const itemHTML = `
                     <div class="favorite-item group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 animate-slide-up" 
@@ -165,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="flex justify-between items-center">
                                 <span class="text-xs font-bold text-gray-900">${typeof item.price === 'number' ? item.price.toLocaleString('vi-VN') + '₫' : item.price}</span>
                                 
-                                <button class="add-to-cart-btn bg-black text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-gray-800 active:scale-95 transition-all duration-200 shadow-sm">
+                                <button onclick="window.openQuickSizeModal('${item.id}')" class="add-to-cart-btn bg-black text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-gray-800 active:scale-95 transition-all duration-200 shadow-sm">
                                     Add to Cart
                                 </button>
                             </div>
@@ -175,14 +274,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 favoritesGrid.insertAdjacentHTML('beforeend', itemHTML);
             });
         }
-        
+
         updateSummary(items);
-        updateNavFavCount(); // Cập nhật lại số lượng badge tim
+        updateNavFavCount();
     }
 
     async function renderSaleSidebar() {
         if (!saleSidebarGrid) return;
-        
+
         // Skeleton Loading
         saleSidebarGrid.innerHTML = Array(3).fill(0).map(() => `
             <div class="flex items-center gap-4 p-2">
@@ -196,11 +295,10 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(API_URL);
             const allProducts = await response.json();
-            // Lọc sản phẩm có tag SALE hoặc ngẫu nhiên nếu không có tag
             const saleItems = allProducts.filter(p => (p.tag && p.tag.toLowerCase().includes('sale'))).slice(0, 4);
 
             saleSidebarGrid.innerHTML = saleItems.map(item => `
-                <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-gray-50 transition-colors group cursor-pointer" onclick="window.location.href='../products/products.html'">
+                <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-gray-50 transition-colors group cursor-pointer" onclick="goToDetailFromSale('${item.id}')">
                     <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform mix-blend-multiply">
                     </div>
@@ -217,10 +315,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Hàm phụ trợ hỗ trợ chuyển sang trang chi tiết từ mục Featured Sale
+    window.goToDetailFromSale = async function (productId) {
+        try {
+            const response = await fetch(API_URL);
+            const allProducts = await response.json();
+            const product = allProducts.find(p => String(p.id) === String(productId));
+            if (product) {
+                localStorage.setItem('nike_selected_product', JSON.stringify(product));
+                window.location.href = `../detail/detail.html?id=${product.id}`;
+            }
+        } catch (err) {
+            console.error("Error navigating to product detail:", err);
+        }
+    };
+
     function updateSummary(items) {
         const totalItems = items.length;
         let totalValue = 0;
-        
+
         items.forEach(item => {
             const price = typeof item.price === 'number' ? item.price : parseInt(String(item.price).replace(/\D/g, '')) || 0;
             totalValue += price;
@@ -233,74 +346,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- XỬ LÝ SỰ KIỆN CLICK (Delegation) ---
-    
-    favoritesGrid.addEventListener('click', function(e) {
+    favoritesGrid.addEventListener('click', function (e) {
         const removeBtn = e.target.closest('.remove-btn');
-        const addToCartBtn = e.target.closest('.add-to-cart-btn');
         const favoriteItem = e.target.closest('.favorite-item');
 
         if (!favoriteItem) return;
         const id = favoriteItem.dataset.id;
 
-        // 1. Xử lý nút Xóa
         if (removeBtn) {
             e.stopPropagation();
-            
+
             let allFavorites = getFavorites();
             allFavorites = allFavorites.filter(item => String(item.id) !== String(id));
             localStorage.setItem('nike_favorites', JSON.stringify(allFavorites));
 
-            // Cập nhật lại UI
             currentItems = currentItems.filter(item => String(item.id) !== String(id));
             showToast('Removed from favorites', 'info');
 
-            // Animation biến mất
             favoriteItem.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
             setTimeout(() => renderItems(currentItems), 300);
-            
-            updateNavFavCount(); // Cập nhật badge
-        }
 
-        // 2. Xử lý nút Add to Cart
-        if (addToCartBtn) {
-            e.stopPropagation(); // Ngăn sự kiện click vào thẻ cha (nếu có)
-
-            // Tìm thông tin sản phẩm trong danh sách favorites
-            const allFavs = getFavorites();
-            const product = allFavs.find(item => String(item.id) === String(id));
-
-            if (product) {
-                // Hiệu ứng click nút
-                addToCartBtn.classList.add('scale-90');
-                setTimeout(() => addToCartBtn.classList.remove('scale-90'), 150);
-
-                // --- LOGIC ADD TO CART ---
-                let cart = getCart();
-                cart.push(product); // Thêm sản phẩm vào mảng
-                localStorage.setItem('nike_cart', JSON.stringify(cart)); // Lưu lại
-
-                // Cập nhật UI
-                updateNavCartCount();
-                
-                // Chuẩn bị dữ liệu hiển thị Modal
-                const productInfo = {
-                    image: product.image,
-                    name: product.name,
-                    category: product.category,
-                    price: typeof product.price === 'number' ? product.price.toLocaleString('vi-VN') + '₫' : product.price
-                };
-                openCartModal(productInfo);
-            }
+            updateNavFavCount();
         }
     });
 
     // --- SORT & FILTER LOGIC ---
-
     function sortItems(items, sortType) {
         const sorted = [...items];
         const getPrice = (p) => typeof p === 'number' ? p : parseInt(String(p).replace(/\D/g, '')) || 0;
 
-        switch(sortType) {
+        switch (sortType) {
             case 'price-asc': return sorted.sort((a, b) => getPrice(a.price) - getPrice(b.price));
             case 'price-desc': return sorted.sort((a, b) => getPrice(b.price) - getPrice(a.price));
             case 'name-asc': return sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -320,26 +395,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const filter = btn.dataset.filter;
             const allFavs = getFavorites();
             let filteredItems = [];
-            
+
             if (filter === 'all') filteredItems = [...allFavs];
             else if (filter === 'shoes') filteredItems = allFavs.filter(i => i.category.toLowerCase().includes('shoes'));
             else if (filter === 'apparel') filteredItems = allFavs.filter(i => i.category.toLowerCase().includes('clothing') || i.category.toLowerCase().includes('top') || i.category.toLowerCase().includes('t-shirt'));
             else if (filter === 'sale') filteredItems = allFavs.filter(i => i.tag && i.tag.toLowerCase().includes('sale'));
-            
+
             currentItems = sortItems(filteredItems, sortSelect ? sortSelect.value : 'recent');
             renderItems(currentItems);
         });
     });
 
     if (sortSelect) {
-        sortSelect.addEventListener('change', function() {
+        sortSelect.addEventListener('change', function () {
             currentItems = sortItems(currentItems, this.value);
             renderItems(currentItems);
         });
     }
 
     // --- INIT ---
-    updateNavCartCount(); // Gọi ngay khi load trang
+    updateNavCartCount();
     updateNavFavCount();
     renderItems(currentItems);
     renderSaleSidebar();

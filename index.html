@@ -1,494 +1,569 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Just Do It. Nike VN (Clone)</title>
+    <script src="./assets/js/components.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
-    
+
     <!-- Tăng hiệu suất kết nối sớm đến các domain bên thứ 3 -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="preconnect" href="https://694a5ba81282f890d2d86de0.mockapi.io" crossorigin>
-    
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-69GZG08LB4"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-
         gtag('config', 'G-69GZG08LB4');
     </script>
 
     <style>
-        /* Cấu hình Tailwind tùy chỉnh */
-        @tailwind base;
-        @tailwind components;
-        @tailwind utilities;
-        
-        /* Một vài hiệu ứng không thể thực hiện với Tailwind mặc định */
+        /* Tùy chỉnh ẩn thanh cuộn ngang nhưng vẫn trượt mượt mà */
         .product-scroll::-webkit-scrollbar {
             display: none;
         }
-        
+
         .product-scroll {
             -ms-overflow-style: none;
             scrollbar-width: none;
+            scroll-behavior: smooth;
         }
-        
-        /* Smooth transitions for all interactive elements */
-        a, button, img {
+
+        /* Smooth transitions */
+        a,
+        button,
+        img {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         /* Enhanced hover for product cards */
         .product-card:hover .card-img-wrap img {
             transform: scale(1.06);
         }
-        
+
         /* Professional Hero Animation */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(30px) scale(0.98);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
         }
-        
+
         .fade-in-up {
             animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Accessibility: Respect user motion preferences */
         @media (prefers-reduced-motion: reduce) {
             .fade-in-up {
                 animation: none;
                 opacity: 1;
                 transform: none;
             }
-            .product-card:hover .card-img-wrap img,
-            .sport-card:hover img {
-                transform: none !important;
-            }
         }
     </style>
 </head>
-<body class="font-sans antialiased">
-    <!-- Top Bar -->
-    <div class="bg-black text-white text-xs md:text-sm py-2 px-4 text-center tracking-wide">
-        New Styles On Sale: Up To 40% Off <a href="#" class="underline font-medium ml-1">Shop Now</a>
-    </div>
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-[100] bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex md:grid md:grid-cols-3 items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="index.html" class="flex-shrink-0 flex justify-start">
-                    <img src="./assets/images/logo.png" 
-                         alt="SGD Logo" class="h-10 md:h-12 w-auto object-contain transition-transform hover:scale-105">
-                </a>
+<body class="font-sans antialiased text-gray-900 bg-white">
+    <app-header></app-header>
 
-                <!-- Desktop Navigation Links -->
-                <div class="hidden md:flex md:items-center md:justify-center gap-x-8">
-                    <a href="pages/products/products.html" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">All</a>
-                    <a href="pages/products/products.html?category=men" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Men</a>
-                    <a href="pages/products/products.html?category=women" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Women</a>
-                    <a href="pages/products/products.html?category=kids" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Kids</a>
-                    <a href="pages/products/products.html?category=sale" class="text-gray-800 hover:text-yellow-400 font-medium text-sm">Sale</a>
-                </div>
+    <!-- Hero Section với Video Banner tự động phát (Đã Fix Link Video Mượt Mà) -->
+    <section class="relative w-full overflow-hidden bg-black">
+        <!-- Khung chứa Video phát tự động tràn viền -->
+        <div class="relative w-full h-[65vh] sm:h-[75vh] md:h-[85vh] overflow-hidden">
 
-                <!-- Icons -->
-                <div class="flex items-center justify-end gap-x-6">
-                    <!-- Search -->
-                    <button class="search-trigger-btn text-gray-600 hover:text-black" aria-label="Tìm kiếm">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    
-                    <!-- Favorites -->
-                    <a href="pages/favor/favor.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                        <span id="navFavCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center opacity-0 transition-opacity">0</span>
-                    </a>
-                    
-                    <!-- Cart -->
-                    <a href="pages/cart/cart.html" class="text-gray-600 hover:text-black transition-all hover:scale-110 relative group">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        <span id="navCartCount" class="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center opacity-0 transition-opacity">0</span>
-                    </a>
+            <!-- Bắt buộc phải có 'muted' và 'playsinline' thì Chrome/Safari mới cho phép autoplay -->
+            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                <!-- Video 1 -->
+                <source
+                    src="https://video-previews.elements.envatousercontent.com/1c26fedd-732e-4c8f-8540-ac7916193108/watermarked_preview/watermarked_preview.mp4"
+                    type="video/mp4">
+                <!-- Video 2 -->
+                <source
+                    src="https://video-previews.elements.envatousercontent.com/d957a20d-defa-4d81-b5d9-820b4251bdf1/watermarked_preview/watermarked_preview.mp4"
+                    type="video/mp4">
 
-                    <button id="mobile-menu-btn" class="md:hidden text-gray-900 hover:text-black focus:outline-none p-1">
-                        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section với Video -->
-    <section class="relative overflow-hidden bg-black">
-        <div class="absolute inset-0 z-0">
-            <video autoplay muted loop playsinline fetchpriority="high" class="w-full h-full object-cover opacity-90">
-                <source src="https://static.nike.com/a/videos/so_5.41/vp_7f1f96a8-28f5-46b8-b759-5cc0e94d3b4e/so_5.41.mp4" type="video/mp4">
-                <!-- Fallback image nếu video không tải được -->
-                <img src="https://static.nike.com/a/images/f_auto/dpr_2.0,cs_srgb/w_1824,c_limit/9dc5d4c5-a5a5-4c82-9ab7-b2dc6ea84e05/nike-just-do-it.jpg" 
-                     alt="Nike Hero" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                <!-- Ảnh fallback dự phòng nếu mạng bị lag không tải được video -->
+                <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1920&q=80"
+                    alt="Nike Hero Backup" class="w-full h-full object-cover">
             </video>
-        </div>
-        
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-            <div class="text-center fade-in-up">
-                <h1 class="text-4xl md:text-5xl lg:text-7xl font-extrabold text-white mb-4 tracking-tighter">POWER THEIR NEXT REP</h1>
-                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">Gift the latest gear to help them set a new personal best.</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 active:scale-95 transition-all">Shop Training</button>
-                    <button class="bg-transparent border-2 border-white text-white font-bold px-8 py-3 rounded-full hover:bg-white hover:text-black active:scale-95 transition-all">Watch ►</button>
+
+            <!-- Lớp phủ tối mờ tinh tế giúp chữ trắng nổi bật lên trên nền video -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 pointer-events-none">
+            </div>
+
+            <!-- Nội dung Chữ & Nút bấm nằm trên Video -->
+            <div
+                class="absolute inset-0 z-10 flex flex-col justify-end items-center text-center p-8 sm:p-12 md:p-16 max-w-5xl mx-auto pointer-events-none">
+
+                <span
+                    class="text-white text-xs sm:text-sm font-extrabold tracking-[0.3em] uppercase mb-3 opacity-90 drop-shadow">
+                    New Training Season
+                </span>
+
+                <h1
+                    class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-4 tracking-tighter uppercase leading-none drop-shadow-md">
+                    POWER THEIR NEXT REP
+                </h1>
+
+                <p class="text-gray-200 text-sm sm:text-base md:text-xl mb-8 max-w-xl font-medium drop-shadow">
+                    Gift the latest gear to help them set a new personal best in every workout.
+                </p>
+
+                <!-- Các nút hành động (Bật lại pointer-events để bấm được) -->
+                <div
+                    class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center items-center pointer-events-auto">
+                    <a href="pages/products/products.html"
+                        class="w-full sm:w-auto bg-white text-black font-extrabold px-8 py-3.5 rounded-full hover:bg-gray-200 active:scale-95 transition-all text-center text-sm sm:text-base shadow-xl">
+                        Shop Training
+                    </a>
+                    <a href="pages/products/products.html?category=sale"
+                        class="w-full sm:w-auto bg-transparent border-2 border-white text-white font-extrabold px-8 py-3.5 rounded-full hover:bg-white hover:text-black active:scale-95 transition-all text-center text-sm sm:text-base">
+                        Shop Sale Items
+                    </a>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Featured Section -->
-    <section class="py-10 md:py-16">
+    <!-- Featured Categories (Kiểu banner to tràn màn hình đúng chuẩn Nike) -->
+    <section class="py-12 md:py-16">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">FEATURED CATEGORIES</h2>
+            </div>
+
+            <!-- Lưới 2 cột cho màn hình lớn, chiều cao banner cực lớn -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+
+                <!-- Banner 1: Men's Gear -->
+                <div class="relative group cursor-pointer overflow-hidden bg-gray-900 h-[450px] sm:h-[550px] lg:h-[600px] flex flex-col justify-end p-8 sm:p-12"
+                    onclick="window.location.href='pages/products/products.html?category=men'">
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                        style="background-image: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 text-white">
+                        <p class="text-xs sm:text-sm font-bold tracking-wider uppercase mb-2 text-gray-200">Men's
+                            Collection</p>
+                        <h3 class="text-2xl sm:text-4xl font-black mb-6 tracking-tight">Engineered for Performance</h3>
+                        <span
+                            class="inline-block bg-white text-black font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-200 transition">Shop
+                            Men</span>
+                    </div>
+                </div>
+
+                <!-- Banner 2: Women's Style -->
+                <div class="relative group cursor-pointer overflow-hidden bg-gray-900 h-[450px] sm:h-[550px] lg:h-[600px] flex flex-col justify-end p-8 sm:p-12"
+                    onclick="window.location.href='pages/products/products.html?category=women'">
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                        style="background-image: url('https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&w=1400&q=80')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 text-white">
+                        <p class="text-xs sm:text-sm font-bold tracking-wider uppercase mb-2 text-gray-200">Women's
+                            Style</p>
+                        <h3 class="text-2xl sm:text-4xl font-black mb-6 tracking-tight">Bold Looks, Maximum Comfort</h3>
+                        <span
+                            class="inline-block bg-white text-black font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-200 transition">Shop
+                            Women</span>
+                    </div>
+                </div>
+
+                <!-- Banner 3: Kids & Teens -->
+                <div class="relative group cursor-pointer overflow-hidden bg-gray-900 h-[450px] sm:h-[550px] lg:h-[600px] flex flex-col justify-end p-8 sm:p-12"
+                    onclick="window.location.href='pages/products/products.html?category=kids'">
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                        style="background-image: url('https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=1400&q=80')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 text-white">
+                        <p class="text-xs sm:text-sm font-bold tracking-wider uppercase mb-2 text-gray-200">Kids & Teens
+                        </p>
+                        <h3 class="text-2xl sm:text-4xl font-black mb-6 tracking-tight">Built for Play & Everyday</h3>
+                        <span
+                            class="inline-block bg-white text-black font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-200 transition">Shop
+                            Kids</span>
+                    </div>
+                </div>
+
+                <!-- Banner 4: Sale Items -->
+                <div class="relative group cursor-pointer overflow-hidden bg-gray-900 h-[450px] sm:h-[550px] lg:h-[600px] flex flex-col justify-end p-8 sm:p-12"
+                    onclick="window.location.href='pages/products/products.html?category=sale'">
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                        style="background-image: url('https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=1400&q=80')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 text-white">
+                        <p class="text-xs sm:text-sm font-bold tracking-wider uppercase mb-2 text-red-400">Special
+                            Offers</p>
+                        <h3 class="text-2xl sm:text-4xl font-black mb-6 tracking-tight">Sale & Limited Deals</h3>
+                        <span
+                            class="inline-block bg-white text-black font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-200 transition">Explore
+                            Sale</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Air Max Campaign Section (Đã thêm ảnh Campaign lớn & Typography chuẩn Nike) -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Ảnh Campaign khổng lồ -->
+            <div class="w-full h-[400px] sm:h-[550px] md:h-[750px] rounded-3xl overflow-hidden mb-12 sm:mb-16 shadow-md cursor-pointer group"
+                onclick="window.location.href='pages/products/products.html'">
+                <!-- Bạn có thể thay link ảnh bằng ảnh giày Air Max thật ở đây -->
+                <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-1000 ease-out"
+                    style="background-image: url('https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=1600&q=80')">
+                </div>
+            </div>
+
+            <!-- Nội dung Text Campaign (Phóng to, làm đậm) -->
+            <div class="max-w-4xl mx-auto text-center px-4">
+                <span class="text-xs md:text-sm font-extrabold tracking-[0.25em] uppercase text-gray-900 mb-4 block">
+                    Nike Innovation
+                </span>
+                <h2
+                    class="text-5xl sm:text-7xl md:text-8xl font-black text-gray-900 mb-6 tracking-tighter uppercase leading-none">
+                    Feel The Unreal
+                </h2>
+                <p
+                    class="text-base sm:text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
+                    The next generation of Air technology is here. Experience dynamic cushioning, explosive energy
+                    return, and a look like never before.
+                </p>
+                <div class="flex justify-center">
+                    <a href="pages/products/products.html"
+                        class="inline-flex items-center justify-center bg-black text-white font-bold px-10 py-4 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-lg text-base sm:text-lg w-full sm:w-auto">
+                        Shop Air Max
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- LOOKBOOK / REVIEW SHOWCASE SECTION (Ảnh tĩnh to bản, chiếm diện tích lớn, không hover/không button) -->
+    <section class="py-20 md:py-32 bg-white">
+        <div class="max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Tiêu đề lớn -->
+            <div class="mb-14 text-center">
+                <span class="text-xs font-bold tracking-[0.3em] uppercase text-gray-400 mb-3 block">Visual
+                    Showcase</span>
+                <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">The Lookbook & Style Review
+                </h2>
+            </div>
+
+            <!-- Bố cục lưới to bản: Cột trái ảnh khổng lồ, Cột phải 2 ảnh lớn xếp dọc -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                <!-- ẢNH LỚN BÊN TRÁI (Thêm chiều cao h-[600px] sm:h-[800px] để chiếm nhiều diện tích) -->
+                <div
+                    class="lg:col-span-7 rounded-3xl overflow-hidden h-[600px] sm:h-[750px] lg:h-[850px] bg-gray-100 shadow-lg">
+                    <!-- Bạn có thể thay đổi link ảnh trực tiếp tại style background-image bên dưới -->
+                    <div class="w-full h-full bg-cover bg-center"
+                        style="background-image: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=85')">
+                    </div>
+                </div>
+
+                <!-- CỘT BÊN PHẢI: 2 ẢNH XẾP DỌC (Cũng được tăng chiều cao tối đa) -->
+                <div class="lg:col-span-5 flex flex-col gap-8">
+
+                    <!-- Ảnh nhỏ/vừa phía trên bên phải -->
+                    <div class="rounded-3xl overflow-hidden h-[286px] sm:h-[359px] lg:h-[409px] bg-gray-100 shadow-lg">
+                        <!-- Thay link ảnh tùy ý tại đây -->
+                        <div class="w-full h-full bg-cover bg-center"
+                            style="background-image: url('https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1200&q=85')">
+                        </div>
+                    </div>
+
+                    <!-- Ảnh nhỏ/vừa phía dưới bên phải -->
+                    <div class="rounded-3xl overflow-hidden h-[286px] sm:h-[359px] lg:h-[409px] bg-gray-100 shadow-lg">
+                        <!-- Thay link ảnh tùy ý tại đây -->
+                        <div class="w-full h-full bg-cover bg-center"
+                            style="background-image: url('https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&q=85')">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- SPOTLIGHT SECTION (Cân đối, to bản vừa vặn, chuẩn phong cách Nike) -->
+    <section class="py-16 md:py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10 md:mb-16">
-                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">FEATURED</h2>
+            <!-- Header tiêu đề và nút điều hướng -->
+            <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end">
+                <div>
+                    <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter mb-2">SPOTLIGHT</h2>
+                    <p class="text-gray-500 text-sm md:text-base font-medium">Classic silhouettes and cutting-edge
+                        innovation to build your game from the ground up.</p>
+                </div>
+                <!-- Nút trượt ngang -->
+                <div class="hidden md:flex gap-3 mt-4 md:mt-0">
+                    <button id="spotlightPrev"
+                        class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition duration-300">❮</button>
+                    <button id="spotlightNext"
+                        class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition duration-300">❯</button>
+                </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Card 1 -->
-                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/image.avif')" loading="lazy" decoding="async">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <div class="text-sm font-medium mb-2">Trail Running</div>
-                        <h3 class="text-xl font-bold mb-4">Up the Mountains, Through the Woods</h3>
-                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Explore</a>
-                    </div>
-                </div>
-                
-                <!-- Card 2 -->
-                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/hollywood-keepers-hero.jpg')" loading="lazy" decoding="async">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <div class="text-sm font-medium mb-2">Hollywood Goalkeepers</div>
-                        <h3 class="text-xl font-bold mb-4">Show Stoppers</h3>
-                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Shop</a>
-                    </div>
-                </div>
-                
-                <!-- Card 3 -->
-                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/image-1.avif')" loading="lazy" decoding="async">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <div class="text-sm font-medium mb-2">New Arrivals</div>
-                        <h3 class="text-xl font-bold mb-4">Run Lighter</h3>
-                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Discover</a>
-                    </div>
-                </div>
-                
-                <!-- Card 4 -->
-                <div class="bg-gray-100 rounded-xl overflow-hidden group relative">
-                    <div class="h-64 md:h-80 bg-cover bg-center" style="background-image: url('assets/images/78-best-nike-sneakers.webp')" loading="lazy" decoding="async">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <div class="text-sm font-medium mb-2">Athlete Picks</div>
-                        <h3 class="text-xl font-bold mb-4">Essentials</h3>
-                        <a href="#" class="inline-block bg-white text-black font-medium px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition duration-300">Shop</a>
-                    </div>
-                </div>
+
+            <!-- Khung chứa sản phẩm Spotlight phóng to vừa vặn cân đối với tổng thể -->
+            <div id="spotlightContainer" class="flex overflow-x-auto product-scroll space-x-6 pb-6 pt-2">
+                <div class="text-gray-400 py-10 text-sm">Loading spotlight products...</div>
             </div>
         </div>
     </section>
 
-    <!-- Air Max Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tighter">FEEL THE UNREAL</h1>
-            <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                The next generation of Air technology is here. Experience dynamic Air like never before.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button class="bg-black text-white font-bold px-8 py-3 rounded-full hover:bg-gray-800 active:scale-95 transition-all">Shop Air Max</button>
-                <button class="bg-transparent border-2 border-black text-black font-bold px-8 py-3 rounded-full hover:bg-black hover:text-white active:scale-95 transition-all">Watch The Film</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trending Products -->
-    <section class="py-10 md:py-16">
+    <!-- Why Choose Us -->
+    <section class="py-16 md:py-24 bg-gray-50 border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Trending This Week</h2>
-                <div class="flex space-x-2">
-                    <button id="btnPrev" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Sản phẩm trước">❮</button>
-                    <button id="btnNext" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Sản phẩm tiếp theo">❯</button>
-                </div>
+            <div class="text-center mb-12">
+                <span class="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-2 block">Why Choose Us</span>
+                <h2 class="text-2xl md:text-4xl font-black text-gray-900 tracking-tight">THE NIKE STORE EXPERIENCE</h2>
             </div>
-            
-            <div id="scrollContainer" class="flex overflow-x-auto product-scroll space-x-6 pb-6">
-               
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Lợi ích 1 -->
+                <div
+                    class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center group hover:shadow-md transition-all">
+                    <div
+                        class="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">Free Shipping & Returns</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Free standard shipping on all orders and 60-day
+                        free returns policy for complete peace of mind.</p>
+                </div>
+
+                <!-- Lợi ích 2 -->
+                <div
+                    class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center group hover:shadow-md transition-all">
+                    <div
+                        class="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">100% Authentic Products</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Guaranteed genuine sportswear, sneakers, and
+                        accessories directly sourced with high-standard quality.</p>
+                </div>
+
+                <!-- Lợi ích 3 -->
+                <div
+                    class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center group hover:shadow-md transition-all">
+                    <div
+                        class="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">Member Exclusive Perks</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Sign up to get early access to limited edition
+                        drops, special sales events, and personalized recommendations.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!--  Sport -->
-    <section class="py-10 md:py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Shop by Sport</h2>
-                <div class="flex space-x-2">
-                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Môn thể thao trước">❮</button>
-                    <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition duration-300" aria-label="Môn thể thao tiếp theo">❯</button>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Sport 1 -->
-                <div class="sport-card relative rounded-xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=800&q=80" 
-                         alt="Basketball" class="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6">
-                        <div class="text-white text-xl font-bold">Basketball</div>
-                    </div>
-                </div>
-                
-                <!-- Sport 2 -->
-                <div class="sport-card relative rounded-xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=800&q=80" 
-                         alt="Football" class="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6">
-                        <div class="text-white text-xl font-bold">Football</div>
-                    </div>
-                </div>
-                
-                <!-- Sport 3 -->
-                <div class="sport-card relative rounded-xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" 
-                         alt="Running" class="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6">
-                        <div class="text-white text-xl font-bold">Running</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <app-footer></app-footer>
 
-    <!-- Footer -->
-    <footer class="bg-black text-white py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="font-bold text-lg mb-4">Find A Store</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white">Become a Member</a></li>
-                        <li><a href="#" class="hover:text-white">Sign Up for Email</a></li>
-                        <li><a href="#" class="hover:text-white">Student Discounts</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="font-bold text-lg mb-4">Get Help</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white">Order Status</a></li>
-                        <li><a href="#" class="hover:text-white">Delivery</a></li>
-                        <li><a href="#" class="hover:text-white">Returns</a></li>
-                        <li><a href="#" class="hover:text-white">Payment Options</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="font-bold text-lg mb-4">About Us</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white">News</a></li>
-                        <li><a href="#" class="hover:text-white">Careers</a></li>
-                        <li><a href="#" class="hover:text-white">Investors</a></li>
-                        <li><a href="#" class="hover:text-white">Sustainability</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="font-bold text-lg mb-4">Follow Us</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <span class="sr-only">Facebook</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <span class="sr-only">Instagram</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-10 pt-6 border-t border-gray-800 text-center text-gray-400 text-sm">
-                <p>© 2023 SGD, Inc. All Rights Reserved</p>
-                <div class="mt-2">
-                    <a href="#" class="hover:text-white mx-2">Guides</a>
-                    <a href="#" class="hover:text-white mx-2">Terms of Sale</a>
-                    <a href="#" class="hover:text-white mx-2">Terms of Use</a>
-                    <a href="#" class="hover:text-white mx-2">Privacy Policy</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <!-- Modal thông báo thêm giỏ hàng thành công -->
     <div id="cartModal" class="relative z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div id="cartModalBackdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0 ease-out duration-300"></div>
+        <div id="cartModalBackdrop"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0 ease-out duration-300"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div id="cartModalPanel" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-[450px] opacity-0 scale-95 duration-300 ease-out p-6 md:p-8">
-                <button onclick="closeCartModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
-                <div class="flex items-center gap-3 mb-6"><div class="flex-shrink-0"><svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></div><h3 class="text-xl font-bold text-gray-900 leading-none">Added to Cart!</h3></div>
-                <div class="flex gap-4 mb-8">
-                    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded bg-[#f5f5f5]"><img id="modalImg" src="" alt="Product Image" class="h-full w-full object-contain object-center mix-blend-multiply"></div>
-                    <div class="flex flex-col justify-center"><h4 id="modalName" class="text-base font-medium text-gray-900"></h4><p id="modalCategory" class="text-sm text-gray-500 mt-1"></p><p id="modalTag" class="text-sm font-bold text-black mt-2 uppercase"></p></div>
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div id="cartModalPanel"
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-[450px] opacity-0 scale-95 duration-300 ease-out p-6 md:p-8">
+                    <button onclick="closeCartModal()"
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="flex-shrink-0">
+                            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="3"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 leading-none">Added to Cart!</h3>
+                    </div>
+                    <div class="flex gap-4 mb-8">
+                        <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded bg-[#f5f5f5]">
+                            <img id="modalImg" src="" alt="Product Image"
+                                class="h-full w-full object-contain object-center mix-blend-multiply">
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <h4 id="modalName" class="text-base font-medium text-gray-900"></h4>
+                            <p id="modalCategory" class="text-sm text-gray-500 mt-1"></p>
+                            <p id="modalTag" class="text-sm font-bold text-black mt-2 uppercase"></p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button onclick="window.location.href='pages/cart/cart.html'"
+                            class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-base font-bold text-gray-900 hover:border-gray-400 transition-colors">View
+                            Cart</button>
+                        <button onclick="window.location.href='pages/cart/cart.html'"
+                            class="flex w-full items-center justify-center rounded-full bg-black px-4 py-3 text-base font-bold text-white hover:bg-gray-800 transition-colors">Checkout</button>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="closeCartModal()"
+                            class="text-sm font-medium text-gray-500 underline hover:text-gray-900 transition-colors">Continue
+                            Shopping</button>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <button onclick="window.location.href='pages/cart/cart.html'" class="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-base font-bold text-gray-900 hover:border-gray-400 transition-colors focus:outline-none">View Cart</button>
-                    <button onclick="window.location.href='pages/cart/cart.html'" class="flex w-full items-center justify-center rounded-full bg-black px-4 py-3 text-base font-bold text-white hover:bg-gray-800 transition-colors focus:outline-none">Checkout</button>
-                </div>
-                <div class="text-center"><button onclick="closeCartModal()" class="text-sm font-medium text-gray-500 underline hover:text-gray-900 transition-colors">Continue Shopping</button></div>
             </div>
-          </div>
         </div>
     </div>
 
-    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black/50 z-[150] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
-
-    <div id="mobile-menu-drawer" class="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white z-[160] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl overflow-y-auto">
+    <!-- Mobile Menu Drawer -->
+    <div id="mobile-menu-backdrop"
+        class="fixed inset-0 bg-black/50 z-[150] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+    </div>
+    <div id="mobile-menu-drawer"
+        class="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white z-[160] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl overflow-y-auto">
         <div class="p-6 flex flex-col h-full">
             <div class="flex justify-between items-center mb-8">
                 <a href="index.html" class="font-bold text-xl tracking-tighter">NIKE</a>
-                
                 <button id="close-mobile-menu" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
                     <svg class="h-6 w-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
-
             <nav class="flex flex-col space-y-6 text-xl font-bold text-gray-900">
-                <a href="index.html" class="flex items-center justify-between group hover:text-gray-600">
-                    Home
-                </a>
-                
-                <a href="pages/products/products.html" class="flex items-center justify-between group hover:text-gray-600">
-                    All Products 
-                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <a href="pages/products/products.html?category=men" class="flex items-center justify-between group hover:text-gray-600">
-                    Men
-                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <a href="pages/products/products.html?category=women" class="flex items-center justify-between group hover:text-gray-600">
-                    Women
-                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <a href="pages/products/products.html?category=kids" class="flex items-center justify-between group hover:text-gray-600">
-                    Kids
-                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <a href="pages/products/products.html?category=sale" class="flex items-center justify-between text-red-600 group hover:text-red-700">
-                    Sale
-                    <svg class="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
+                <a href="index.html" class="hover:text-gray-600">Home</a>
+                <a href="pages/products/products.html" class="hover:text-gray-600">All Products</a>
+                <a href="pages/products/products.html?category=men" class="hover:text-gray-600">Men</a>
+                <a href="pages/products/products.html?category=women" class="hover:text-gray-600">Women</a>
+                <a href="pages/products/products.html?category=kids" class="hover:text-gray-600">Kids</a>
+                <a href="pages/products/products.html?category=sale" class="text-red-600 hover:text-red-700">Sale</a>
             </nav>
-
-            <div class="mt-auto pt-10 border-t border-gray-100">
-                <div class="flex flex-col space-y-4 text-gray-600 font-medium">
-                    <a href="pages/cart/cart.html" class="hover:text-black flex items-center gap-3">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        Bag
-                    </a>
-                    <a href="pages/favor/favor.html" class="hover:text-black flex items-center gap-3">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                        Favorites
-                    </a>
-                    <a href="#" class="hover:text-black flex items-center gap-3">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Help
-                    </a>
-                </div>
-                <div class="mt-6 text-sm text-gray-400">
-                    <p>Become a Nike Member for the best products, inspiration and stories in sport.</p>
-                    <div class="mt-3 flex gap-3">
-                        <button class="bg-black text-white px-4 py-2 rounded-full font-bold">Join Us</button>
-                        <button class="border border-gray-300 px-4 py-2 rounded-full font-bold">Sign In</button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
+    <!-- Script tương tác slider và Fetch dữ liệu sản phẩm thật từ API cho cả Trending và Spotlight -->
     <script>
-        // JavaScript cho tính năng scroll sản phẩm
-        document.addEventListener('DOMContentLoaded', function() {
+        const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // 1. Slider cuộn ngang cho Trending This Week
             const scrollContainer = document.getElementById('scrollContainer');
             const btnNext = document.getElementById('btnNext');
             const btnPrev = document.getElementById('btnPrev');
-            
+
             if (scrollContainer && btnNext && btnPrev) {
-                const scrollAmount = 300;
-                
-                btnNext.addEventListener('click', function() {
-                    scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                    // Theo dõi hành vi người dùng 
-                    if (window.trackEvent) window.trackEvent('slider_click', { 'direction': 'next' });
-                });
-                
-                btnPrev.addEventListener('click', function() {
-                    scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                    if (window.trackEvent) window.trackEvent('slider_click', { 'direction': 'prev' });
-                });
+                const scrollAmount = 320;
+                btnNext.addEventListener('click', () => scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+                btnPrev.addEventListener('click', () => scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
             }
-            
-            // Thêm hiệu ứng hover cho sản phẩm
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                const img = card.querySelector('img');
-                if (img) {
-                    card.addEventListener('mouseenter', function() {
-                        img.style.transform = 'scale(1.05)';
-                    });
-                    
-                    card.addEventListener('mouseleave', function() {
-                        img.style.transform = 'scale(1)';
+
+            // 2. Slider cuộn ngang cho phần Spotlight
+            const spotlightContainer = document.getElementById('spotlightContainer');
+            const spotlightNext = document.getElementById('spotlightNext');
+            const spotlightPrev = document.getElementById('spotlightPrev');
+
+            if (spotlightContainer && spotlightNext && spotlightPrev) {
+                const scrollStep = 260;
+                spotlightNext.addEventListener('click', () => spotlightContainer.scrollBy({ left: scrollStep, behavior: 'smooth' }));
+                spotlightPrev.addEventListener('click', () => spotlightContainer.scrollBy({ left: -scrollStep, behavior: 'smooth' }));
+            }
+
+            // 3. Fetch dữ liệu sản phẩm thực tế từ API
+            try {
+                const res = await fetch(API_URL);
+                const products = await res.json();
+
+                // Render dữ liệu vào "Trending This Week"
+                if (scrollContainer && products.length > 0) {
+                    scrollContainer.innerHTML = "";
+                    products.slice(0, 6).forEach(product => {
+                        const priceDisplay = typeof product.price === 'number' ? product.price.toLocaleString('vi-VN') + '₫' : product.price;
+
+                        const itemCard = document.createElement('div');
+                        itemCard.className = "flex-shrink-0 w-72 cursor-pointer group";
+                        itemCard.innerHTML = `
+                            <div class="bg-[#f5f5f5] rounded-2xl overflow-hidden aspect-square mb-4 relative flex items-center justify-center p-4">
+                                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
+                                ${product.tag ? `<span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold uppercase rounded tracking-wider shadow-sm">${product.tag}</span>` : ''}
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-sm truncate group-hover:text-gray-600 transition-colors">${product.name}</h3>
+                            <p class="text-gray-500 text-xs mb-1">${product.category}</p>
+                            <p class="font-bold text-gray-900 text-sm">${priceDisplay}</p>
+                        `;
+
+                        itemCard.addEventListener('click', () => {
+                            localStorage.setItem('nike_selected_product', JSON.stringify(product));
+                            window.location.href = `pages/detail/detail.html?id=${product.id}`;
+                        });
+
+                        scrollContainer.appendChild(itemCard);
                     });
                 }
-            });
+
+                // Render dữ liệu thật vào phần "SPOTLIGHT" theo đúng style Nike Official tối giản
+                if (spotlightContainer && products.length > 0) {
+                    spotlightContainer.innerHTML = "";
+                    products.forEach(product => {
+                        const spotlightItem = document.createElement('div');
+                        spotlightItem.className = "flex-shrink-0 w-48 sm:w-56 text-center group cursor-pointer";
+
+                        spotlightItem.innerHTML = `
+                            <div class="bg-[#f5f5f5] rounded-2xl h-56 flex items-center justify-center p-6 mb-4 group-hover:bg-gray-200 transition duration-300 relative overflow-hidden">
+                                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-500">
+                                ${product.tag ? `<span class="absolute top-2 left-2 bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase rounded shadow-sm">${product.tag}</span>` : ''}
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-sm md:text-base group-hover:text-gray-600 transition truncate px-1">${product.name}</h3>
+                            <p class="text-gray-500 text-xs mt-0.5">${product.category}</p>
+                        `;
+
+                        spotlightItem.addEventListener('click', () => {
+                            localStorage.setItem('nike_selected_product', JSON.stringify(product));
+                            window.location.href = `pages/detail/detail.html?id=${product.id}`;
+                        });
+
+                        spotlightContainer.appendChild(spotlightItem);
+                    });
+                }
+
+            } catch (err) {
+                console.error("Failed to load products from API:", err);
+                if (scrollContainer) scrollContainer.innerHTML = '<p class="text-xs text-gray-400">Could not load items.</p>';
+                if (spotlightContainer) spotlightContainer.innerHTML = '<p class="text-xs text-gray-400">Could not load items.</p>';
+            }
         });
     </script>
+
     <script src="./assets/js/home.js" type="module"></script>
-    <!-- Search Overlay -->
     <script src="./assets/js/searchOverlay.js" type="module"></script>
-    <script src="./assets/js/monitoring.js" type="module"></script>
     <script src="./assets/js/mobile.js"></script>
 </body>
+
 </html>
