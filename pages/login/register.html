@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký | Nike Clone</title>
+    <script src="../../assets/js/components.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tailwind-build.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+
+<body class="auth-body">
+    <div class="auth-layout">
+        <aside class="auth-aside">
+            <div class="auth-brand">SGD Store</div>
+
+            <div>
+                <h2 class="auth-aside-title">Chạm tới<br>giới hạn mới.</h2>
+                <p class="auth-aside-text">Tham gia cộng đồng thành viên để nhận ưu đãi riêng và những mẫu mới nhất
+                    trước mọi người.</p>
+            </div>
+
+            <ul class="auth-perks">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M5 13l4 4L19 7" />
+                    </svg>Miễn phí vận chuyển</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M5 13l4 4L19 7" />
+                    </svg>Đổi trả trong 60 ngày</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M5 13l4 4L19 7" />
+                    </svg>Ưu đãi dành riêng cho thành viên</li>
+            </ul>
+        </aside>
+
+        <main class="auth-main">
+            <a href="../../index.html" class="auth-back" aria-label="Quay lại trang chủ">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Trang chủ
+            </a>
+
+            <div class="auth-box">
+                <img src="../../assets/images/logo.png" alt="SGD" class="auth-logo" onerror="this.style.display='none'">
+                <h1 class="auth-title">Tạo tài khoản</h1>
+                <p class="auth-subtitle">Chỉ mất một phút để trở thành thành viên và nhận ưu đãi riêng.</p>
+
+                <form id="registerForm">
+                    <div class="auth-field">
+                        <label class="auth-label" for="name">Họ và tên</label>
+                        <input type="text" id="name" placeholder="Nguyễn Văn A" autocomplete="name" required>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="email">Email</label>
+                        <input type="email" id="email" placeholder="name@example.com" autocomplete="email" required>
+                    </div>
+                    <div class="auth-field has-toggle">
+                        <label class="auth-label" for="password">Mật khẩu</label>
+                        <input type="password" id="password" placeholder="Tạo mật khẩu" autocomplete="new-password"
+                            required>
+                        <button type="button" class="auth-toggle" aria-label="Hiện mật khẩu">
+                            <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M3 3l18 18M10.6 10.6a3 3 0 004.2 4.2M9.9 5.1A10.4 10.4 0 0112 5c6.5 0 10 7 10 7a17.6 17.6 0 01-3.2 4.2M6.6 6.6C3.7 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 004-.9" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="authAlert" class="auth-alert" role="alert" aria-live="polite" hidden>
+                        <svg id="authAlertIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"></svg>
+                        <span id="authAlertText"></span>
+                    </div>
+                    <button type="submit" class="auth-btn">Tạo tài khoản</button>
+                </form>
+
+                <p class="auth-switch">Đã là thành viên? <a href="login.html">Đăng nhập</a></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hiện / ẩn mật khẩu (chỉ là giao diện, không đụng logic đăng nhập) -->
+    <script>
+        document.querySelectorAll('.auth-toggle').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.parentElement.querySelector('input');
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.classList.toggle('is-visible', show);
+                btn.setAttribute('aria-label', show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+            });
+        });
+    </script>
+    <!-- Script Xử lý Logic gọi API -->
+    <script>
+        const form = document.getElementById('registerForm');
+        const alertBox = document.getElementById('authAlert');
+        const alertText = document.getElementById('authAlertText');
+        const alertIcon = document.getElementById('authAlertIcon');
+        const ICONS = {
+            error: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+            success: '<circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/>'
+        };
+
+        function showAlert(type, message) {
+            alertBox.className = 'auth-alert is-' + type;
+            alertIcon.innerHTML = ICONS[type];
+            alertText.textContent = message;
+            alertBox.hidden = false;
+        }
+
+        function clearAlert() {
+            alertBox.hidden = true;
+            form.querySelectorAll('input').forEach(function (i) { i.classList.remove('is-invalid'); });
+        }
+
+        form.addEventListener('input', clearAlert);
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearAlert();
+
+            const btn = form.querySelector('.auth-btn');
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            let redirecting = false;
+
+            btn.disabled = true;
+            btn.textContent = 'Đang tạo tài khoản...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/v1/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    showAlert('success', 'Tạo tài khoản thành công! Đang chuyển tới trang đăng nhập...');
+                    redirecting = true;
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+                } else {
+                    showAlert('error', data.message || 'Đăng ký thất bại, vui lòng thử lại.');
+                    if (response.status === 409) document.getElementById('email').classList.add('is-invalid');
+                }
+            } catch (error) {
+                console.error(error);
+                showAlert('error', 'Không thể kết nối tới máy chủ. Vui lòng thử lại sau.');
+            } finally {
+                if (!redirecting) {
+                    btn.disabled = false;
+                    btn.textContent = 'Tạo tài khoản';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

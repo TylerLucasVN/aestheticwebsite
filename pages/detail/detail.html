@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - Nike.com</title>
+    <!-- Nhúng components.js để load Header/Footer -->
+    <script src="../../assets/js/components.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tailwind-build.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out' },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="font-sans antialiased bg-white text-gray-900 flex flex-col min-h-screen">
+    <app-header></app-header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full animate-fade-in">
+
+        <!-- Loading State -->
+        <div id="loadingState" class="flex justify-center items-center h-[50vh]">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+        </div>
+
+        <!-- Product Container (Ẩn lúc đầu) -->
+        <div id="productContainer" class="hidden grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+            <!-- Cột trái: Hình ảnh -->
+            <div class="bg-gray-50 rounded-3xl p-8 flex items-center justify-center aspect-square">
+                <img id="detailImage" src="" alt="Product"
+                    class="w-full h-full object-contain mix-blend-multiply drop-shadow-2xl hover:scale-105 transition-transform duration-500">
+            </div>
+
+            <!-- Cột phải: Thông tin & Nút bấm -->
+            <div class="flex flex-col justify-center">
+                <p id="detailCategory" class="text-lg text-gray-500 font-medium mb-2 uppercase tracking-wide"></p>
+                <h1 id="detailName"
+                    class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4 leading-tight"></h1>
+                <p id="detailPrice" class="text-2xl font-bold text-gray-900 mb-8"></p>
+
+                <!-- Mô tả lấy từ DB -->
+                <p id="detailDesc" class="text-gray-600 leading-relaxed mb-8">
+                    Đang tải mô tả sản phẩm...
+                </p>
+
+                <!-- Size Selector -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-bold text-gray-900">Select Size <span id="sizeError"
+                                class="text-red-500 text-sm ml-2 hidden font-normal">* Please select a
+                                size</span></span>
+                        <a href="#" class="text-gray-500 text-sm hover:text-black">Size Guide</a>
+                    </div>
+                    <!-- Container size động -->
+                    <div id="sizeContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col space-y-4">
+                    <button id="btnAddToCart"
+                        class="w-full bg-black text-white rounded-full py-5 font-bold text-lg hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Add to Bag
+                    </button>
+                    <button id="btnFavorite"
+                        class="w-full bg-white text-gray-900 border border-gray-300 rounded-full py-5 font-bold text-lg hover:border-black transition-colors flex items-center justify-center gap-2">
+                        Favorite
+                        <svg id="favIcon" class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 👉 POPUP / SIDE-DRAWER GIỎ HÀNG (Ẩn lúc đầu) -->
+    <div id="cartDrawer" class="fixed inset-0 z-[200] hidden">
+        <!-- Backdrop mờ nền -->
+        <div id="drawerBackdrop" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300"></div>
+
+        <!-- Panel trượt từ phải sang -->
+        <div id="drawerPanel"
+            class="absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+            <!-- Header của Drawer -->
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <h3 class="font-bold text-lg text-gray-900">Added to Bag</h3>
+                </div>
+                <button id="closeDrawer" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Nội dung sản phẩm vừa add -->
+            <div class="p-6 flex-grow overflow-y-auto">
+                <div class="flex gap-4 bg-gray-50 p-4 rounded-2xl mb-6">
+                    <img id="drawerItemImg" src="" alt=""
+                        class="w-24 h-24 object-contain mix-blend-multiply bg-white rounded-xl p-2">
+                    <div class="flex flex-col justify-center">
+                        <h4 id="drawerItemName" class="font-bold text-gray-900 text-sm"></h4>
+                        <p id="drawerItemCategory" class="text-gray-500 text-xs mt-1"></p>
+                        <p class="text-gray-700 text-xs mt-1 font-medium">Size: <span id="drawerItemSize"
+                                class="text-black font-bold"></span></p>
+                        <p id="drawerItemPrice" class="font-bold text-gray-900 text-sm mt-2"></p>
+                    </div>
+                </div>
+
+                <!-- Tóm tắt số lượng trong giỏ -->
+                <div class="text-center text-sm text-gray-600 mb-4">
+                    There are <span id="drawerTotalItems" class="font-bold text-black">0</span> items in your bag.
+                </div>
+            </div>
+
+            <!-- Footer nút bấm chuyển hướng -->
+            <div class="p-6 border-t border-gray-100 flex flex-col gap-3">
+                <a href="../cart/cart.html"
+                    class="w-full bg-black text-white text-center rounded-full py-4 font-bold hover:bg-gray-800 transition-colors shadow-lg">
+                    View Bag (<span id="drawerBagCount">0</span>)
+                </a>
+                <button id="continueShopping"
+                    class="w-full bg-white text-gray-900 border border-gray-300 text-center rounded-full py-4 font-bold hover:border-black transition-colors">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <app-footer></app-footer>
+
+    <script type="module" src="../../assets/js/searchOverlay.js"></script>
+    <script type="module" src="detail.js"></script>
+</body>
+
+</html>

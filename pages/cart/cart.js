@@ -1,5 +1,5 @@
 // --- CONFIG API ---
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 // --- UTILS ---
 const formatCurrency = (amount) => {
@@ -25,8 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let rawCart = JSON.parse(localStorage.getItem('nike_cart')) || [];
 
-    // --- RENDER CART & SUMMARY (Giữ nguyên logic cũ) ---
-    
     function updateNavFavCount() {
         const favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
         const navFavCount = document.getElementById("navFavCount");
@@ -43,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNavFavCount();
 
     function showToast(message) {
+        if (!toastContainer) return;
         const toast = document.createElement('div');
         toast.className = `bg-black text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-toast-in min-w-[250px]`;
         toast.innerHTML = `<span class="text-sm font-bold">${message}</span>`;
@@ -54,78 +53,91 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderCart() {
+        // Gom nhóm sản phẩm dựa trên CẢ ID VÀ SIZE để phân biệt các phân loại khác nhau
         const groupedCart = rawCart.reduce((acc, item) => {
-            const existingItem = acc.find(i => String(i.id) === String(item.id));
+            const itemSize = item.size || 'N/A';
+            const itemId = item.id || item._id;
+            const existingItem = acc.find(i => String(i.id || i._id) === String(itemId) && (i.size || 'N/A') === itemSize);
+
             if (existingItem) {
-                existingItem.quantity += 1;
+                existingItem.quantity += (parseInt(item.quantity) || 1);
             } else {
-                acc.push({ ...item, quantity: 1 });
+                acc.push({ ...item, size: itemSize, quantity: parseInt(item.quantity) || 1 });
             }
             return acc;
         }, []);
 
         if (groupedCart.length === 0) {
-            cartItemsContainer.innerHTML = '';
-            cartItemsContainer.classList.add('hidden');
-            emptyState.classList.remove('hidden');
-            checkoutBtn.disabled = true;
-            summarySubtotal.textContent = formatCurrency(0);
-            summaryTotal.textContent = formatCurrency(0);
-            navCartCount.classList.add('opacity-0');
+            if (cartItemsContainer) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.classList.add('hidden');
+            }
+            if (emptyState) emptyState.classList.remove('hidden');
+            if (checkoutBtn) checkoutBtn.disabled = true;
+            if (summarySubtotal) summarySubtotal.textContent = formatCurrency(0);
+            if (summaryTotal) summaryTotal.textContent = formatCurrency(0);
+            if (navCartCount) navCartCount.classList.add('opacity-0');
             return;
         }
 
-        cartItemsContainer.classList.remove('hidden');
-        emptyState.classList.add('hidden');
-        checkoutBtn.disabled = false;
-        
-        navCartCount.textContent = rawCart.length;
-        navCartCount.classList.remove('opacity-0');
+        if (cartItemsContainer) cartItemsContainer.classList.remove('hidden');
+        if (emptyState) emptyState.classList.add('hidden');
+        if (checkoutBtn) checkoutBtn.disabled = false;
 
-        cartItemsContainer.innerHTML = groupedCart.map(item => {
-            const unitPrice = parsePrice(item.price);
-            return `
-            <div class="flex gap-4 md:gap-6 py-6 border-b border-gray-100 animate-fade-in group">
-                <div class="w-24 h-24 md:w-36 md:h-36 bg-[#f5f5f5] rounded-xl flex-shrink-0 overflow-hidden">
-                    <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain mix-blend-multiply p-2 transition-transform duration-500 group-hover:scale-105">
-                </div>
-                <div class="flex-1 flex flex-col justify-between">
-                    <div class="flex justify-between items-start gap-4">
-                        <div>
-                            <h3 class="font-medium text-gray-900 text-base md:text-lg hover:underline cursor-pointer">${item.name}</h3>
-                            <p class="text-gray-500 text-sm mt-1">${item.category}</p>
-                            ${item.tag ? `<p class="text-gray-500 text-sm mt-0.5 capitalize">${item.tag}</p>` : ''}
-                        </div>
-                        <p class="font-medium text-gray-900 text-sm md:text-base whitespace-nowrap">
-                            ${formatCurrency(unitPrice * item.quantity)}
-                        </p>
+        const totalItemsCount = rawCart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+        if (navCartCount) {
+            navCartCount.textContent = totalItemsCount;
+            navCartCount.classList.remove('opacity-0');
+        }
+
+        if (cartItemsContainer) {
+            cartItemsContainer.innerHTML = groupedCart.map(item => {
+                const unitPrice = parsePrice(item.price);
+                const itemId = item.id || item._id;
+                return `
+                <div class="flex gap-4 md:gap-6 py-6 border-b border-gray-100 animate-fade-in group">
+                    <div class="w-24 h-24 md:w-36 md:h-36 bg-[#f5f5f5] rounded-xl flex-shrink-0 overflow-hidden">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain mix-blend-multiply p-2 transition-transform duration-500 group-hover:scale-105">
                     </div>
-                    <div class="flex items-center gap-6 mt-4">
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-500 text-sm">Quantity</span>
-                            <div class="flex items-center border border-gray-200 rounded-full h-8 px-2">
-                                <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${item.id}', -1)">−</button>
-                                <span class="w-6 text-center text-sm font-medium">${item.quantity}</span>
-                                <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${item.id}', 1)">+</button>
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div class="flex justify-between items-start gap-4">
+                            <div>
+                                <h3 class="font-medium text-gray-900 text-base md:text-lg hover:underline cursor-pointer" onclick="window.location.href='../detail/detail.html?id=${itemId}'">${item.name}</h3>
+                                <p class="text-gray-500 text-sm mt-1">${item.category}</p>
+                                <!-- HIỂN THỊ THÔNG SỐ SIZE ĐÃ CHỌN -->
+                                <p class="text-gray-700 text-sm font-medium mt-1">Size: <span class="text-black font-bold">${item.size}</span></p>
+                                ${item.tag ? `<p class="text-gray-500 text-sm mt-0.5 capitalize">${item.tag}</p>` : ''}
                             </div>
+                            <p class="font-medium text-gray-900 text-sm md:text-base whitespace-nowrap">
+                                ${formatCurrency(unitPrice * item.quantity)}
+                            </p>
                         </div>
-                        <button class="text-gray-400 hover:text-red-500 p-2 transition-colors" onclick="removeItem('${item.id}')" aria-label="Remove item">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
+                        <div class="flex items-center gap-6 mt-4">
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-500 text-sm">Quantity</span>
+                                <div class="flex items-center border border-gray-200 rounded-full h-8 px-2">
+                                    <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${itemId}', '${item.size}', -1)">−</button>
+                                    <span class="w-6 text-center text-sm font-medium">${item.quantity}</span>
+                                    <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${itemId}', '${item.size}', 1)">+</button>
+                                </div>
+                            </div>
+                            <button class="text-gray-400 hover:text-red-500 p-2 transition-colors" onclick="removeItem('${itemId}', '${item.size}')" aria-label="Remove item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>`;
-        }).join('');
+                </div>`;
+            }).join('');
+        }
 
-        const total = rawCart.reduce((sum, item) => sum + parsePrice(item.price), 0);
-        summarySubtotal.textContent = formatCurrency(total);
-        summaryTotal.textContent = formatCurrency(total);
+        const total = rawCart.reduce((sum, item) => sum + (parsePrice(item.price) * (parseInt(item.quantity) || 1)), 0);
+        if (summarySubtotal) summarySubtotal.textContent = formatCurrency(total);
+        if (summaryTotal) summaryTotal.textContent = formatCurrency(total);
     }
 
-    // --- RECOMMENDATION LOGIC (MỚI THÊM) ---
+    // --- RECOMMENDATION LOGIC ---
     async function fetchRecommendations() {
         try {
-            // Hiển thị skeleton loading
             if (recommendationGrid) {
                 recommendationGrid.innerHTML = Array(4).fill(0).map(() => `
                     <div class="min-w-[200px] md:min-w-[250px] space-y-3">
@@ -140,13 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Failed to load products');
             const products = await res.json();
 
-            // Lấy ngẫu nhiên 4-8 sản phẩm (hoặc lọc theo tiêu chí)
-            // Ở đây lấy 8 sản phẩm đầu tiên chưa có trong giỏ hàng
-            const cartIds = rawCart.map(i => String(i.id));
+            const cartIds = rawCart.map(i => String(i.id || i._id));
             const recommended = products
-                .filter(p => !cartIds.includes(String(p.id))) // Loại bỏ sp đã có trong giỏ
-                .sort(() => 0.5 - Math.random()) // Trộn ngẫu nhiên
-                .slice(0, 8); // Lấy 8 cái
+                .filter(p => !cartIds.includes(String(p.id || p._id)))
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 8);
 
             renderRecommendations(recommended);
 
@@ -158,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderRecommendations(items) {
         if (!recommendationGrid) return;
-        
+
         if (items.length === 0) {
             recommendationGrid.innerHTML = '<p class="text-gray-500">No recommendations available.</p>';
             return;
@@ -166,14 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         recommendationGrid.innerHTML = items.map(product => {
             const priceDisplay = typeof product.price === "number" ? formatCurrency(product.price) : product.price;
+            const prodId = product.id || product._id;
             return `
-            <div class="min-w-[200px] md:min-w-[250px] group cursor-pointer">
+            <div class="min-w-[200px] md:min-w-[250px] group cursor-pointer" onclick="window.location.href='../detail/detail.html?id=${prodId}'">
                 <div class="relative bg-[#f5f5f5] rounded-xl overflow-hidden mb-3 aspect-square">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105">
-                    <button onclick='addToCartFromRec(${JSON.stringify(product).replace(/'/g, "&#39;")})' 
-                            class="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white transform translate-y-2 group-hover:translate-y-0" title="Add to Bag">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    </button>
+                    <a href="../detail/detail.html?id=${prodId}" class="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white transform translate-y-2 group-hover:translate-y-0 flex items-center justify-center" title="View Detail">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </a>
                 </div>
                 <div>
                     <h4 class="font-medium text-gray-900 truncate hover:text-gray-600 transition-colors">${product.name}</h4>
@@ -185,34 +195,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    // --- GLOBAL FUNCTIONS ---
-    
-    // Hàm thêm vào giỏ từ mục Recommendation
-    window.addToCartFromRec = (product) => {
-        rawCart.push(product);
-        localStorage.setItem('nike_cart', JSON.stringify(rawCart));
-        
-        // Hiệu ứng và cập nhật UI
-        showToast('Added to bag');
-        renderCart();
-        
-        // Reload lại recommendation để loại bỏ sản phẩm vừa thêm (tùy chọn)
-        // fetchRecommendations(); 
-    };
+    // --- GLOBAL FUNCTIONS CHO SỰ KIỆN NÚT BẤM ---
 
-    window.updateQuantity = (id, change) => {
-        if (change === 1) {
-            const itemToAdd = rawCart.find(i => String(i.id) === String(id));
-            if (itemToAdd) rawCart.push(itemToAdd);
-        } else if (change === -1) {
-            const indexToRemove = rawCart.findIndex(i => String(i.id) === String(id));
-            if (indexToRemove !== -1) rawCart.splice(indexToRemove, 1);
+    window.updateQuantity = (id, size, change) => {
+        // Tìm đúng sản phẩm khớp cả ID và Size trong rawCart
+        const itemIndex = rawCart.findIndex(i => String(i.id || i._id) === String(id) && (i.size || 'N/A') === size);
+
+        if (itemIndex !== -1) {
+            let currentQty = parseInt(rawCart[itemIndex].quantity) || 1;
+            currentQty += change;
+
+            if (currentQty <= 0) {
+                rawCart.splice(itemIndex, 1);
+                showToast('Item removed from bag');
+            } else {
+                rawCart[itemIndex].quantity = currentQty;
+            }
         }
         saveAndRefresh();
     };
 
-    window.removeItem = (id) => {
-        rawCart = rawCart.filter(i => String(i.id) !== String(id));
+    window.removeItem = (id, size) => {
+        rawCart = rawCart.filter(i => !(String(i.id || i._id) === String(id) && (i.size || 'N/A') === size));
         showToast('Item removed from bag');
         saveAndRefresh();
     };
@@ -221,12 +225,44 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('nike_cart', JSON.stringify(rawCart));
         renderCart();
     }
+    // --- XỬ LÝ LOGIC THANH TOÁN (CHECKOUT) ---
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            // 1. Kiểm tra giỏ hàng rỗng
+            if (rawCart.length === 0) {
+                showToast("Your bag is empty. Please add items to checkout.");
+                return;
+            }
 
-    checkoutBtn.addEventListener('click', () => {
-        alert('Proceeding to checkout...\nTotal: ' + summaryTotal.textContent);
-    });
+            // 2. Hiển thị Modal thành công thay vì dùng alert
+            const modal = document.getElementById('checkoutSuccessModal');
+            if (modal) {
+                // Tạo một mã đơn hàng ảo (ví dụ: ORD-59284) để nhìn ngầu hơn
+                const randomOrderNum = "ORD-" + Math.floor(10000 + Math.random() * 90000);
+                document.getElementById('orderNumberDisplay').textContent = randomOrderNum;
+                modal.classList.remove('hidden');
+            }
+        });
+    }
+
+    // 3. Xử lý khi bấm nút "Continue Shopping" trong Modal
+    const closeCheckoutModalBtn = document.getElementById('closeCheckoutModalBtn');
+    if (closeCheckoutModalBtn) {
+        closeCheckoutModalBtn.addEventListener('click', () => {
+            // Xóa toàn bộ dữ liệu giỏ hàng trong bộ nhớ
+            rawCart = [];
+            localStorage.removeItem('nike_cart');
+
+            // Cập nhật lại UI giỏ hàng ngay lập tức
+            renderCart();
+
+            // Ẩn modal và (Tùy chọn) đá người dùng về trang chủ
+            document.getElementById('checkoutSuccessModal').classList.add('hidden');
+            window.location.href = "../../index.html";
+        });
+    }
 
     // --- INIT ---
     renderCart();
-    fetchRecommendations(); // Gọi hàm lấy sản phẩm gợi ý
+    fetchRecommendations();
 });
