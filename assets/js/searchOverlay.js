@@ -1,5 +1,5 @@
 import { trackEvent } from './monitoring.js';
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 // Biến lưu trữ dữ liệu cache cho overlay để tìm kiếm nhanh
 let cachedOverlayData = [];
@@ -7,13 +7,13 @@ let cachedOverlayData = [];
 // Fetch dữ liệu ngay khi load file (hoặc khi DOMReady)
 function fetchOverlayData() {
     fetch(API_URL)
-        .then(function(response) {
+        .then(function (response) {
             if (response.ok) return response.json();
         })
-        .then(function(data) {
+        .then(function (data) {
             if (data) cachedOverlayData = data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
             console.error("Search Overlay: Failed to fetch API", error);
         });
 }
@@ -120,14 +120,14 @@ export function initSearchOverlay() {
     const closeBtn = document.getElementById('closeSearchBtn');
     const input = document.getElementById('globalSearchInput');
     const clearInputBtn = document.getElementById('clearSearchInput');
-    
+
     // Content Sections
     const defaultContent = document.getElementById('defaultSearchContent');
     const liveResults = document.getElementById('liveSearchResults');
     const liveProductList = document.getElementById('liveProductList');
     const noResultsMsg = document.getElementById('noResultsMsg');
     const viewAllBtn = document.getElementById('viewAllResultsBtn');
-    
+
     // History Elements
     const historySection = document.getElementById('searchHistorySection');
     const historyList = document.getElementById('historyList');
@@ -160,7 +160,7 @@ export function initSearchOverlay() {
             historySection.classList.add('hidden');
             return;
         }
-        
+
         historySection.classList.remove('hidden');
         historyList.innerHTML = history.map(term => `
             <button class="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-700 flex items-center gap-2 history-item-btn">
@@ -177,15 +177,15 @@ export function initSearchOverlay() {
 
     // --- OVERLAY ACTIONS ---
     function openOverlay(e) {
-        if(e) e.preventDefault();
-        
+        if (e) e.preventDefault();
+
         // Fetch dữ liệu nếu chưa có (đảm bảo cache có dữ liệu)
         if (cachedOverlayData.length === 0) fetchOverlayData();
 
         backdrop.classList.remove('hidden');
         setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
         container.classList.remove('-translate-y-full');
-        
+
         input.value = '';
         toggleView('');
         renderHistory();
@@ -205,7 +205,7 @@ export function initSearchOverlay() {
     // --- SEARCH LOGIC ---
     function performSearch(query) {
         if (!query.trim()) return;
-        
+
         // Theo dõi từ khóa tìm kiếm (Ý số 1)
         trackEvent('search', { search_term: query.trim() });
 
@@ -230,10 +230,10 @@ export function initSearchOverlay() {
 
     function renderLiveProducts(query) {
         const lowerQuery = query.toLowerCase();
-        
+
         // Sử dụng dữ liệu cache từ API để lọc
-        const matches = cachedOverlayData.filter(p => 
-            (p.name && p.name.toLowerCase().includes(lowerQuery)) || 
+        const matches = cachedOverlayData.filter(p =>
+            (p.name && p.name.toLowerCase().includes(lowerQuery)) ||
             (p.category && p.category.toLowerCase().includes(lowerQuery))
         ).slice(0, 4);
 
@@ -248,12 +248,13 @@ export function initSearchOverlay() {
             viewAllBtn.onclick = () => performSearch(query);
 
             liveProductList.innerHTML = matches.map(product => {
-                const priceDisplay = typeof product.price === 'number' 
-                    ? product.price.toLocaleString('vi-VN') + '₫' 
+                const prodId = product.id || product._id;
+                const priceDisplay = typeof product.price === 'number'
+                    ? product.price.toLocaleString('vi-VN') + '₫'
                     : product.price;
 
                 return `
-                <div class="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition product-suggestion-item" data-id="${product.id}">
+                <div class="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition product-suggestion-item" data-id="${prodId}">
                     <div class="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
                         <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply">
                     </div>

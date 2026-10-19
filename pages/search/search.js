@@ -1,5 +1,5 @@
 // --- CẤU HÌNH API ---
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 let products = [];
 let currentFilters = {
@@ -77,8 +77,8 @@ window.toggleLike = function (event, btn, productId) {
 
     let favorites = getFavorites();
     const icon = btn.querySelector('svg');
-    const product = products.find(p => String(p.id) === String(productId));
-    const index = favorites.findIndex(f => String(f.id) === String(productId));
+    const product = products.find(p => String(p.id || p._id) === String(productId));
+    const index = favorites.findIndex(f => String(f.id || f._id) === String(productId));
 
     if (index !== -1) {
         favorites.splice(index, 1);
@@ -100,7 +100,7 @@ window.openQuickSizeModal = function (event, productId) {
     event.preventDefault();
     event.stopPropagation();
 
-    const product = products.find(p => String(p.id) === String(productId));
+    const product = products.find(p => String(p.id || p._id) === String(productId));
     if (!product) return;
 
     activeQuickProduct = product;
@@ -243,7 +243,8 @@ function renderProducts(items) {
     const favorites = getFavorites();
 
     items.forEach(product => {
-        const isLiked = favorites.some(f => String(f.id) === String(product.id));
+        const prodId = product.id || product._id;
+        const isLiked = favorites.some(f => String(f.id || f._id) === String(prodId));
         const heartClass = isLiked ? 'text-red-500 fill-current' : 'text-gray-500';
 
         const priceDisplay = typeof product.price === 'number'
@@ -252,18 +253,18 @@ function renderProducts(items) {
 
         // 👉 CLICK VÀO CARD SẼ LƯU VÀO CACHE VÀ CHUYỂN SANG TRANG DETAIL
         const html = `
-            <div onclick="goToDetail('${product.id}')" class="product-card group cursor-pointer relative transition-all duration-500 hover:-translate-y-1">
+            <div onclick="goToDetail('${prodId}')" class="product-card group cursor-pointer relative transition-all duration-500 hover:-translate-y-1">
                 <div class="relative">
                     <div class="card-img-wrap bg-[#f5f5f5] aspect-square mb-2 relative rounded-2xl overflow-hidden transition-all duration-500 group-hover:shadow-2xl">
                         <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-110">
                         ${product.tag ? `<span class="absolute top-2 left-2 bg-white px-2 py-1 text-xs font-bold uppercase rounded z-10">${product.tag}</span>` : ''}
                     </div>
 
-                    <button onclick="window.toggleLike(event, this, '${product.id}')" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-sm hover:bg-gray-100 transition-all z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 scale-100 hover:scale-110">
+                    <button onclick="window.toggleLike(event, this, '${prodId}')" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-sm hover:bg-gray-100 transition-all z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 scale-100 hover:scale-110">
                         <svg class="w-5 h-5 ${heartClass}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </button>
 
-                    <button onclick="window.openQuickSizeModal(event, '${product.id}')" class="absolute top-14 right-2 bg-white text-gray-900 p-2 rounded-full shadow-sm hover:bg-gray-100 transition-all z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 delay-75 scale-100 hover:scale-110" title="Quick Add">
+                    <button onclick="window.openQuickSizeModal(event, '${prodId}')" class="absolute top-14 right-2 bg-white text-gray-900 p-2 rounded-full shadow-sm hover:bg-gray-100 transition-all z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 delay-75 scale-100 hover:scale-110" title="Quick Add">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     </button>
                 </div>
@@ -281,10 +282,10 @@ function renderProducts(items) {
 
 // Hàm chuyển hướng sang Detail
 window.goToDetail = function (productId) {
-    const product = products.find(p => String(p.id) === String(productId));
+    const product = products.find(p => String(p.id || p._id) === String(productId));
     if (product) {
         localStorage.setItem('nike_selected_product', JSON.stringify(product));
-        window.location.href = `../detail/detail.html?id=${product.id}`;
+        window.location.href = `../detail/detail.html?id=${productId}`;
     }
 };
 
@@ -418,7 +419,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let cart = getCart();
-            const existingItem = cart.find(item => String(item.id) === String(activeQuickProduct.id) && item.size === selectedQuickSize);
+            const prodId = activeQuickProduct.id || activeQuickProduct._id;
+            const existingItem = cart.find(item => String(item.id || item._id) === String(prodId) && item.size === selectedQuickSize);
 
             if (existingItem) {
                 existingItem.quantity = (parseInt(existingItem.quantity) || 1) + currentQuickQty;

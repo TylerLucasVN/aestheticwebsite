@@ -1,4 +1,4 @@
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 let selectedSize = null; // Biến lưu trạng thái size
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -24,7 +24,8 @@ async function loadProductDetail() {
         const cachedProduct = localStorage.getItem('nike_selected_product');
         if (cachedProduct) {
             const parsed = JSON.parse(cachedProduct);
-            if (String(parsed.id) === String(productId)) {
+            const cachedId = parsed.id || parsed._id;
+            if (String(cachedId) === String(productId) || String(parsed.id) === String(productId) || String(parsed._id) === String(productId)) {
                 product = parsed;
             }
         }
@@ -36,7 +37,7 @@ async function loadProductDetail() {
                 const resAll = await fetch(API_URL);
                 if (!resAll.ok) throw new Error("Failed to fetch products list");
                 const products = await resAll.json();
-                product = products.find(p => String(p.id) === String(productId));
+                product = products.find(p => String(p.id) === String(productId) || String(p._id) === String(productId));
             } else {
                 product = await res.json();
             }

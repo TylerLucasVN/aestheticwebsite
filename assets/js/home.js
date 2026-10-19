@@ -1,90 +1,83 @@
 import { trackEvent } from './monitoring.js';
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 // --- 1. CẬP NHẬT NAV ---
-
 function updateNavFavCount() {
   const favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
   const navFavCount = document.getElementById("navFavCount");
-  
+
   if (!navFavCount) return;
-  
+
   navFavCount.textContent = favorites.length;
   navFavCount.classList.toggle("opacity-0", favorites.length === 0);
   navFavCount.classList.toggle("opacity-100", favorites.length > 0);
 }
 
 function updateNavCartCount() {
-    const cart = JSON.parse(localStorage.getItem('nike_cart')) || [];
-    const navCartCount = document.getElementById('navCartCount');
-    
-    // FIX NaN: Tính tổng dựa trên quantity thay vì length
-    const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+  const cart = JSON.parse(localStorage.getItem('nike_cart')) || [];
+  const navCartCount = document.getElementById('navCartCount');
 
-    if (navCartCount) {
-        navCartCount.innerText = totalItems;
-        navCartCount.classList.toggle("opacity-0", totalItems === 0);
-        navCartCount.classList.toggle("opacity-100", totalItems > 0);
-    }
+  // Tính tổng dựa trên quantity
+  const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+
+  if (navCartCount) {
+    navCartCount.innerText = totalItems;
+    navCartCount.classList.toggle("opacity-0", totalItems === 0);
+    navCartCount.classList.toggle("opacity-100", totalItems > 0);
+  }
 }
 
-// --- 2. LOGIC MODAL (FIX ĐƯỜNG DẪN) ---
+// --- 2. LOGIC MODAL ---
+window.closeCartModal = function () {
+  const modal = document.getElementById('cartModal');
+  const backdrop = document.getElementById('cartModalBackdrop');
+  const panel = document.getElementById('cartModalPanel');
+  if (!modal) return;
 
-window.closeCartModal = function() {
-    const modal = document.getElementById('cartModal');
-    const backdrop = document.getElementById('cartModalBackdrop');
-    const panel = document.getElementById('cartModalPanel');
-    if(!modal) return;
+  backdrop.classList.add('opacity-0');
+  panel.classList.remove('opacity-100', 'scale-100');
+  panel.classList.add('opacity-0', 'scale-95');
 
-    backdrop.classList.add('opacity-0');
-    panel.classList.remove('opacity-100', 'scale-100');
-    panel.classList.add('opacity-0', 'scale-95');
-    
-    setTimeout(() => { 
-        modal.classList.add('hidden'); 
-    }, 300);
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
 }
 
 function showCartModal(product) {
-    const modal = document.getElementById('cartModal');
-    const backdrop = document.getElementById('cartModalBackdrop');
-    const panel = document.getElementById('cartModalPanel');
-    
-    if(!modal) return;
+  const modal = document.getElementById('cartModal');
+  const backdrop = document.getElementById('cartModalBackdrop');
+  const panel = document.getElementById('cartModalPanel');
 
-    document.getElementById('modalImg').src = product.image;
-    document.getElementById('modalName').innerText = product.name;
-    document.getElementById('modalCategory').innerText = product.category;
-    
-    const tagEl = document.getElementById('modalTag');
-    if (product.price) { 
-        // Hiển thị giá tiền thay vì Tag để người dùng thấy rõ
-        const priceDisplay = typeof product.price === 'number' 
-            ? product.price.toLocaleString('vi-VN') + '₫' 
-            : product.price;
-        tagEl.innerText = priceDisplay; 
-        tagEl.classList.remove('hidden'); 
-    }
+  if (!modal) return;
 
-    // === SỬA HTML MODAL ĐỂ FIX ĐƯỜNG DẪN ===
-    // Tìm các nút trong modal và sửa lại onclick bằng JS để tránh lỗi path ../
-    const viewCartBtn = panel.querySelectorAll('button')[1]; // Nút View Cart
-    const checkoutBtn = panel.querySelectorAll('button')[2]; // Nút Checkout
+  document.getElementById('modalImg').src = product.image;
+  document.getElementById('modalName').innerText = product.name;
+  document.getElementById('modalCategory').innerText = product.category;
 
-    // Vì file này chạy ở index.html, đường dẫn đến cart phải là 'pages/cart/cart.html'
-    if(viewCartBtn) viewCartBtn.setAttribute('onclick', "window.location.href='pages/cart/cart.html'");
-    if(checkoutBtn) checkoutBtn.setAttribute('onclick', "window.location.href='pages/cart/cart.html'");
+  const tagEl = document.getElementById('modalTag');
+  if (product.price) {
+    const priceDisplay = typeof product.price === 'number'
+      ? product.price.toLocaleString('vi-VN') + '₫'
+      : product.price;
+    tagEl.innerText = priceDisplay;
+    tagEl.classList.remove('hidden');
+  }
 
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        backdrop.classList.remove('opacity-0');
-        panel.classList.remove('opacity-0', 'scale-95');
-        panel.classList.add('opacity-100', 'scale-100');
-    }, 10);
+  const viewCartBtn = panel.querySelectorAll('button')[1];
+  const checkoutBtn = panel.querySelectorAll('button')[2];
+
+  if (viewCartBtn) viewCartBtn.setAttribute('onclick', "window.location.href='pages/cart/cart.html'");
+  if (checkoutBtn) checkoutBtn.setAttribute('onclick', "window.location.href='pages/cart/cart.html'");
+
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    backdrop.classList.remove('opacity-0');
+    panel.classList.remove('opacity-0', 'scale-95');
+    panel.classList.add('opacity-100', 'scale-100');
+  }, 10);
 }
 
 // --- 3. FETCH DATA ---
-
 function getProducts() {
   return new Promise(function (resolve, reject) {
     fetch(API_URL)
@@ -93,25 +86,25 @@ function getProducts() {
       .catch(error => reject(error));
   });
 }
-
 export default getProducts;
 
-// --- 4. RENDER SẢN PHẨM ---
-
+// --- 4. RENDER GIAO DIỆN ---
 function renderProducts(data) {
   const container = document.getElementById("scrollContainer");
+  if (!container) return;
   const favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-  
+
   let htmlContent = "";
 
   data.forEach(product => {
-    const isFavorite = favorites.some(fav => String(fav.id) === String(product.id));
-    const priceDisplay = typeof product.price === 'number' 
-        ? product.price.toLocaleString('vi-VN') + '₫' 
-        : product.price;
+    const prodId = product.id || product._id;
+    const isFavorite = favorites.some(fav => String(fav.id || fav._id) === String(prodId));
+    const priceDisplay = typeof product.price === 'number'
+      ? product.price.toLocaleString('vi-VN') + '₫'
+      : product.price;
 
     htmlContent += `
-      <div class="product-card flex-shrink-0 w-64 md:w-72 cursor-pointer group relative" data-id="${product.id}">
+      <div class="product-card flex-shrink-0 w-64 md:w-72 cursor-pointer group relative" data-id="${prodId}">
         <div class="card-img-wrap bg-gray-100 rounded-xl overflow-hidden mb-4 relative transition-transform duration-300">
             <img src="${product.image}" alt="${product.name}" class="w-full h-auto object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105" loading="lazy">
              
@@ -137,45 +130,44 @@ function renderProducts(data) {
 
   container.innerHTML = htmlContent;
 
-  // Gán sự kiện
+  // Gán sự kiện click cho giỏ hàng, tym và chuyển trang chi tiết
   data.forEach(product => {
-    const card = container.querySelector(`[data-id="${product.id}"]`);
+    const prodId = product.id || product._id;
+    const card = container.querySelector(`[data-id="${prodId}"]`);
+    if (!card) return;
+
     const favBtn = card.querySelector('.fav-btn');
     const cartBtn = card.querySelector('.cart-btn');
 
-    // 1. Click thẻ (Tracking)
     card.addEventListener('click', (e) => {
-        if (!e.target.closest('.fav-btn') && !e.target.closest('.cart-btn')) {
-             if(window.trackEvent) trackEvent('product_click', { product_id: product.id, product_name: product.name });
-        }
+      if (!e.target.closest('.fav-btn') && !e.target.closest('.cart-btn')) {
+        if (window.trackEvent) trackEvent('product_click', { product_id: prodId, product_name: product.name });
+        localStorage.setItem('nike_selected_product', JSON.stringify(product));
+        window.location.href = `pages/detail/detail.html?id=${prodId}`;
+      }
     });
 
-    // 2. Thêm vào Giỏ hàng (FIX LOGIC QUANTITY)
     cartBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        cartBtn.classList.add('scale-90');
-        setTimeout(() => cartBtn.classList.remove('scale-90'), 150);
+      e.preventDefault();
+      e.stopPropagation();
 
-        let cart = JSON.parse(localStorage.getItem('nike_cart')) || [];
-        
-        // Kiểm tra xem đã có trong giỏ chưa
-        const existingItem = cart.find(item => String(item.id) === String(product.id));
+      cartBtn.classList.add('scale-90');
+      setTimeout(() => cartBtn.classList.remove('scale-90'), 150);
 
-        if (existingItem) {
-            existingItem.quantity = (parseInt(existingItem.quantity) || 1) + 1;
-        } else {
-            // QUAN TRỌNG: Thêm quantity: 1 để tránh lỗi NaN
-            cart.push({ ...product, quantity: 1 });
-        }
-        
-        localStorage.setItem('nike_cart', JSON.stringify(cart));
-        updateNavCartCount();
-        showCartModal(product);
+      let cart = JSON.parse(localStorage.getItem('nike_cart')) || [];
+      const existingItem = cart.find(item => String(item.id || item._id) === String(prodId));
+
+      if (existingItem) {
+        existingItem.quantity = (parseInt(existingItem.quantity) || 1) + 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+
+      localStorage.setItem('nike_cart', JSON.stringify(cart));
+      updateNavCartCount();
+      showCartModal(product);
     });
 
-    // 3. Yêu thích
     favBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleFavorite(product, favBtn);
@@ -183,9 +175,63 @@ function renderProducts(data) {
   });
 }
 
+function renderSpotlight(data) {
+  const spotlightContainer = document.getElementById('spotlightContainer');
+  if (!spotlightContainer || data.length === 0) return;
+
+  spotlightContainer.innerHTML = "";
+
+  data.forEach(product => {
+    const prodId = product.id || product._id;
+    const spotlightItem = document.createElement('div');
+    spotlightItem.className = "flex-shrink-0 w-48 sm:w-56 text-center group cursor-pointer";
+
+    spotlightItem.innerHTML = `
+          <div class="bg-[#f5f5f5] rounded-2xl h-56 flex items-center justify-center p-6 mb-4 group-hover:bg-gray-200 transition duration-300 relative overflow-hidden">
+              <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-500">
+              ${product.tag ? `<span class="absolute top-2 left-2 bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase rounded shadow-sm">${product.tag}</span>` : ''}
+          </div>
+          <h3 class="font-bold text-gray-900 text-sm md:text-base group-hover:text-gray-600 transition truncate px-1">${product.name}</h3>
+          <p class="text-gray-500 text-xs mt-0.5">${product.category}</p>
+      `;
+
+    spotlightItem.addEventListener('click', () => {
+      localStorage.setItem('nike_selected_product', JSON.stringify(product));
+      window.location.href = `pages/detail/detail.html?id=${prodId}`;
+    });
+
+    spotlightContainer.appendChild(spotlightItem);
+  });
+}
+
+// Logic Slider
+function initSliders() {
+  const scrollContainer = document.getElementById('scrollContainer');
+  const btnNext = document.getElementById('btnNext');
+  const btnPrev = document.getElementById('btnPrev');
+
+  if (scrollContainer && btnNext && btnPrev) {
+    const scrollAmount = 320;
+    btnNext.addEventListener('click', () => scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+    btnPrev.addEventListener('click', () => scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+  }
+
+  const spotlightContainer = document.getElementById('spotlightContainer');
+  const spotlightNext = document.getElementById('spotlightNext');
+  const spotlightPrev = document.getElementById('spotlightPrev');
+
+  if (spotlightContainer && spotlightNext && spotlightPrev) {
+    const scrollStep = 260;
+    spotlightNext.addEventListener('click', () => spotlightContainer.scrollBy({ left: scrollStep, behavior: 'smooth' }));
+    spotlightPrev.addEventListener('click', () => spotlightContainer.scrollBy({ left: -scrollStep, behavior: 'smooth' }));
+  }
+}
+
+// --- UTILS ---
 function toggleFavorite(product, btnElement) {
   let favorites = JSON.parse(localStorage.getItem('nike_favorites')) || [];
-  const index = favorites.findIndex(f => String(f.id) === String(product.id));
+  const prodId = product.id || product._id;
+  const index = favorites.findIndex(f => String(f.id || f._id) === String(prodId));
   const svg = btnElement.querySelector('svg');
 
   if (index === -1) {
@@ -204,32 +250,42 @@ function toggleFavorite(product, btnElement) {
 function filterByTag(data, tag) {
   if (!tag) return data;
   const searchTag = tag.toLowerCase();
-  
   return data.filter(item => {
     const itemTag = item.tag ? String(item.tag).toLowerCase() : "";
     return itemTag.includes(searchTag);
   });
 }
 
+// --- 5. INITIALIZE ---
 function init() {
   const container = document.getElementById("scrollContainer");
+  const spotlightContainer = document.getElementById("spotlightContainer");
+
   if (container) container.innerHTML = '<div class="text-gray-500 p-10">Loading...</div>';
+  if (spotlightContainer) spotlightContainer.innerHTML = '<div class="text-gray-500 py-10 text-sm">Loading spotlight products...</div>';
 
   getProducts()
-    .then(function(products) {
-      if (container) container.innerHTML = ''; 
+    .then(function (products) {
+      if (container) container.innerHTML = '';
+
+      // Render 2 section bằng cùng 1 data fetched (Không gọi API 2 lần)
       renderProducts(filterByTag(products, "trending"));
-      
-      // Gọi cập nhật số lượng khi load trang
-      updateNavCartCount(); 
-      updateNavFavCount(); // Gọi hàm này như yêu cầu
-      
+      renderSpotlight(products);
+
+      // Kích hoạt slider
+      initSliders();
+
+      // Cập nhật badges
+      updateNavCartCount();
+      updateNavFavCount();
+
       const cartBackdrop = document.getElementById('cartModalBackdrop');
-      if(cartBackdrop) cartBackdrop.addEventListener('click', window.closeCartModal);
+      if (cartBackdrop) cartBackdrop.addEventListener('click', window.closeCartModal);
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.error("Lỗi:", error);
       if (container) container.innerHTML = '<div class="text-red-500 p-10">Failed to load products.</div>';
+      if (spotlightContainer) spotlightContainer.innerHTML = '<div class="text-red-500 py-10 text-sm">Failed to load spotlight.</div>';
     });
 }
 

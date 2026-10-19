@@ -1,58 +1,127 @@
-/* --- 1. BIẾN & RESET --- */
-:root {
-    --primary: #111111;
-    --secondary: #757575;
-    --bg-gray: #f5f5f5;
-    --white: #ffffff;
-    --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@layer base {
+
+    /* Bạn có thể viết thêm CSS thuần của bạn ở dưới dòng này */
+    /* --- 1. BIẾN & RESET --- */
+    :root {
+        --primary: #111111;
+        --secondary: #757575;
+        --bg-gray: #f5f5f5;
+        --white: #ffffff;
+        --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-main);
+        color: var(--primary);
+        background-color: var(--white);
+        overflow-x: hidden;
+        /* Ẩn thanh cuộn ngang của body */
+        text-rendering: optimizeSpeed;
+    }
+
+    /* Tối ưu hóa việc render các section ngoài màn hình */
+    section,
+    footer {
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 500px;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    button {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        font-family: inherit;
+    }
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: var(--font-main);
-    color: var(--primary);
-    background-color: var(--white);
-    overflow-x: hidden; /* Ẩn thanh cuộn ngang của body */
-    text-rendering: optimizeSpeed;
-}
-
-/* Tối ưu hóa việc render các section ngoài màn hình */
-section, footer {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 500px;
-}
-
-a { text-decoration: none; color: inherit; cursor: pointer; }
-ul { list-style: none; }
-button { cursor: pointer; border: none; outline: none; background: none; font-family: inherit; }
 
 /* --- 2. HEADER & NAV --- */
-.top-bar {
-    background-color: var(--bg-gray);
-    text-align: center;
-    padding: 8px;
-    font-size: 12px;
+@layer components {
+    .top-bar {
+        background-color: var(--bg-gray);
+        text-align: center;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .top-bar a {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    height: 60px;
+    background: var(--white);
+    z-index: 100;
+}
+
+.logo img {
+    width: 160px;
+    height: auto;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-links a {
     font-weight: 500;
-}
-.top-bar a { text-decoration: underline; font-weight: bold; }
-
-nav {
-    position: sticky; top: 0;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 40px; height: 60px;
-    background: var(--white);  z-index: 100;
+    font-size: 16px;
+    position: relative;
+    padding-bottom: 5px;
 }
 
-.logo img { width: 160px; height: auto; display: block; }
+.nav-links a:hover {
+    border-bottom: 2px solid var(--primary);
+}
 
-.nav-links { display: flex; gap: 20px; position: absolute; left: 50%; transform: translateX(-50%); }
-.nav-links a { font-weight: 500; font-size: 16px; position: relative; padding-bottom: 5px; }
-.nav-links a:hover { border-bottom: 2px solid var(--primary); }
+.nav-icons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
 
-.nav-icons { display: flex; gap: 15px; align-items: center; }
-.icon-btn { font-size: 20px; padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-.icon-btn:hover { background-color: #e5e5e5; }
+.icon-btn {
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background-color: #e5e5e5;
+}
 
 /* --- SEARCH BAR (Nike Style) --- */
 .search-wrapper {
@@ -64,51 +133,111 @@ nav {
     width: 180px;
     transition: all 0.3s ease;
     margin-right: 10px;
-    position: relative; /* Để căn chỉnh dropdown theo khung này */
+    position: relative;
+    /* Để căn chỉnh dropdown theo khung này */
 }
-.search-wrapper:hover { background-color: #e5e5e5; }
+
+.search-wrapper:hover {
+    background-color: #e5e5e5;
+}
 
 /* Khi click vào ô tìm kiếm, thanh này sẽ dài ra giống Nike */
-.search-wrapper:focus-within { background-color: #e5e5e5; width: 240px; }
-
-.search-btn { display: flex; align-items: center; justify-content: center; color: var(--primary); }
-.search-input {
-    border: none; background: transparent; outline: none;
-    width: 100%; font-family: inherit; font-size: 16px; font-weight: 500;
-    color: var(--primary); margin-left: 8px;
+.search-wrapper:focus-within {
+    background-color: #e5e5e5;
+    width: 240px;
 }
-.search-input::placeholder { color: var(--secondary); }
+
+.search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary);
+    margin-left: 8px;
+}
+
+.search-input::placeholder {
+    color: var(--secondary);
+}
 
 /* --- SEARCH DROPDOWN --- */
 .search-dropdown {
     position: absolute;
-    top: 120%; /* Cách thanh tìm kiếm một chút */
+    top: 120%;
+    /* Cách thanh tìm kiếm một chút */
     right: 0;
-    width: 280px; /* Rộng hơn thanh tìm kiếm để chứa nhiều chữ */
+    width: 280px;
+    /* Rộng hơn thanh tìm kiếm để chứa nhiều chữ */
     background-color: var(--white);
     border-radius: 12px;
     padding: 15px 0;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Đổ bóng nhẹ */
-    opacity: 0; visibility: hidden; /* Ẩn mặc định */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    /* Đổ bóng nhẹ */
+    opacity: 0;
+    visibility: hidden;
+    /* Ẩn mặc định */
     transform: translateY(-10px);
     transition: all 0.2s ease;
-    z-index: 999; /* Đảm bảo hiện trên mọi thứ khác */
+    z-index: 999;
+    /* Đảm bảo hiện trên mọi thứ khác */
 }
 
 /* Hiện dropdown khi focus vào ô input */
 .search-wrapper:focus-within .search-dropdown {
-    opacity: 1; visibility: visible; transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
-.search-dropdown h4 { font-size: 13px; color: var(--secondary); margin: 0 20px 10px; font-weight: 600; text-transform: uppercase; }
-.search-item { display: block; padding: 8px 20px; font-size: 15px; font-weight: 500; color: var(--primary); transition: 0.2s; }
-.search-item:hover { background-color: var(--bg-gray); }
+.search-dropdown h4 {
+    font-size: 13px;
+    color: var(--secondary);
+    margin: 0 20px 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.search-item {
+    display: block;
+    padding: 8px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--primary);
+    transition: 0.2s;
+}
+
+.search-item:hover {
+    background-color: var(--bg-gray);
+}
 
 @media (max-width: 900px) {
+
     /* Trên mobile, không ẩn input hoàn toàn mà để nó thu nhỏ lại */
-    .search-wrapper { width: 40px; padding: 6px 8px; overflow: hidden; }
-    .search-wrapper:focus-within { width: 200px; background-color: var(--bg-gray); }
-    .search-dropdown { width: 220px; right: -50px; }
+    .search-wrapper {
+        width: 40px;
+        padding: 6px 8px;
+        overflow: hidden;
+    }
+
+    .search-wrapper:focus-within {
+        width: 200px;
+        background-color: var(--bg-gray);
+    }
+
+    .search-dropdown {
+        width: 220px;
+        right: -50px;
+    }
 }
 
 /* --- SEARCH OVERLAY --- */
@@ -118,13 +247,17 @@ nav {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4); /* Màu tối mờ */
-    backdrop-filter: blur(4px); /* Hiệu ứng làm mờ nền */
-    z-index: 90; /* Thấp hơn nav (100) để thanh nav vẫn sáng */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Màu tối mờ */
+    backdrop-filter: blur(4px);
+    /* Hiệu ứng làm mờ nền */
+    z-index: 90;
+    /* Thấp hơn nav (100) để thanh nav vẫn sáng */
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
-    pointer-events: none; /* Không ngăn cản click khi đang ẩn */
+    pointer-events: none;
+    /* Không ngăn cản click khi đang ẩn */
 }
 
 /* Kích hoạt overlay khi thanh tìm kiếm được focus */
@@ -140,68 +273,173 @@ body:has(.search-wrapper:focus-within) {
 }
 
 /* --- 3. HERO SECTION --- */
-.hero { margin-bottom: 60px; position: relative; overflow: hidden; }
+.hero {
+    margin-bottom: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
 .hero-img {
     pointer-events: none;
-    width: 100%; height: 95vh;
-    object-fit: cover; object-position: center;
+    width: 100%;
+    height: 95vh;
+    object-fit: cover;
+    object-position: center;
     position: relative;
 }
 
-.hero-content { text-align: center; padding: 40px 20px; }
-.hero-tag { font-weight: 500; margin-bottom: 10px; font-size: 16px; }
+.hero-content {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.hero-tag {
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
 
 .hero-title {
-    font-size: 70px; font-weight: 900; text-transform: uppercase;
-    line-height: 0.9; margin-bottom: 20px; letter-spacing: -2px;
+    font-size: 70px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.9;
+    margin-bottom: 20px;
+    letter-spacing: -2px;
     font-family: 'Arial Black', sans-serif;
 }
-.hero-desc { margin-bottom: 30px; font-size: 16px; max-width: 600px; margin: 0 auto 30px auto; }
 
-.btn-group { display: flex; justify-content: center; gap: 10px; }
+.hero-desc {
+    margin-bottom: 30px;
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
 
 .btn-nike {
-    background-color: var(--primary); color: var(--white);
-    padding: 10px 25px; border-radius: 30px;
-    font-weight: 500; font-size: 15px; transition: 0.3s;
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 15px;
+    transition: 0.3s;
 }
-.btn-nike:hover { background-color: #3d3d3d; }
-.btn-nike.secondary { background-color: #fff; color: #111; border: 1px solid #ccc; }
-.btn-nike.secondary:hover { border-color: #111; }
+
+.btn-nike:hover {
+    background-color: #3d3d3d;
+}
+
+.btn-nike.secondary {
+    background-color: #fff;
+    color: #111;
+    border: 1px solid #ccc;
+}
+
+.btn-nike.secondary:hover {
+    border-color: #111;
+}
 
 /* --- 4. TRENDING CAROUSEL --- */
 .section-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 40px; margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    margin-bottom: 20px;
 }
-.section-title { font-size: 24px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
-.scroll-btns { display: flex; gap: 10px; }
-.circle-btn { background-color: #f5f5f5; width: 40px; height: 40px; }
+
+.section-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.scroll-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.circle-btn {
+    background-color: #f5f5f5;
+    width: 40px;
+    height: 40px;
+}
 
 .product-scroll {
-    display: flex; gap: 20px; overflow-x: auto;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
     padding: 0 40px 40px 40px;
-    scrollbar-width: none; /* Firefox */
-    cursor: grab; /* Con trỏ hình bàn tay */
+    scrollbar-width: none;
+    /* Firefox */
+    cursor: grab;
+    /* Con trỏ hình bàn tay */
 }
-.product-scroll::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
-.product-scroll.active { cursor: grabbing; /* Con trỏ nắm chặt khi kéo */ }
 
-.product-card { min-width: 400px; cursor: pointer; user-select: none; /* Không cho bôi đen text khi kéo */ }
+.product-scroll::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.product-scroll.active {
+    cursor: grabbing;
+    /* Con trỏ nắm chặt khi kéo */
+}
+
+.product-card {
+    min-width: 400px;
+    cursor: pointer;
+    user-select: none;
+    /* Không cho bôi đen text khi kéo */
+}
 
 .card-img-wrap {
-    width: 100%; height: 400px; background-color: var(--bg-gray);
-    margin-bottom: 15px; position: relative;
+    width: 100%;
+    height: 400px;
+    background-color: var(--bg-gray);
+    margin-bottom: 15px;
+    position: relative;
 }
-.card-img-wrap img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
 
-.card-info { display: flex; justify-content: space-between; align-items: flex-start; }
-.p-name { font-weight: 500; font-size: 16px; margin-bottom: 5px; }
-.p-cat { color: var(--secondary); font-size: 16px; }
-.p-price { font-weight: 500; }
+.card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.p-name {
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.p-cat {
+    color: var(--secondary);
+    font-size: 16px;
+}
+
+.p-price {
+    font-weight: 500;
+}
 
 
-.center-text{
+.center-text {
     z-index: 2;
     transform: translate(-50%, -50%);
     position: absolute;
@@ -210,28 +448,104 @@ body:has(.search-wrapper:focus-within) {
 }
 
 /* --- FEATURED TILES --- */
-.featured { padding: 0; }
-.featured-inner { max-width: none; width: 100%; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
-.featured-card { border-radius: 0; overflow: visible; position: relative; min-height: 600px; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
-.featured-card .featured-content { padding: 28px; color: #fff; z-index: 2; }
-.featured-card::before{ content: ""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.55) 80%); }
-.featured-card.left .kicker, .featured-card.right .kickearr{ font-size: 14px; mgin-bottom: 8px; opacity: 0.95; }
-.featured-card h3{ margin:0 0 12px 0; font-size: 26px; line-height:1.05; font-weight:700; }
-.feature-btn{ display:inline-block; background:#fff; color:#111; padding:10px 18px; border-radius:999px; text-decoration:none; font-weight:600; box-shadow: 0 8px 18px rgba(0,0,0,0.25); }
-
-@media (max-width: 900px){
-    .featured-inner{ grid-template-columns: 1fr; padding: 0 20px; }
-    .featured-card{ min-height: 320px; }
+.featured {
+    padding: 0;
 }
+
+.featured-inner {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0;
+}
+
+.featured-card {
+    border-radius: 0;
+    overflow: visible;
+    position: relative;
+    min-height: 600px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+}
+
+.featured-card .featured-content {
+    padding: 28px;
+    color: #fff;
+    z-index: 2;
+}
+
+.featured-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.55) 80%);
+}
+
+.featured-card.left .kicker,
+.featured-card.right .kickearr {
+    font-size: 14px;
+    mgin-bottom: 8px;
+    opacity: 0.95;
+}
+
+.featured-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 26px;
+    line-height: 1.05;
+    font-weight: 700;
+}
+
+.feature-btn {
+    display: inline-block;
+    background: #fff;
+    color: #111;
+    padding: 10px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 900px) {
+    .featured-inner {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+    }
+
+    .featured-card {
+        min-height: 320px;
+    }
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .hero-title { font-size: 40px; }
-    .product-card { min-width: 300px; }
-    nav { padding: 0 20px; }
-    .section-header, .product-scroll { padding-left: 20px; padding-right: 20px; }
+    .nav-links {
+        display: none;
+    }
+
+    .hero-title {
+        font-size: 40px;
+    }
+
+    .product-card {
+        min-width: 300px;
+    }
+
+
+
+    .section-header,
+    .product-scroll {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }
-.title-text{
+
+.title-text {
     white-space: nowrap;
     font-family: 'Anton', sans-serif;
     font-weight: 900;
@@ -241,22 +555,458 @@ body:has(.search-wrapper:focus-within) {
     color: rgb(255, 255, 255);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
-.second-title-text{
+
+.second-title-text {
     font-size: 20px;
     font-weight: bold;
     margin-top: 20px;
     margin-bottom: 30px;
     color: rgb(255, 255, 255);
 }
-.feature-title{font-size: 28px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+
+.feature-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+}
 
 /* inline Shop-by-Sport under Trending */
-.shop-by-sport-inline { padding: 24px 40px 40px 40px; }
-.shop-by-sport-inline .sport-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; }
-.shop-by-sport-inline .sport-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 6px; display: block; }
-.shop-by-sport-inline .sport-caption { margin-top: 10px; text-align: center; font-size: 16px; color: var(--primary); }
+.shop-by-sport-inline {
+    padding: 24px 40px 40px 40px;
+}
+
+.shop-by-sport-inline .sport-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.shop-by-sport-inline .sport-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.shop-by-sport-inline .sport-caption {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--primary);
+}
 
 @media (max-width: 900px) {
-    .shop-by-sport-inline .sport-grid { grid-template-columns: 1fr; }
-    .shop-by-sport-inline .sport-card img { height: 180px; }
+    .shop-by-sport-inline .sport-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .shop-by-sport-inline .sport-card img {
+        height: 180px;
+    }
+}
+
+/* ===================== AUTH (login / register) ===================== */
+.auth-body {
+    min-height: 100vh;
+    background: #fff;
+    color: #111;
+}
+
+.auth-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+}
+
+@media (min-width: 960px) {
+    .auth-layout {
+        grid-template-columns: 5fr 6fr;
+    }
+}
+
+/* ---------- Cột trái: thương hiệu (chỉ hiện trên desktop) ---------- */
+.auth-aside {
+    display: none;
+    position: relative;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 56px;
+    background: #111;
+    color: #fff;
+}
+
+@media (min-width: 960px) {
+    .auth-aside {
+        display: flex;
+    }
+}
+
+.auth-aside::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(800px 480px at 0% 0%, rgba(255, 255, 255, 0.14), transparent 60%),
+        radial-gradient(700px 520px at 100% 100%, rgba(255, 94, 0, 0.32), transparent 60%);
+}
+
+.auth-aside>* {
+    position: relative;
+}
+
+.auth-brand {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.auth-aside-title {
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+.auth-aside-text {
+    margin-top: 16px;
+    max-width: 420px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-perks {
+    display: grid;
+    gap: 14px;
+    list-style: none;
+}
+
+.auth-perks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.auth-perks svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* ---------- Cột phải: form ---------- */
+.auth-main {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 88px 24px 48px;
+}
+
+.auth-back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px 8px 8px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+}
+
+.auth-back:hover {
+    background-color: #f3f3f3;
+}
+
+.auth-back svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-logo {
+    display: block;
+    height: 40px;
+    width: auto;
+    margin-bottom: 32px;
+}
+
+.auth-title {
+    font-family: var(--font-main);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.auth-subtitle {
+    margin: 10px 0 32px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #6b6b6b;
+}
+
+.auth-field {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.auth-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+}
+
+.auth-box input {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid #d4d4d4;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 16px;
+    color: #111;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-box input::placeholder {
+    color: #a3a3a3;
+}
+
+.auth-box input:hover {
+    border-color: #9a9a9a;
+}
+
+.auth-box input:focus {
+    outline: none;
+    border-color: #111;
+    box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.08);
+}
+
+.auth-field.has-toggle input {
+    padding-right: 52px;
+}
+
+.auth-toggle {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    color: #6b6b6b;
+    cursor: pointer;
+}
+
+.auth-toggle:hover {
+    color: #111;
+    background: #f3f3f3;
+}
+
+.auth-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+.auth-toggle .icon-off {
+    display: none;
+}
+
+.auth-toggle.is-visible .icon-off {
+    display: block;
+}
+
+.auth-toggle.is-visible .icon-on {
+    display: none;
+}
+
+.auth-btn {
+    width: 100%;
+    height: 52px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background-color: #111;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.auth-btn:hover {
+    background-color: #333;
+}
+
+.auth-btn:active {
+    transform: scale(0.99);
+}
+
+.auth-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.auth-switch {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 14px;
+    color: #6b6b6b;
+}
+
+.auth-switch a {
+    font-weight: 700;
+    color: #111;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.auth-note {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #8d8d8d;
+}
+
+.auth-back:focus-visible,
+.auth-toggle:focus-visible,
+.auth-btn:focus-visible,
+.auth-switch a:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 2px;
+}
+
+/* ---------- Thông báo trong form (thay cho alert() của trình duyệt) ---------- */
+.auth-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: left;
+    animation: authAlertIn 0.2s ease-out;
+}
+
+.auth-alert[hidden] {
+    display: none;
+}
+
+.auth-alert svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.auth-alert.is-error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.auth-alert.is-success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #15803d;
+}
+
+.auth-box input.is-invalid {
+    border-color: #dc2626;
+}
+
+.auth-box input.is-invalid:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+}
+
+@keyframes authAlertIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- 5. CUSTOM UTILITIES & ANIMATIONS (Moved from index.html) --- */
+
+/* Bổ sung cuộn mượt cho class đã có */
+.product-scroll {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scroll-behavior: smooth;
+}
+
+/* Smooth transitions tổng thể */
+a,
+button,
+img {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover for product cards */
+.product-card:hover .card-img-wrap img {
+    transform: scale(1.06);
+}
+
+/* Professional Hero Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-in-up {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+}
+
+@layer base {
+    * {
+        border-color: var(--color-gray);
+    }
 }

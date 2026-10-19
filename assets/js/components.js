@@ -6,9 +6,21 @@ const pages = isRoot ? 'pages/' : '../';
 // 1. HEADER COMPONENT
 class AppHeader extends HTMLElement {
     connectedCallback() {
+        let user = null;
+        try { user = JSON.parse(localStorage.getItem('user')); } catch (e) { }
+        const accountHTML = user
+            ? `<div class="flex items-center gap-x-3">
+           <span class="hidden sm:inline text-sm font-medium text-gray-800">Hi, ${user.name || 'bạn'}</span>
+           <button id="logoutBtn" class="text-sm font-medium text-gray-600 hover:text-black underline">Logout</button>
+       </div>`
+            : `<a href="${pages}login/login.html" class="text-gray-600 hover:text-black transition-colors" aria-label="Đăng nhập" title="Đăng nhập">
+           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+           </svg>
+       </a>`;
         this.innerHTML = `
         <div class="bg-black text-white text-xs md:text-sm py-2 px-4 text-center">
-            Free Shipping & 60-Day Free Returns. <a href="#" class="underline font-medium ml-1">Join Now</a>
+            Free Shipping & 60-Day Free Returns. <a href="${pages}login/register.html" class="underline font-medium ml-1">Join Now</a>
         </div>
 
         <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
@@ -47,6 +59,7 @@ class AppHeader extends HTMLElement {
                             </svg>
                             <span id="navCartCount" class="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center opacity-0 transition-opacity">0</span>
                         </a>
+                        ${accountHTML}
                         <button id="mobile-menu-btn" class="md:hidden text-gray-900 hover:text-black focus:outline-none p-1">
                             <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -55,8 +68,14 @@ class AppHeader extends HTMLElement {
                     </div>
                 </div>
             </div>
-        </nav>
+                </nav>
         `;
+
+        const lo = this.querySelector('#logoutBtn');
+        if (lo) lo.addEventListener('click', () => {
+            localStorage.removeItem('user');
+            location.reload();
+        });
     }
 }
 

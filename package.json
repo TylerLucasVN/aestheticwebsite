@@ -1,0 +1,39 @@
+{
+  "name": "aestheticwebsite",
+  "version": "1.0.0",
+  "description": "Web Bán Giày là một ứng dụng web bán hàng online được xây dựng dựa trên việc tham khảo và clone UI/UX cũng như một phần logic từ nhiều website thương mại điện tử nổi tiếng (như Nike, Adidas, v.v.).\r Ứng dụng hướng tới việc tạo ra một nền tảng trưng bày sản phẩm giày dép hiện đại, trực quan, giúp người dùng dễ dàng khám phá sản phẩm, đánh dấu yêu thích và mô phỏng trải nghiệm mua sắm online.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "server": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TylerLucasVN/aestheticwebsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TylerLucasVN/aestheticwebsite/issues"
+  },
+  "homepage": "https://github.com/TylerLucasVN/aestheticwebsite#readme",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "tailwindcss": "^4.3.3"
+  }
+}

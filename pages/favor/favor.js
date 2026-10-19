@@ -1,5 +1,5 @@
 // --- CẤU HÌNH API ---
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 // Biến cho Quick Size Modal
 let activeQuickProduct = null;
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- QUICK SIZE MODAL LOGIC ---
     window.openQuickSizeModal = function (productId) {
         const allFavs = getFavorites();
-        const product = allFavs.find(item => String(item.id) === String(productId));
+        const product = allFavs.find(item => String(item.id || item._id) === String(productId));
         if (!product) return;
 
         activeQuickProduct = product;
@@ -191,7 +191,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             let cart = getCart();
-            const existingItem = cart.find(item => String(item.id) === String(activeQuickProduct.id) && item.size === selectedQuickSize);
+            const prodId = activeQuickProduct.id || activeQuickProduct._id;
+            const existingItem = cart.find(item => String(item.id || item._id) === String(prodId) && item.size === selectedQuickSize);
 
             if (existingItem) {
                 existingItem.quantity = (parseInt(existingItem.quantity) || 1) + currentQuickQty;
@@ -241,9 +242,10 @@ document.addEventListener('DOMContentLoaded', function () {
             emptyState.classList.add('hidden');
 
             items.forEach((item, index) => {
+                const itemId = item.id || item._id;
                 const itemHTML = `
                     <div class="favorite-item group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 animate-slide-up" 
-                         style="animation-delay: ${index * 0.05}s" data-id="${item.id}">
+                         style="animation-delay: ${index * 0.05}s" data-id="${itemId}">
                         <div class="relative">
                             <div class="aspect-square bg-gray-100 relative">
                                 <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain p-3 transition-transform duration-300 hover:scale-105 mix-blend-multiply">
@@ -264,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="flex justify-between items-center">
                                 <span class="text-xs font-bold text-gray-900">${typeof item.price === 'number' ? item.price.toLocaleString('vi-VN') + '₫' : item.price}</span>
                                 
-                                <button onclick="window.openQuickSizeModal('${item.id}')" class="add-to-cart-btn bg-black text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-gray-800 active:scale-95 transition-all duration-200 shadow-sm">
+                                <button onclick="window.openQuickSizeModal('${itemId}')" class="add-to-cart-btn bg-black text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-gray-800 active:scale-95 transition-all duration-200 shadow-sm">
                                     Add to Cart
                                 </button>
                             </div>
@@ -297,8 +299,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const allProducts = await response.json();
             const saleItems = allProducts.filter(p => (p.tag && p.tag.toLowerCase().includes('sale'))).slice(0, 4);
 
-            saleSidebarGrid.innerHTML = saleItems.map(item => `
-                <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-gray-50 transition-colors group cursor-pointer" onclick="goToDetailFromSale('${item.id}')">
+            saleSidebarGrid.innerHTML = saleItems.map(item => {
+                const itemId = item.id || item._id;
+                return `
+                <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-gray-50 transition-colors group cursor-pointer" onclick="goToDetailFromSale('${itemId}')">
                     <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform mix-blend-multiply">
                     </div>
@@ -308,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <span class="text-sm font-bold text-black">${typeof item.price === 'number' ? item.price.toLocaleString('vi-VN') + '₫' : item.price}</span>
                     </div>
                 </div>
-            `).join('');
+            `;}).join('');
         } catch (error) {
             console.error("Error loading sale items:", error);
             saleSidebarGrid.innerHTML = '<p class="text-xs text-gray-400">Cannot load recommendations.</p>';
@@ -320,10 +324,10 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch(API_URL);
             const allProducts = await response.json();
-            const product = allProducts.find(p => String(p.id) === String(productId));
+            const product = allProducts.find(p => String(p.id || p._id) === String(productId));
             if (product) {
                 localStorage.setItem('nike_selected_product', JSON.stringify(product));
-                window.location.href = `../detail/detail.html?id=${product.id}`;
+                window.location.href = `../detail/detail.html?id=${productId}`;
             }
         } catch (err) {
             console.error("Error navigating to product detail:", err);
@@ -357,10 +361,10 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation();
 
             let allFavorites = getFavorites();
-            allFavorites = allFavorites.filter(item => String(item.id) !== String(id));
+            allFavorites = allFavorites.filter(item => String(item.id || item._id) !== String(id));
             localStorage.setItem('nike_favorites', JSON.stringify(allFavorites));
 
-            currentItems = currentItems.filter(item => String(item.id) !== String(id));
+            currentItems = currentItems.filter(item => String(item.id || item._id) !== String(id));
             showToast('Removed from favorites', 'info');
 
             favoriteItem.classList.add('opacity-0', 'scale-95', 'pointer-events-none');

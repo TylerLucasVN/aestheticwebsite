@@ -1,7 +1,7 @@
 // =======================
 // 1. API & GLOBAL VARIABLES
 // =======================
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 let allProducts = [];
 let currentCategoryList = [];
@@ -116,7 +116,8 @@ function renderProducts(products) {
     emptyState.classList.add("hidden");
 
     products.forEach(product => {
-        const isFavorite = favorites.some(f => String(f.id) === String(product.id));
+        const prodId = product.id || product._id;
+        const isFavorite = favorites.some(f => String(f.id || f._id) === String(prodId));
         const priceDisplay = typeof product.price === "number"
             ? product.price.toLocaleString("vi-VN") + "₫"
             : product.price;
@@ -156,7 +157,7 @@ function renderProducts(products) {
 
         card.addEventListener('click', () => {
             localStorage.setItem('nike_selected_product', JSON.stringify(product));
-            window.location.href = `../detail/detail.html?id=${product.id}`;
+            window.location.href = `../detail/detail.html?id=${prodId}`;
         });
 
         card.querySelector(".fav-btn").addEventListener("click", (e) => {
@@ -257,7 +258,8 @@ document.getElementById("confirmQuickAdd").onclick = () => {
     }
 
     let cart = JSON.parse(localStorage.getItem("nike_cart")) || [];
-    const existingItem = cart.find(item => String(item.id) === String(activeQuickProduct.id) && item.size === selectedQuickSize);
+    const prodId = activeQuickProduct.id || activeQuickProduct._id;
+    const existingItem = cart.find(item => String(item.id || item._id) === String(prodId) && item.size === selectedQuickSize);
 
     if (existingItem) {
         existingItem.quantity = (parseInt(existingItem.quantity) || 1) + currentQuickQty;
@@ -331,7 +333,8 @@ window.closeCartModal = function () {
 // =======================
 function toggleFavorite(product, btn) {
     let favorites = JSON.parse(localStorage.getItem("nike_favorites")) || [];
-    const index = favorites.findIndex(f => String(f.id) === String(product.id));
+    const prodId = product.id || product._id;
+    const index = favorites.findIndex(f => String(f.id || f._id) === String(prodId));
     const svg = btn.querySelector("svg");
 
     if (index === -1) {

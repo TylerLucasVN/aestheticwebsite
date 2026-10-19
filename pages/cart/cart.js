@@ -1,5 +1,5 @@
 // --- CONFIG API ---
-const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 // --- UTILS ---
 const formatCurrency = (amount) => {
@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Gom nhóm sản phẩm dựa trên CẢ ID VÀ SIZE để phân biệt các phân loại khác nhau
         const groupedCart = rawCart.reduce((acc, item) => {
             const itemSize = item.size || 'N/A';
-            const existingItem = acc.find(i => String(i.id) === String(item.id) && (i.size || 'N/A') === itemSize);
+            const itemId = item.id || item._id;
+            const existingItem = acc.find(i => String(i.id || i._id) === String(itemId) && (i.size || 'N/A') === itemSize);
 
             if (existingItem) {
                 existingItem.quantity += (parseInt(item.quantity) || 1);
@@ -92,8 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cartItemsContainer) {
             cartItemsContainer.innerHTML = groupedCart.map(item => {
                 const unitPrice = parsePrice(item.price);
-                // Tạo một định danh kết hợp id và size để truyền vào hàm xử lý
-                const uniqueKey = `${item.id}_${item.size}`;
+                const itemId = item.id || item._id;
                 return `
                 <div class="flex gap-4 md:gap-6 py-6 border-b border-gray-100 animate-fade-in group">
                     <div class="w-24 h-24 md:w-36 md:h-36 bg-[#f5f5f5] rounded-xl flex-shrink-0 overflow-hidden">
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flex-1 flex flex-col justify-between">
                         <div class="flex justify-between items-start gap-4">
                             <div>
-                                <h3 class="font-medium text-gray-900 text-base md:text-lg hover:underline cursor-pointer">${item.name}</h3>
+                                <h3 class="font-medium text-gray-900 text-base md:text-lg hover:underline cursor-pointer" onclick="window.location.href='../detail/detail.html?id=${itemId}'">${item.name}</h3>
                                 <p class="text-gray-500 text-sm mt-1">${item.category}</p>
                                 <!-- HIỂN THỊ THÔNG SỐ SIZE ĐÃ CHỌN -->
                                 <p class="text-gray-700 text-sm font-medium mt-1">Size: <span class="text-black font-bold">${item.size}</span></p>
@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="flex items-center gap-3">
                                 <span class="text-gray-500 text-sm">Quantity</span>
                                 <div class="flex items-center border border-gray-200 rounded-full h-8 px-2">
-                                    <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${item.id}', '${item.size}', -1)">−</button>
+                                    <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${itemId}', '${item.size}', -1)">−</button>
                                     <span class="w-6 text-center text-sm font-medium">${item.quantity}</span>
-                                    <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${item.id}', '${item.size}', 1)">+</button>
+                                    <button class="w-6 h-full flex items-center justify-center text-gray-500 hover:text-black" onclick="updateQuantity('${itemId}', '${item.size}', 1)">+</button>
                                 </div>
                             </div>
-                            <button class="text-gray-400 hover:text-red-500 p-2 transition-colors" onclick="removeItem('${item.id}', '${item.size}')" aria-label="Remove item">
+                            <button class="text-gray-400 hover:text-red-500 p-2 transition-colors" onclick="removeItem('${itemId}', '${item.size}')" aria-label="Remove item">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>
@@ -152,9 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Failed to load products');
             const products = await res.json();
 
-            const cartIds = rawCart.map(i => String(i.id));
+            const cartIds = rawCart.map(i => String(i.id || i._id));
             const recommended = products
-                .filter(p => !cartIds.includes(String(p.id)))
+                .filter(p => !cartIds.includes(String(p.id || p._id)))
                 .sort(() => 0.5 - Math.random())
                 .slice(0, 8);
 
@@ -176,11 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         recommendationGrid.innerHTML = items.map(product => {
             const priceDisplay = typeof product.price === "number" ? formatCurrency(product.price) : product.price;
+            const prodId = product.id || product._id;
             return `
-            <div class="min-w-[200px] md:min-w-[250px] group cursor-pointer">
+            <div class="min-w-[200px] md:min-w-[250px] group cursor-pointer" onclick="window.location.href='../detail/detail.html?id=${prodId}'">
                 <div class="relative bg-[#f5f5f5] rounded-xl overflow-hidden mb-3 aspect-square">
                     <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply p-4 transition-transform duration-500 group-hover:scale-105">
-                    <a href="../detail/detail.html?id=${product.id}" class="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white transform translate-y-2 group-hover:translate-y-0 flex items-center justify-center" title="View Detail">
+                    <a href="../detail/detail.html?id=${prodId}" class="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white transform translate-y-2 group-hover:translate-y-0 flex items-center justify-center" title="View Detail">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                     </a>
                 </div>
@@ -198,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.updateQuantity = (id, size, change) => {
         // Tìm đúng sản phẩm khớp cả ID và Size trong rawCart
-        const itemIndex = rawCart.findIndex(i => String(i.id) === String(id) && (i.size || 'N/A') === size);
+        const itemIndex = rawCart.findIndex(i => String(i.id || i._id) === String(id) && (i.size || 'N/A') === size);
 
         if (itemIndex !== -1) {
             let currentQty = parseInt(rawCart[itemIndex].quantity) || 1;
@@ -215,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.removeItem = (id, size) => {
-        rawCart = rawCart.filter(i => !(String(i.id) === String(id) && (i.size || 'N/A') === size));
+        rawCart = rawCart.filter(i => !(String(i.id || i._id) === String(id) && (i.size || 'N/A') === size));
         showToast('Item removed from bag');
         saveAndRefresh();
     };
@@ -224,10 +225,40 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('nike_cart', JSON.stringify(rawCart));
         renderCart();
     }
-
+    // --- XỬ LÝ LOGIC THANH TOÁN (CHECKOUT) ---
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
-            alert('Proceeding to checkout...\nTotal: ' + summaryTotal.textContent);
+            // 1. Kiểm tra giỏ hàng rỗng
+            if (rawCart.length === 0) {
+                showToast("Your bag is empty. Please add items to checkout.");
+                return;
+            }
+
+            // 2. Hiển thị Modal thành công thay vì dùng alert
+            const modal = document.getElementById('checkoutSuccessModal');
+            if (modal) {
+                // Tạo một mã đơn hàng ảo (ví dụ: ORD-59284) để nhìn ngầu hơn
+                const randomOrderNum = "ORD-" + Math.floor(10000 + Math.random() * 90000);
+                document.getElementById('orderNumberDisplay').textContent = randomOrderNum;
+                modal.classList.remove('hidden');
+            }
+        });
+    }
+
+    // 3. Xử lý khi bấm nút "Continue Shopping" trong Modal
+    const closeCheckoutModalBtn = document.getElementById('closeCheckoutModalBtn');
+    if (closeCheckoutModalBtn) {
+        closeCheckoutModalBtn.addEventListener('click', () => {
+            // Xóa toàn bộ dữ liệu giỏ hàng trong bộ nhớ
+            rawCart = [];
+            localStorage.removeItem('nike_cart');
+
+            // Cập nhật lại UI giỏ hàng ngay lập tức
+            renderCart();
+
+            // Ẩn modal và (Tùy chọn) đá người dùng về trang chủ
+            document.getElementById('checkoutSuccessModal').classList.add('hidden');
+            window.location.href = "../../index.html";
         });
     }
 

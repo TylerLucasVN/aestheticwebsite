@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Just Do It. Nike VN (Clone)</title>
     <script src="./assets/js/components.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/tailwind-build.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 
     <!-- Tăng hiệu suất kết nối sớm đến các domain bên thứ 3 -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-    <link rel="preconnect" href="https://694a5ba81282f890d2d86de0.mockapi.io" crossorigin>
+    <link rel="preconnect" href="http://localhost:5000" crossorigin>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-69GZG08LB4"></script>
@@ -22,55 +22,6 @@
         gtag('config', 'G-69GZG08LB4');
     </script>
 
-    <style>
-        /* Tùy chỉnh ẩn thanh cuộn ngang nhưng vẫn trượt mượt mà */
-        .product-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        .product-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
-        }
-
-        /* Smooth transitions */
-        a,
-        button,
-        img {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Enhanced hover for product cards */
-        .product-card:hover .card-img-wrap img {
-            transform: scale(1.06);
-        }
-
-        /* Professional Hero Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.98);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .fade-in-up {
-                animation: none;
-                opacity: 1;
-                transform: none;
-            }
-        }
-    </style>
 </head>
 
 <body class="font-sans antialiased text-gray-900 bg-white">
@@ -82,15 +33,8 @@
         <div class="relative w-full h-[65vh] sm:h-[75vh] md:h-[85vh] overflow-hidden">
 
             <!-- Bắt buộc phải có 'muted' và 'playsinline' thì Chrome/Safari mới cho phép autoplay -->
-            <video autoplay muted loop playsinline class="w-full h-full object-cover">
-                <!-- Video 1 -->
-                <source
-                    src="https://video-previews.elements.envatousercontent.com/1c26fedd-732e-4c8f-8540-ac7916193108/watermarked_preview/watermarked_preview.mp4"
-                    type="video/mp4">
-                <!-- Video 2 -->
-                <source
-                    src="https://video-previews.elements.envatousercontent.com/d957a20d-defa-4d81-b5d9-820b4251bdf1/watermarked_preview/watermarked_preview.mp4"
-                    type="video/mp4">
+            <video autoplay muted loop playsinline preload="metadata" class="w-full h-full object-cover">
+                <source src="assets/videos/test-video.mp4" type="video/mp4">
 
                 <!-- Ảnh fallback dự phòng nếu mạng bị lag không tải được video -->
                 <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1920&q=80"
@@ -466,100 +410,14 @@
                 <a href="pages/products/products.html?category=kids" class="hover:text-gray-600">Kids</a>
                 <a href="pages/products/products.html?category=sale" class="text-red-600 hover:text-red-700">Sale</a>
             </nav>
+            <div class="mt-auto pt-8 flex gap-3">
+                <button onclick="location.href='pages/login/register.html'"
+                    class="bg-black text-white px-4 py-2 rounded-full font-bold">Join Us</button>
+                <button onclick="location.href='pages/login/login.html'"
+                    class="border border-gray-300 px-4 py-2 rounded-full font-bold">Sign In</button>
+            </div>
         </div>
     </div>
-
-    <!-- Script tương tác slider và Fetch dữ liệu sản phẩm thật từ API cho cả Trending và Spotlight -->
-    <script>
-        const API_URL = "https://694a5ba81282f890d2d86de0.mockapi.io/api/v1/products";
-
-        document.addEventListener('DOMContentLoaded', async function () {
-            // 1. Slider cuộn ngang cho Trending This Week
-            const scrollContainer = document.getElementById('scrollContainer');
-            const btnNext = document.getElementById('btnNext');
-            const btnPrev = document.getElementById('btnPrev');
-
-            if (scrollContainer && btnNext && btnPrev) {
-                const scrollAmount = 320;
-                btnNext.addEventListener('click', () => scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
-                btnPrev.addEventListener('click', () => scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
-            }
-
-            // 2. Slider cuộn ngang cho phần Spotlight
-            const spotlightContainer = document.getElementById('spotlightContainer');
-            const spotlightNext = document.getElementById('spotlightNext');
-            const spotlightPrev = document.getElementById('spotlightPrev');
-
-            if (spotlightContainer && spotlightNext && spotlightPrev) {
-                const scrollStep = 260;
-                spotlightNext.addEventListener('click', () => spotlightContainer.scrollBy({ left: scrollStep, behavior: 'smooth' }));
-                spotlightPrev.addEventListener('click', () => spotlightContainer.scrollBy({ left: -scrollStep, behavior: 'smooth' }));
-            }
-
-            // 3. Fetch dữ liệu sản phẩm thực tế từ API
-            try {
-                const res = await fetch(API_URL);
-                const products = await res.json();
-
-                // Render dữ liệu vào "Trending This Week"
-                if (scrollContainer && products.length > 0) {
-                    scrollContainer.innerHTML = "";
-                    products.slice(0, 6).forEach(product => {
-                        const priceDisplay = typeof product.price === 'number' ? product.price.toLocaleString('vi-VN') + '₫' : product.price;
-
-                        const itemCard = document.createElement('div');
-                        itemCard.className = "flex-shrink-0 w-72 cursor-pointer group";
-                        itemCard.innerHTML = `
-                            <div class="bg-[#f5f5f5] rounded-2xl overflow-hidden aspect-square mb-4 relative flex items-center justify-center p-4">
-                                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
-                                ${product.tag ? `<span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold uppercase rounded tracking-wider shadow-sm">${product.tag}</span>` : ''}
-                            </div>
-                            <h3 class="font-bold text-gray-900 text-sm truncate group-hover:text-gray-600 transition-colors">${product.name}</h3>
-                            <p class="text-gray-500 text-xs mb-1">${product.category}</p>
-                            <p class="font-bold text-gray-900 text-sm">${priceDisplay}</p>
-                        `;
-
-                        itemCard.addEventListener('click', () => {
-                            localStorage.setItem('nike_selected_product', JSON.stringify(product));
-                            window.location.href = `pages/detail/detail.html?id=${product.id}`;
-                        });
-
-                        scrollContainer.appendChild(itemCard);
-                    });
-                }
-
-                // Render dữ liệu thật vào phần "SPOTLIGHT" theo đúng style Nike Official tối giản
-                if (spotlightContainer && products.length > 0) {
-                    spotlightContainer.innerHTML = "";
-                    products.forEach(product => {
-                        const spotlightItem = document.createElement('div');
-                        spotlightItem.className = "flex-shrink-0 w-48 sm:w-56 text-center group cursor-pointer";
-
-                        spotlightItem.innerHTML = `
-                            <div class="bg-[#f5f5f5] rounded-2xl h-56 flex items-center justify-center p-6 mb-4 group-hover:bg-gray-200 transition duration-300 relative overflow-hidden">
-                                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-500">
-                                ${product.tag ? `<span class="absolute top-2 left-2 bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase rounded shadow-sm">${product.tag}</span>` : ''}
-                            </div>
-                            <h3 class="font-bold text-gray-900 text-sm md:text-base group-hover:text-gray-600 transition truncate px-1">${product.name}</h3>
-                            <p class="text-gray-500 text-xs mt-0.5">${product.category}</p>
-                        `;
-
-                        spotlightItem.addEventListener('click', () => {
-                            localStorage.setItem('nike_selected_product', JSON.stringify(product));
-                            window.location.href = `pages/detail/detail.html?id=${product.id}`;
-                        });
-
-                        spotlightContainer.appendChild(spotlightItem);
-                    });
-                }
-
-            } catch (err) {
-                console.error("Failed to load products from API:", err);
-                if (scrollContainer) scrollContainer.innerHTML = '<p class="text-xs text-gray-400">Could not load items.</p>';
-                if (spotlightContainer) spotlightContainer.innerHTML = '<p class="text-xs text-gray-400">Could not load items.</p>';
-            }
-        });
-    </script>
 
     <script src="./assets/js/home.js" type="module"></script>
     <script src="./assets/js/searchOverlay.js" type="module"></script>
